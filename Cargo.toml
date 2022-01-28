@@ -1,0 +1,2 @@
+[workspace]
+members=["cassie_common","cassie_web"]
