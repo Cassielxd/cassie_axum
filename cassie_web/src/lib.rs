@@ -1,9 +1,20 @@
-use axum::{body::Body, response::Response};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+#![allow(unused_variables)] //允许未使用的变量
+#![allow(dead_code)] //允许未使用的代码
+#![allow(unused_must_use)]
+
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate rbatis;
 
 pub mod error;
 pub mod routers;
+pub mod config;
+pub mod service;
+pub mod dao;
 
+use axum::{body::Body, response::Response};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use crate::error::Error;
 pub const CODE_SUCCESS: &str = "SUCCESS";
 pub const CODE_FAIL: &str = "FAIL";
