@@ -3,7 +3,8 @@
 pub struct ApplicationConfig {
     pub debug: bool,
     ///当前服务地址
-    pub server_url: String,
+    pub host: String,
+    pub port: String,
     ///redis地址
     pub redis_url: String,
     /// 数据库地址
