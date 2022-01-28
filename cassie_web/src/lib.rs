@@ -7,15 +7,15 @@ extern crate lazy_static;
 #[macro_use]
 extern crate rbatis;
 
+pub mod config;
+pub mod dao;
 pub mod error;
 pub mod routers;
-pub mod config;
 pub mod service;
-pub mod dao;
 
+use crate::error::Error;
 use axum::{body::Body, response::Response};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use crate::error::Error;
 pub const CODE_SUCCESS: &str = "SUCCESS";
 pub const CODE_FAIL: &str = "FAIL";
 
