@@ -18,7 +18,7 @@ where
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let headers = req.headers().unwrap();
         let mut service = CASBIN_CONTEXT.service.clone();
-        let action = req.method().clone().to_string();
+        let action = req.method().clone().;
         let path = req.uri().clone().to_string();
 
         let cas = CasbinVals {
