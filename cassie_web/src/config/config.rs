@@ -3,8 +3,7 @@
 pub struct ApplicationConfig {
     pub debug: bool,
     ///当前服务地址
-    pub host: String,
-    pub port: String,
+    pub server: String,
     ///redis地址
     pub redis_url: String,
     /// 数据库地址
@@ -43,7 +42,7 @@ impl Default for ApplicationConfig {
         let yml_data = include_str!("../../application.yml");
         //读取配置
         let result: ApplicationConfig =
-            serde_yaml::from_str(yml_data).expect("load config file fail");
+            serde_yaml::from_str(yml_data).expect("配置文件加载失败");
 
         result
     }

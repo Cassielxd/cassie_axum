@@ -1,4 +1,4 @@
-use crate::error::Result;
+use cassie_common::error::Result;
 use crate::service::{MemService, RedisService};
 use async_trait::async_trait;
 use serde::de::DeserializeOwned;
@@ -22,7 +22,7 @@ pub struct CacheService {
 }
 
 impl CacheService {
-    pub fn new(cfg:&ApplicationConfig) -> crate::error::Result<Self> {
+    pub fn new(cfg:&ApplicationConfig) -> cassie_common::error::Result<Self> {
         match cfg.cache_type.as_str() {
             "mem" => {
                 println!(" cache_type: mem");
@@ -56,7 +56,7 @@ impl CacheService {
     {
         let data = serde_json::to_string(v);
         if data.is_err() {
-            return Err(crate::error::Error::from(format!(
+            return Err(cassie_common::error::Error::from(format!(
                 "MemCacheService set_json fail:{}",
                 data.err().unwrap()
             )));
@@ -75,7 +75,7 @@ impl CacheService {
         }
         let data: serde_json::Result<T> = serde_json::from_str(r.as_str());
         if data.is_err() {
-            return Err(crate::error::Error::from(format!(
+            return Err(cassie_common::error::Error::from(format!(
                 "MemCacheService GET fail:{}",
                 data.err().unwrap()
             )));

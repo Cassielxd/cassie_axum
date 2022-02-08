@@ -8,7 +8,7 @@ author = "String<348040933@qq.com>"
 
 [dependencies]
 axum ="0.4.4"
-tokio = { version="1", features = ["full"] }
+tokio = { version="1", features = ["full","fs", "io-util","sync"] }
 tokio-pg-mapper = "0.2"
 tokio-pg-mapper-derive = "0.2"
 #serde and json
@@ -45,3 +45,5 @@ indexmap = "1.7.0"
 
 #futures
 futures = "0.3"
+cassie_common = {path="../cassie_common"}
+casbin = { version = "2.0.2", default-features = false, features = ["runtime-async-std","cached","logging"] }

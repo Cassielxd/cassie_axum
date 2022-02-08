@@ -1,4 +1,4 @@
-use crate::error::{Error, Result};
+use cassie_common::error::{Error, Result};
 use crate::service::ICacheService;
 use async_trait::async_trait;
 use indexmap::IndexMap;
@@ -39,11 +39,6 @@ impl Default for MemService {
     }
 }
 
-impl<T> std::convert::From<PoisonError<T>> for Error {
-    fn from(arg: PoisonError<T>) -> Self {
-        Error::E(arg.to_string())
-    }
-}
 
 #[async_trait]
 impl ICacheService for MemService {
@@ -79,7 +74,7 @@ impl ICacheService for MemService {
         if inserted.is_some() {
             return Ok(v.to_string());
         }
-        return Result::Err(crate::error::Error::E(format!(
+        return Result::Err(cassie_common::error::Error::E(format!(
             "[mem_service]insert fail!"
         )));
     }

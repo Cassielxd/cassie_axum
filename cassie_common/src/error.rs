@@ -2,7 +2,11 @@
 use std::error::Error as StdError;
 use std::fmt::{self, Debug, Display};
 use std::io;
-
+use std::sync::PoisonError;
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 use serde::de::Visitor;
 use serde::ser::{Serialize, Serializer};
 use serde::{Deserialize, Deserializer};
@@ -15,6 +19,12 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     /// Default Error
     E(String),
+}
+
+impl<T> std::convert::From<PoisonError<T>> for Error {
+    fn from(arg: PoisonError<T>) -> Self {
+        Error::E(arg.to_string())
+    }
 }
 
 impl Display for Error {
@@ -53,6 +63,7 @@ impl From<&dyn std::error::Error> for Error {
         return Error::E(arg.to_string());
     }
 }
+
 
 impl From<Error> for std::io::Error {
     fn from(arg: Error) -> Self {
@@ -118,5 +129,13 @@ impl<'de> Deserialize<'de> for Error {
     {
         let r = deserializer.deserialize_string(ErrorVisitor)?;
         return Ok(Error::from(r));
+    }
+}
+
+impl IntoResponse for Error {
+    fn into_response(self) -> Response {
+        match self {
+            Error::E(error) => (StatusCode::UNAUTHORIZED, error).into_response(),
+        }
     }
 }

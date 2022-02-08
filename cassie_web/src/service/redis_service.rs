@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use redis::aio::Connection;
 
-use crate::error::{Error, Result};
+use cassie_common::error::{Error, Result};
 use crate::service::ICacheService;
 use async_trait::async_trait;
 use redis::RedisResult;
@@ -23,7 +23,7 @@ impl RedisService {
         let conn = self.client.get_async_connection().await;
         if conn.is_err() {
             let err = format!("RedisService connect fail:{}", conn.err().unwrap());
-            return Err(crate::error::Error::from(err));
+            return Err(cassie_common::error::Error::from(err));
         }
         return Ok(conn.unwrap());
     }

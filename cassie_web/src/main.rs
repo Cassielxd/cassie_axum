@@ -1,32 +1,34 @@
-use axum::{response::IntoResponse, routing::get, Router};
+use axum::{extract::extractor_middleware, response::IntoResponse, routing::get, Router};
+use cassie_common::RespVO;
 use cassie_web::{
+    middleware::auth::Auth,
     routers::{admin, api},
-    RespVO,
+    service::CONTEXT,
 };
-use std::net::SocketAddr;
 
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
 }
 
-/** 
- * axum 主入口类 
+/**
+ * axum 主入口类
  * admin 后台管理端路由
- * api 前端使用路由 例如:pc wapp  app 
+ * api 前端使用路由 例如:pc wapp  app
  * */
 #[tokio::main]
 async fn main() {
+    
     // 初始化日志
     tracing_subscriber::fmt::init();
 
     // 构建路由
     let app = Router::new()
-        .route("/", get(index))
+        .route("/index", get(index))
+        .layer(extractor_middleware::<Auth>())
         .nest("/admin", admin::routers())
         .nest("/api", api::routers());
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    tracing::debug!("listening on {}", addr);
-    axum::Server::bind(&addr)
+    println!("address:{}", &CONTEXT.config.server);
+    axum::Server::bind(&CONTEXT.config.server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
