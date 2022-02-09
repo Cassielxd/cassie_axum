@@ -63,8 +63,7 @@ impl<B> FromRequest<B> for Auth
             match checked_token(token_value).await {
                 Ok(data) => {
                     let mut tls = REQUEST_CONTEXT.clone();
-                    let ts = tls.borrow_mut();
-                    ts.get_or(|| RequestModel {
+                    tls.get_or(|| RequestModel {
                         uid: data.id.clone(),
                         username: data.username.clone(),
                         agency_code: data.agency_code.clone(),
