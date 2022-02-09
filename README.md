@@ -22,6 +22,7 @@ rust axum web 是rust开发的web手脚架项目
 3.  完成casbin的基础RABC权限集成
 4.  TODO 微服务集成 KONG网关集成
 5.  nacos注册中心集成
+6.  动态表单实现
 
 #### 已完成
 1.  基础缓存定义,redis

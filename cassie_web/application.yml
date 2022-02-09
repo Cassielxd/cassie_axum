@@ -9,7 +9,7 @@ cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)
 redis_url: "redis://127.0.0.1:6379"
 #数据库地址
-database_url: "mysql://root:root@localhost:3306/rivet_admin"
+database_url: "mysql://root:root@localhost:3306/cassie_admin"
 #逻辑删除字段
 logic_column: "del"
 logic_un_deleted: 0
@@ -25,7 +25,7 @@ log_rolling_type: "KeepNum(20)"
 #日志等级-info,error,warn,debug,trace
 log_level: "info"
 #JwtToken秘钥
-jwt_secret: "abs_admin"
+jwt_secret: "cassie_admin"
 #短信通道缓存（系统先把数据放入队列sms:send:，第三方短信sdk或程序需要从队列获取并发送，获得回执存入sms:resp:*）,格式为sms:send:手机号和sms:resp:手机号
 sms_cache_send_key_prefix: "sms:send:"
 #登陆失败拒绝策略，重试次数限制(0次无限制)

@@ -62,7 +62,7 @@ impl<B> FromRequest<B> for Auth
             /*验证token有效性*/
             match checked_token(token_value).await {
                 Ok(data) => {
-                    let mut tls = REQUEST_CONTEXT.clone();
+                    let tls = REQUEST_CONTEXT.clone();
                     tls.get_or(|| RequestModel {
                         uid: data.id.clone(),
                         username: data.username.clone(),
