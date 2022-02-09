@@ -32,20 +32,23 @@ pub struct CasbinService {
 
 impl CasbinService {
     /**
-            sign_in
-             *method:default
-             *desc:初始化casbin 上下文 加载model 初始化 CICIAdapter casbin适配器
-             *author:String
-             *email:348040933@qq.com
+    sign_in
+     *method:default
+     *desc:初始化casbin 上下文 加载model 初始化 CICIAdapter casbin适配器
+     *author:String
+     *email:348040933@qq.com
      */
     pub fn default() -> Self {
         let cached_enforcer = async_std::task::block_on(async {
+            /*加载模型文件*/
             let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
                 .await
-                .unwrap();
+                .unwrap()
+                /*初始化适配器*/;
             let a = CICIAdapter::new();
 
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
+            /* 添加自定义验证方法 */
             cached_enforcer.add_function("ciciMatch", cici_match);
             cached_enforcer
         });
@@ -69,10 +72,10 @@ impl CasbinService {
         CasbinService { enforcer: e }
     }
     /**
-         *method:call
-         *desc:核心验证方法 path ,action ,vals
-         *author:String
-         *email:348040933@qq.com
+     *method:call
+     *desc:核心验证方法 path ,action ,vals
+     *author:String
+     *email:348040933@qq.com
      */
     pub async fn call(&mut self, path: String, action: String, vals: CasbinVals) -> bool {
         /*获取验证器*/
@@ -80,21 +83,18 @@ impl CasbinService {
         let subject = vals.subject.clone();
         /*获取对应的 用户 用户为空直接返回false*/
         if !vals.subject.is_empty() {
+            let mut vecs = Vec::new();
             /*判断是否是多租户模型*/
             if let Some(domain) = vals.domain {
-                let mut lock = cloned_enforcer.write().await;
-                match lock.enforce_mut(vec![subject, domain, path, action]) {
-                    Ok(true) => true,
-                    Ok(false) => false,
-                    Err(e) => false
-                }
+                vecs = vec![subject, domain, path, action];
             } else {
-                let mut lock = cloned_enforcer.write().await;
-                match lock.enforce_mut(vec![subject, path, action]) {
-                    Ok(true) => true,
-                    Ok(false) => false,
-                    Err(_) => false
-                }
+                vecs = vec![subject, path, action];
+            }
+            let mut lock = cloned_enforcer.write().await;
+            match lock.enforce_mut(vecs) {
+                Ok(true) => true,
+                Ok(false) => false,
+                Err(_) => false
             }
         } else {
             false

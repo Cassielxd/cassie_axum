@@ -69,7 +69,7 @@ impl<B> FromRequest<B> for Auth
                         agency_code: data.agency_code.clone(),
                         product_code: "".to_string(),
                     });
-                    // todo 获取用户名和租户编码 进入下一步资源认证
+                    // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
                         subject: data.username,
                         domain: Option::from(data.agency_code),
