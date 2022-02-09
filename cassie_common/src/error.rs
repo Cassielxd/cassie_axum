@@ -64,6 +64,11 @@ impl From<&dyn std::error::Error> for Error {
     }
 }
 
+impl From<rbatis::core::Error> for Error {
+    fn from(arg: rbatis::core::Error) -> Self {
+        Error::E(arg.to_string())
+    }
+}
 
 impl From<Error> for std::io::Error {
     fn from(arg: Error) -> Self {

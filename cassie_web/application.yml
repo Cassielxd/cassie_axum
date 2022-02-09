@@ -5,7 +5,7 @@ server_name: "cassieWeb"
 #server 地址
 server: "0.0.0.0:9999"
 #缓存介质类型,单选("mem","redis")
-cache_type: "mem"
+cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)
 redis_url: "redis://127.0.0.1:6379"
 #数据库地址

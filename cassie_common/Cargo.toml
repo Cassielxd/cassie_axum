@@ -10,3 +10,8 @@ serde = { version="1", features = ["derive"] }
 serde_json = "1.0"
 axum ="0.4.4"
 tokio = { version="1", features = ["full"] }
+md5 = "0.7.0"
+rustflake = "0.1.0"
+
+rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
+rbson = "2.0.3"

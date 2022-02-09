@@ -1,4 +1,6 @@
 pub mod error;
+pub mod utils;
+
 ///是否处在白名单接口中
 pub fn is_white_list_api(path: &str,white_list_api: &Vec<String>) -> bool {
 

@@ -8,8 +8,9 @@ use cassie_common::error::{Error, Result};
 use casbin::{CachedEnforcer, CoreApi, Result as CasbinResult};
 
 
-use crate::casbin_adapter::{cici_adapter::CICIAdapter, cici_match};
+use crate::casbin_adapter::{cici_adapter::CICIAdapter};
 use async_std::sync::RwLock;
+use crate::cici_casbin::cici_match;
 
 
 #[derive(Clone)]
@@ -18,20 +19,36 @@ pub struct CasbinVals {
     pub domain: Option<String>,
 }
 
+/**
+ *struct:CasbinService
+ *desc:casbin 权限处理核心service
+ *author:String
+ *email:348040933@qq.com
+ */
 #[derive(Clone)]
 pub struct CasbinService {
     pub enforcer: Arc<RwLock<CachedEnforcer>>,
 }
 
 impl CasbinService {
-    pub async fn default() -> Self {
-        let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
-            .await
-            .unwrap();
-        let a = CICIAdapter::new();
+    /**
+            sign_in
+             *method:default
+             *desc:初始化casbin 上下文 加载model 初始化 CICIAdapter casbin适配器
+             *author:String
+             *email:348040933@qq.com
+     */
+    pub fn default() -> Self {
+        let cached_enforcer = async_std::task::block_on(async {
+            let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
+                .await
+                .unwrap();
+            let a = CICIAdapter::new();
 
-        let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
-        cached_enforcer.add_function("ciciMatch", cici_match);
+            let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
+            cached_enforcer.add_function("ciciMatch", cici_match);
+            cached_enforcer
+        });
         Self {
             enforcer: Arc::new(RwLock::new(cached_enforcer)),
         }
@@ -51,41 +68,36 @@ impl CasbinService {
     pub fn set_enforcer(e: Arc<RwLock<CachedEnforcer>>) -> CasbinService {
         CasbinService { enforcer: e }
     }
-    pub async fn call(&mut self, path: String, action: String, vals: CasbinVals) -> Result<bool> {
+    /**
+         *method:call
+         *desc:核心验证方法 path ,action ,vals
+         *author:String
+         *email:348040933@qq.com
+     */
+    pub async fn call(&mut self, path: String, action: String, vals: CasbinVals) -> bool {
+        /*获取验证器*/
         let cloned_enforcer = self.enforcer.clone();
         let subject = vals.subject.clone();
+        /*获取对应的 用户 用户为空直接返回false*/
         if !vals.subject.is_empty() {
+            /*判断是否是多租户模型*/
             if let Some(domain) = vals.domain {
                 let mut lock = cloned_enforcer.write().await;
                 match lock.enforce_mut(vec![subject, domain, path, action]) {
-                    Ok(true) => {
-                        Ok(true)
-                    }
-                    Ok(false) => {
-                        println!("验证失败");
-                        Ok(false)
-                    }
-                    Err(e) => {
-                        println!("验证异常{}", e.to_string());
-                        Ok(false)
-                    }
+                    Ok(true) => true,
+                    Ok(false) => false,
+                    Err(e) => false
                 }
             } else {
                 let mut lock = cloned_enforcer.write().await;
                 match lock.enforce_mut(vec![subject, path, action]) {
-                    Ok(true) => {
-                        Ok(true)
-                    }
-                    Ok(false) => {
-                        Ok(false)
-                    }
-                    Err(_) => {
-                        Ok(false)
-                    }
+                    Ok(true) => true,
+                    Ok(false) => false,
+                    Err(_) => false
                 }
             }
         } else {
-            Ok(false)
+            false
         }
     }
 }
