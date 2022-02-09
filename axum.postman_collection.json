@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "1e774c66-83a5-4ba4-b94f-68a0ceac9e5c",
+		"name": "axum",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "获取图片验证码",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "PRODUCT_CODE",
+						"value": "search",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:9999/admin/captcha/123456",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9999",
+					"path": [
+						"admin",
+						"captcha",
+						"123456"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "登录接口",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"uuid\": \"123456\",\r\n    \"vcode\": \"wx8e\",\r\n    \"username\": \"lixingdong1\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9999/admin/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9999",
+					"path": [
+						"admin",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "权限测试接口",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access_token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTA2NzI0Njg3NTgwMDAwMDAwMiwidXNlcm5hbWUiOiJsaXhpbmdkb25nMSIsImFnZW5jeV9jb2RlIjoic3VwZXJhZG1pbiIsImV4cCI6MTY0NDM4ODgyOTEwMn0.TyonmrI2cNHyMNr5xCQkCPDjChcRJqwbAFzcAoUy0wI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:9999/index",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9999",
+					"path": [
+						"index"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
