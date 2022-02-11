@@ -45,7 +45,12 @@ pub async fn list(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
     let vo = CONTEXT.sys_user_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
-
+/**
+ *method:/user/:id
+ *desc:用户查询user
+ *author:String
+ *email:348040933@qq.com
+ */
 pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let vo = CONTEXT.sys_user_service.get(id).await;
     RespVO::from_result(&vo).resp_json()
