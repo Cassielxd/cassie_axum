@@ -84,7 +84,7 @@ impl CasbinService {
         /*获取对应的 用户 用户为空直接返回false*/
         if !vals.subject.is_empty() {
             /*判断是否是多租户模型*/
-            let mut vecs =  if let Some(domain) = vals.domain {
+            let vecs = if let Some(domain) = vals.domain {
                 vec![subject, domain, path, action]
             } else {
                 vec![subject, path, action]
@@ -92,9 +92,18 @@ impl CasbinService {
             let mut lock = cloned_enforcer.write().await;
 
             match lock.enforce_mut(vecs) {
-                Ok(true) => true,
-                Ok(false) => false,
-                Err(_) => false
+                Ok(true) => {
+                    drop(lock) ;
+                    true
+                },
+                Ok(false) =>{
+                    drop(lock) ;
+                    false
+                } ,
+                Err(_) =>{
+                    drop(lock) ;
+                    false
+                }
             }
         } else {
             false
