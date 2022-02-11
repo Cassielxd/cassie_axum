@@ -11,7 +11,7 @@ use axum::routing::get;
 use axum::routing::post;
 use cassie_common::error::Error;
 use validator::Validate;
-use axum::extract::Path;
+use axum::extract::{Path, Query};
 
 /**
  *method:/user/page
@@ -19,7 +19,8 @@ use axum::extract::Path;
  *author:String
  *email:348040933@qq.com
  */
-pub async fn page(Json(arg): Json<SysUserQuery>) -> impl IntoResponse {
+pub async fn page(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
+    let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_user_service
         .page(
@@ -39,7 +40,8 @@ pub async fn page(Json(arg): Json<SysUserQuery>) -> impl IntoResponse {
  *author:String
  *email:348040933@qq.com
  */
-pub async fn list(Json(arg): Json<SysUserQuery>) -> impl IntoResponse {
+pub async fn list(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
+    let arg = arg.unwrap();
     let vo = CONTEXT.sys_user_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
@@ -69,8 +71,8 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
 
 pub fn init_router() -> Router {
     Router::new()
-        .route("/page", post(page))
-        .route("/list", post(list))
+        .route("/", get(page))
+        .route("/list", get(list))
         .route("/save", post(save))
         .route("/:id", get(get_user_by_id))
 }

@@ -3,7 +3,7 @@ use axum::{http::HeaderMap, Router, routing::{get, post}};
 
 pub fn routers() -> Router {
     Router::new()
-        .nest("/users", sys_user_resource::init_router())
+        .nest("/user", sys_user_resource::init_router())
         .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
         .route("/login", post(sys_auth_resource::login))
 }
