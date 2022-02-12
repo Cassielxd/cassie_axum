@@ -1,7 +1,8 @@
-use crate::casbin_adapter::action::CICICasinService;
-use crate::casbin_adapter::models::{CasbinRule, NewCasbinRule};
 use casbin::{Adapter, Filter, Model, Result};
 use async_trait::async_trait;
+use rbatis::rbatis::Rbatis;
+
+use crate::{models::{NewCasbinRule, CasbinRule}, action::CICICasinService};
 
 /**
 *struct:CICIAdapter
@@ -9,13 +10,14 @@ use async_trait::async_trait;
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Default)]
+
 pub struct CICIAdapter {
+    service: CICICasinService,
     is_filtered: bool,
 }
 impl CICIAdapter {
-    pub fn new() -> CICIAdapter {
-        CICIAdapter { is_filtered: false }
+    pub fn new(r:Rbatis) -> CICIAdapter {
+        CICIAdapter { is_filtered: false,service:CICICasinService{rbatis:r} }
     }
     pub(crate) fn save_policy_line<'a>(
         &self,
@@ -93,7 +95,7 @@ impl CICIAdapter {
 #[async_trait]
 impl Adapter for CICIAdapter {
     async fn load_policy(&self, m: &mut dyn Model) -> Result<()> {
-        let rules = CICICasinService::load_policy().await?;
+        let rules = self.service.load_policy().await?;
         for casbin_rule in &rules {
             let rule = self.load_policy_line(casbin_rule);
             if let Some(ref sec) = casbin_rule.ptype.chars().next().map(|x| x.to_string()) {
@@ -110,7 +112,7 @@ impl Adapter for CICIAdapter {
     }
 
     async fn load_filtered_policy<'a>(&mut self, m: &mut dyn Model, f: Filter<'a>) -> Result<()> {
-        let rules = CICICasinService::load_filtered_policy(&f).await?;
+        let rules = self.service.load_filtered_policy(&f).await?;
         self.is_filtered = true;
         for casbin_rule in &rules {
             if let Some(policy) = self.normalize_policy(casbin_rule) {
@@ -151,11 +153,11 @@ impl Adapter for CICIAdapter {
                 rules.extend(new_rules);
             }
         }
-        CICICasinService::save_policy(rules).await
+        self.service.save_policy(rules).await
     }
 
     async fn clear_policy(&mut self) -> Result<()> {
-        CICICasinService::clear_policy().await
+        self.service.clear_policy().await
     }
 
     fn is_filtered(&self) -> bool {
@@ -164,7 +166,7 @@ impl Adapter for CICIAdapter {
 
     async fn add_policy(&mut self, sec: &str, ptype: &str, rule: Vec<String>) -> Result<bool> {
         if let Some(new_rule) = self.save_policy_line(ptype, rule.as_slice()) {
-            return CICICasinService::add_policy(new_rule).await;
+            return self.service.add_policy(new_rule).await;
         }
         Ok(false)
     }
@@ -180,12 +182,12 @@ impl Adapter for CICIAdapter {
             .filter_map(|x| self.save_policy_line(ptype, x))
             .collect::<Vec<NewCasbinRule>>();
 
-        CICICasinService::save_policy(new_rules).await;
+            self.service.save_policy(new_rules).await;
         Ok(true)
     }
 
     async fn remove_policy(&mut self, sec: &str, ptype: &str, rule: Vec<String>) -> Result<bool> {
-        CICICasinService::remove_policy(ptype, rule).await
+        self.service.remove_policy(ptype, rule).await
     }
 
     async fn remove_policies(
@@ -194,7 +196,7 @@ impl Adapter for CICIAdapter {
         ptype: &str,
         rules: Vec<Vec<String>>,
     ) -> Result<bool> {
-        CICICasinService::remove_policies(ptype, rules).await
+        self.service.remove_policies(ptype, rules).await
     }
 
     async fn remove_filtered_policy(
@@ -207,7 +209,7 @@ impl Adapter for CICIAdapter {
         if field_index <= 5 && !field_values.is_empty() && field_values.len() >= 6 - field_index {
             Ok(false)
         } else {
-            CICICasinService::remove_filtered_policy(ptype, field_index, field_values).await
+            self.service.remove_filtered_policy(ptype, field_index, field_values).await
         }
     }
 }

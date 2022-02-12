@@ -8,9 +8,10 @@ use casbin::{prelude::{TryIntoAdapter, TryIntoModel}, DefaultModel};
 use casbin::{CachedEnforcer, CoreApi, Result as CasbinResult};
 
 
-use crate::casbin_adapter::{cici_adapter::CICIAdapter};
+
 use async_std::sync::RwLock;
-use crate::cici_casbin::cici_match;
+use cassie_casbin_adapter::cici_adapter::CICIAdapter;
+use crate::{cici_casbin::cici_match, service::CONTEXT, dao::init_rbatis};
 
 
 #[derive(Clone)]
@@ -44,9 +45,8 @@ impl CasbinService {
             let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
                 .await
                 .unwrap()
-                /*初始化适配器*/;
-            let a = CICIAdapter::new();
-
+            /*初始化适配器*/;
+            let a = CICIAdapter::new(init_rbatis(&CONTEXT.config).await);
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
             /* 添加自定义验证方法 */
             cached_enforcer.add_function("ciciMatch", cici_match);

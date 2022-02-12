@@ -447,6 +447,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_casbin_adapter"
+version = "0.1.0"
+dependencies = [
+ "async-std",
+ "async-trait",
+ "casbin",
+ "rbatis",
+ "rbson",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "cassie_common"
 version = "0.1.0"
 dependencies = [
@@ -469,6 +482,7 @@ dependencies = [
  "axum",
  "captcha",
  "casbin",
+ "cassie_casbin_adapter",
  "cassie_common",
  "chrono",
  "futures",
