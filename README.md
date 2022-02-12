@@ -28,6 +28,7 @@ rust axum web 是rust开发的web手脚架项目
 4. TODO 微服务集成 KONG网关集成
 5. nacos注册中心集成
 6. 动态表单实现
+7. 微信小程序工具集开发
 
 #### 已完成
 
