@@ -37,7 +37,7 @@ login_fail_retry_wait_sec: 30
 
 #接口白名单（免登陆直接访问）
 white_list_api:
- - "/admin/sys_login"
+ - "/admin/login"
  - "/admin/captcha"
 
 
