@@ -14,7 +14,6 @@ pub mod routers;
 pub mod service;
 pub mod cici_casbin;
 pub mod middleware;
-pub mod casbin_adapter;
 pub mod entity;
 pub mod dto;
 pub mod vo;
