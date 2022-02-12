@@ -1,6 +1,6 @@
 use crate::admin::{sys_user_resource, sys_auth_resource, sys_role_resource,
                    sys_params_resource, sys_dict_type_resource, sys_dict_value_resource};
-use axum::{http::HeaderMap, Router, routing::{get, post}};
+use axum::{Router, routing::{get, post}};
 
 pub fn routers() -> Router {
     Router::new()

@@ -2,8 +2,8 @@
 
 use std::sync::Arc;
 
-use casbin::{prelude::{TryIntoAdapter, TryIntoModel}, DefaultModel, MgmtApi};
-use cassie_common::error::{Error, Result};
+use casbin::{prelude::{TryIntoAdapter, TryIntoModel}, DefaultModel};
+
 
 use casbin::{CachedEnforcer, CoreApi, Result as CasbinResult};
 

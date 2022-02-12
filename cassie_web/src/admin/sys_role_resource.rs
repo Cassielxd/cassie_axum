@@ -1,7 +1,5 @@
 use crate::{
-    dto::sys_user_dto::SysUserDTO,
     entity::PageData,
-    request::SysUserQuery,
     service::{crud_service::CrudService, CONTEXT},
 };
 use crate::request::SysRoleQuery;

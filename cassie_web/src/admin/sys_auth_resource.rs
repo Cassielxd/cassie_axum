@@ -9,7 +9,7 @@ use crate::service::CONTEXT;
 use std::time::Duration;
 use captcha::Captcha;
 use captcha::filters::{Noise, Wave, Dots};
-use axum::extract::{Path};
+use axum::extract::Path;
 
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
