@@ -56,6 +56,18 @@ pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
+pub async fn edit(Path(id): Path<String>,Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
+    let user = arg;
+    if let Err(e) = user.validate() {
+        return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
+    }
+    CONTEXT.sys_user_service.update_by_id(id,&user.into()).await;
+
+
+    return RespVO::from(&"修改成功".to_string()).resp_json();
+}
+
+
 /**
  *method:/user/save
  *desc:用户保存

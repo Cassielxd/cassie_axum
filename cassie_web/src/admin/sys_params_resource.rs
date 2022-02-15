@@ -46,11 +46,3 @@ pub async fn save(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
     let vo = CONTEXT.sys_params_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
-
-pub fn init_router() -> Router {
-    Router::new()
-        .route("/", get(page))
-        .route("/list", get(list))
-        .route("/save", post(save))
-        .route("/:id", get(get_by_id))
-}

@@ -58,9 +58,3 @@ pub async fn save(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
-pub fn init_router() -> Router {
-    Router::new()
-        .route("/", get(page))
-        .route("/save", post(save))
-        .route("/:id", get(get_by_id))
-}

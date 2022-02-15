@@ -2,6 +2,7 @@ use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbson::Bson;
 use rbatis::Error;
+
 #[derive(Debug)]
 pub struct AgencyInterceptor{}
 

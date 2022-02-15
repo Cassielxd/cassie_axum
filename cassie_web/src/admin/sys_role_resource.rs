@@ -3,7 +3,7 @@ use crate::{
     service::{crud_service::CrudService, CONTEXT},
 };
 use crate::request::SysRoleQuery;
-use axum::extract::Query;
+use axum::extract::{Query, Path};
 use cassie_common::RespVO;
 use crate::dto::sys_role_dto::SysRoleDTO;
 use axum::{Json, Router};
@@ -11,6 +11,8 @@ use axum::response::IntoResponse;
 use crate::cici_casbin::CASBIN_CONTEXT;
 use casbin::MgmtApi;
 use axum::routing::{post, get};
+use cassie_common::error::Error;
+use validator::Validate;
 
 /**
  *method:/role/page
@@ -32,7 +34,19 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
         .await;
     RespVO::from_result(&vo).resp_json()
 }
+pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
+    let vo = CONTEXT.sys_role_service.get(id).await;
+    RespVO::from_result(&vo).resp_json()
+}
 
+pub async fn edit(Path(id): Path<String>,Json(arg): Json<SysRoleDTO>) -> impl IntoResponse {
+    let role = arg;
+    if let Err(e) = role.validate() {
+       return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
+    }
+    CONTEXT.sys_role_service.update_by_id(id,&role.into()).await;
+    RespVO::from(&"修改成功".to_string()).resp_json()
+}
 /**
  *method:/role/save
  *desc:角色保存
@@ -108,9 +122,3 @@ pub async fn casbin_test() -> impl IntoResponse {
     RespVO::from_result(&res).resp_json()
 }
 
-pub fn init_router() -> Router {
-    Router::new()
-        .route("/", get(page))
-        .route("/save", post(save))
-        .route("/casbin_test", get(casbin_test))
-}

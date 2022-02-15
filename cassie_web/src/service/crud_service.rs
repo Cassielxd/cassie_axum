@@ -89,7 +89,7 @@ pub trait CrudService<Entity, Dto, Params>: Sync + Send
     /**
      * 根据id更新实体
      */
-    async fn update_by_id(&self, id: u64, mut data: &Entity) {
+    async fn update_by_id(&self, id: String, mut data: &Entity) {
         let wrapper = CONTEXT.rbatis.new_wrapper().eq("id", id);
         CONTEXT
             .rbatis

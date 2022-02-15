@@ -1,12 +1,12 @@
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
-
+use validator_derive::Validate;
 use crate::entity::sys_entitys::{SysRole, SysRoleDataScope, SysRoleMenu, SysRoleUser};
 
 /**
  * 角色dto
  */
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize,Validate)]
 pub struct SysRoleDTO {
     pub id: Option<i64>,
     pub name: Option<String>,
