@@ -95,9 +95,26 @@ CREATE TABLE `casbin_rule`  (
 -- ----------------------------
 -- Records of casbin_rule
 -- ----------------------------
-INSERT INTO `casbin_rule` VALUES (1, 'g', 'lixingdong', 'admin', 'superadmin', '', '', '');
+-- ----------------------------
+INSERT INTO `casbin_rule` VALUES (1, 'g', 'lixingdong1', 'admin', 'superadmin', '', '', '');
 INSERT INTO `casbin_rule` VALUES (3, 'p', 'admin', 'superadmin', '/', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (2, 'p', 'admin', 'superadmin', '/index', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (18, 'p', 'admin', 'superadmin', '/dict/type', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (20, 'p', 'admin', 'superadmin', '/dict/type/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (19, 'p', 'admin', 'superadmin', '/dict/type/save', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (21, 'p', 'admin', 'superadmin', '/dict/value', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (23, 'p', 'admin', 'superadmin', '/dict/value/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (22, 'p', 'admin', 'superadmin', '/dict/value/save', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (14, 'p', 'admin', 'superadmin', '/params', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (16, 'p', 'admin', 'superadmin', '/params/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (15, 'p', 'admin', 'superadmin', '/params/list', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (17, 'p', 'admin', 'superadmin', '/params/save', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (6, 'p', 'admin', 'superadmin', '/role', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (13, 'p', 'admin', 'superadmin', '/role/casbin_test', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (12, 'p', 'admin', 'superadmin', '/role/save', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (2, 'p', 'admin', 'superadmin', '/user', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (7, 'p', 'admin', 'superadmin', '/user/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (4, 'p', 'admin', 'superadmin', '/user/list', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (5, 'p', 'admin', 'superadmin', '/user/save', 'POST', '', '');
 
 -- ----------------------------
 -- Table structure for cicc_wechat_user
