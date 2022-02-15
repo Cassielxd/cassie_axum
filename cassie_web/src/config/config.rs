@@ -27,7 +27,8 @@ pub struct ApplicationConfig {
     ///jwt 秘钥
     pub jwt_secret: String,
     ///白名单接口
-    pub white_list_api: Vec<String>,
+    pub admin_white_list_api: Vec<String>,
+    pub api_white_list_api: Vec<String>,
     ///权限缓存类型
     pub cache_type: String,
     ///重试

@@ -5,19 +5,20 @@ use rbatis::rbatis::Rbatis;
 use crate::{models::{NewCasbinRule, CasbinRule}, action::CICICasinService};
 
 /**
-*struct:CICIAdapter
-*desc:持久化权限适配器 casbin
-*author:String
-*email:348040933@qq.com
-*/
+ *struct:CICIAdapter
+ *desc:持久化权限适配器 casbin
+ *author:String
+ *email:348040933@qq.com
+ */
 
 pub struct CICIAdapter {
     service: CICICasinService,
     is_filtered: bool,
 }
+
 impl CICIAdapter {
-    pub fn new(r:Rbatis) -> CICIAdapter {
-        CICIAdapter { is_filtered: false,service:CICICasinService{rbatis:r} }
+    pub fn new(r: Rbatis) -> CICIAdapter {
+        CICIAdapter { is_filtered: false, service: CICICasinService { rbatis: r } }
     }
     pub(crate) fn save_policy_line<'a>(
         &self,
@@ -182,7 +183,7 @@ impl Adapter for CICIAdapter {
             .filter_map(|x| self.save_policy_line(ptype, x))
             .collect::<Vec<NewCasbinRule>>();
 
-            self.service.save_policy(new_rules).await;
+        self.service.save_policy(new_rules).await;
         Ok(true)
     }
 

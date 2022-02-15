@@ -1,5 +1,5 @@
 use cassie_common::error::Error;
-
+use std::sync::Arc;
 
 use axum::{
     async_trait,
@@ -7,9 +7,9 @@ use axum::{
 };
 
 use crate::cici_casbin::casbin_service::CasbinVals;
-use crate::cici_casbin::CASBIN_CONTEXT;
-
-use cassie_common::{is_white_list_api, RespVO};
+use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
+use tracing::Instrument;
+use cassie_common::{RespVO};
 use crate::service::CONTEXT;
 use axum::http::HeaderValue;
 use crate::vo::jwt::JWTToken;
@@ -41,7 +41,7 @@ impl<B> FromRequest<B> for Auth
         let headers = req.headers().unwrap();
         let token = headers.get("access_token").unwrap_or(&value);
         /*判断是否在白名单里 如果不在进行验证*/
-        if !is_white_list_api(&path, &CONTEXT.config.white_list_api) {
+        if !is_white_list_api(&path, &CONTEXT.config.admin_white_list_api) {
             let token_value = token.to_str().unwrap_or("");
             /*token为空提示登录*/
             if token_value.is_empty() {
@@ -71,8 +71,8 @@ impl<B> FromRequest<B> for Auth
                     });
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
-                        subject: data.username,
-                        domain: Option::from(data.agency_code),
+                        username: data.username,
+                        agency_code: Option::from(data.agency_code),
                     };
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {

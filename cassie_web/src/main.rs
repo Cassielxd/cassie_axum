@@ -5,6 +5,7 @@ use cassie_web::{
     routers::{admin, api},
     service::CONTEXT,
 };
+use casbin::function_map::key_match2;
 
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
@@ -22,8 +23,8 @@ async fn main() {
     tracing_subscriber::fmt::init();
     //绑定端口 初始化 路由
     let app = Router::new()
-        .route("/index", get(index)).layer(extractor_middleware::<Auth>())
-        .nest("/admin", admin::routers())
+        .route("/index", get(index))
+        .nest("/admin", admin::routers().layer(extractor_middleware::<Auth>()))
         .nest("/api", api::routers());
     println!("address:{}", &CONTEXT.config.server);
     axum::Server::bind(&CONTEXT.config.server.parse().unwrap())

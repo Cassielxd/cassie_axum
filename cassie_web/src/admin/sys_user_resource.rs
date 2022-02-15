@@ -74,10 +74,3 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
 }
 
 
-pub fn init_router() -> Router {
-    Router::new()
-        .route("/", get(page))
-        .route("/list", get(list))
-        .route("/save", post(save))
-        .route("/:id", get(get_user_by_id))
-}

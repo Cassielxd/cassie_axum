@@ -16,8 +16,8 @@ use crate::{cici_casbin::cici_match, service::CONTEXT, dao::init_rbatis};
 
 #[derive(Clone)]
 pub struct CasbinVals {
-    pub subject: String,
-    pub domain: Option<String>,
+    pub username: String,
+    pub agency_code: Option<String>,
 }
 
 /**
@@ -80,14 +80,14 @@ impl CasbinService {
     pub async fn call(&mut self, path: String, action: String, vals: CasbinVals) -> bool {
         /*获取验证器*/
         let cloned_enforcer = self.enforcer.clone();
-        let subject = vals.subject.clone();
+        let username = vals.username.clone();
         /*获取对应的 用户 用户为空直接返回false*/
-        if !vals.subject.is_empty() {
+        if !vals.username.is_empty() {
             /*判断是否是多租户模型*/
-            let vecs = if let Some(domain) = vals.domain {
-                vec![subject, domain, path, action]
+            let vecs = if let Some(agency_code) = vals.agency_code {
+                vec![username, agency_code, path, action]
             } else {
-                vec![subject, path, action]
+                vec![username, path, action]
             };
             let mut lock = cloned_enforcer.write().await;
 

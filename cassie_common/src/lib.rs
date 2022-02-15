@@ -1,18 +1,7 @@
 pub mod error;
 pub mod utils;
 
-///是否处在白名单接口中
-pub fn is_white_list_api(path: &str,white_list_api: &Vec<String>) -> bool {
-    if path.eq("/") {
-        return true;
-    }
-    for x in white_list_api {
-        if x.contains(path) {
-            return true;
-        }
-    }
-    return false;
-}
+
 
 
 use error::{Error};
