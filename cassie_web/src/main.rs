@@ -5,7 +5,7 @@ use cassie_web::{
     routers::{admin, api},
     service::CONTEXT,
 };
-use casbin::function_map::key_match2;
+
 
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()

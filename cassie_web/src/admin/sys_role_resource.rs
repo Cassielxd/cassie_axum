@@ -6,11 +6,10 @@ use crate::request::SysRoleQuery;
 use axum::extract::{Query, Path};
 use cassie_common::RespVO;
 use crate::dto::sys_role_dto::SysRoleDTO;
-use axum::{Json, Router};
+use axum::{Json};
 use axum::response::IntoResponse;
 use crate::cici_casbin::CASBIN_CONTEXT;
 use casbin::MgmtApi;
-use axum::routing::{post, get};
 use cassie_common::error::Error;
 use validator::Validate;
 

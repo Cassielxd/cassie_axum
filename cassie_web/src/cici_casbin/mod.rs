@@ -4,8 +4,7 @@ use casbin::rhai::ImmutableString;
 
 use crate::cici_casbin::casbin_service::CasbinService;
 use crate::service::CONTEXT;
-use std::borrow::Cow;
-use casbin::function_map::{regex_match, key_match2};
+use casbin::function_map::{key_match2};
 
 ///是否处在白名单接口中
 pub fn is_white_list_api(path: &str,white_list_api: &Vec<String>) -> bool {
@@ -37,9 +36,6 @@ pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
     }
     return false;
 }
-
-
-
 
 
 lazy_static! {

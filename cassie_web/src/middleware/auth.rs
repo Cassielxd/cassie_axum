@@ -1,6 +1,4 @@
 use cassie_common::error::Error;
-use std::sync::Arc;
-
 use axum::{
     async_trait,
     extract::{FromRequest, RequestParts},
@@ -8,7 +6,7 @@ use axum::{
 
 use crate::cici_casbin::casbin_service::CasbinVals;
 use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
-use tracing::Instrument;
+
 use cassie_common::{RespVO};
 use crate::service::CONTEXT;
 use axum::http::HeaderValue;

@@ -6,9 +6,7 @@ use crate::{
 };
 use cassie_common::RespVO;
 use axum::response::IntoResponse;
-use axum::{Json, Router};
-use axum::routing::get;
-use axum::routing::post;
+use axum::Json;
 use cassie_common::error::Error;
 use validator::Validate;
 use axum::extract::{Path, Query};
