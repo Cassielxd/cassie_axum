@@ -78,7 +78,8 @@ async fn main() {
 ```
 
 #### 框架说明
-
+管理员账号:admin/123456
+测试账号:lixingdong1/123456
 1. https://casbin.org/docs/zh-CN/overview
 2. https://rbatis.github.io/rbatis.io/#/
 3. https://axum.rs/
@@ -86,3 +87,13 @@ async fn main() {
 #### 参与贡献
 
 String <348040933@qq.com>
+
+
+#### 更新日志
+
+2022.2.15
+```rust
+  1:更新casbin初始化权限脚本
+  2:添加 resource/:id 资源验证方式
+  3:部分代码重构
+```
