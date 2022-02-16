@@ -13,7 +13,19 @@ use rbatis::wrapper::Wrapper;
 */
 pub struct SysMenuService {}
 
-impl SysMenuService {}
+impl SysMenuService {
+   pub async fn save_or_update(&self,dto:SysMenuDTO){
+    let mut entity:SysMenu = dto.into();
+         //保存或更新菜单
+        let id = if let Some(id) = entity.id {
+            self.update_by_id(id.to_string(), &entity).await;
+            id
+        } else {
+            let role_id = self.save(&mut entity).await;
+            role_id.unwrap()
+        };
+   }
+}
 impl  Default for SysMenuService {
     fn default() -> Self {
         SysMenuService{}

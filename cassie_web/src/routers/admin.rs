@@ -1,6 +1,6 @@
 use crate::admin::{
-    sys_auth_resource, sys_dict_type_resource, sys_dict_value_resource, sys_params_resource,
-    sys_role_resource, sys_user_resource,
+    sys_auth_resource, sys_dict_type_resource, sys_dict_value_resource, sys_menu_resource,
+    sys_params_resource, sys_role_resource, sys_user_resource,
 };
 use axum::{
     routing::{get, post},
@@ -9,20 +9,21 @@ use axum::{
 
 pub fn routers() -> Router {
     Router::new()
+        //-------------------------------------菜单服务-------------------------------------------------------
+        .route("/menu", get(sys_menu_resource::page))
+        .route("/menu/:id", get(sys_menu_resource::get_by_id))
+        .route("/menu/save", post(sys_menu_resource::save))
         //-------------------------------------用户服务-------------------------------------------------------
         .route("/user", get(sys_user_resource::page))
         .route("/user/list", get(sys_user_resource::list))
         .route("/user/save", post(sys_user_resource::save))
-        .route(
-            "/user/:id",
-            get(sys_user_resource::get_user_by_id).post(sys_user_resource::edit),
-        )
+        .route("/user/:id", get(sys_user_resource::get_user_by_id))
         //-------------------------------------角色服务-------------------------------------------------------
         .route("/role", get(sys_role_resource::page))
         .route("/role/save", post(sys_role_resource::save))
         .route(
             "/role/:id",
-            get(sys_role_resource::get_by_id).post(sys_role_resource::edit),
+            get(sys_role_resource::get_by_id),
         )
         .route("/role/casbin_test", get(sys_role_resource::casbin_test))
         //-------------------------------------参数服务-------------------------------------------------------

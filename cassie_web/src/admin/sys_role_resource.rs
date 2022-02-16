@@ -38,14 +38,6 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
-pub async fn edit(Path(id): Path<String>,Json(arg): Json<SysRoleDTO>) -> impl IntoResponse {
-    let role = arg;
-    if let Err(e) = role.validate() {
-       return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
-    }
-    CONTEXT.sys_role_service.update_by_id(id,&role.into()).await;
-    RespVO::from(&"修改成功".to_string()).resp_json()
-}
 /**
  *method:/role/save
  *desc:角色保存
