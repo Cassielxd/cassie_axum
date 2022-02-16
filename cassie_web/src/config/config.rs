@@ -29,6 +29,7 @@ pub struct ApplicationConfig {
     ///白名单接口
     pub admin_white_list_api: Vec<String>,
     pub api_white_list_api: Vec<String>,
+    pub super_admin_ids:Vec<String>,
     ///权限缓存类型
     pub cache_type: String,
     ///重试

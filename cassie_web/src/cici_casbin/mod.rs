@@ -19,6 +19,15 @@ pub fn is_white_list_api(path: &str,white_list_api: &Vec<String>) -> bool {
     return false;
 }
 
+pub fn is_super_admin(id: &str,super_admin_ids: &Vec<String>) -> bool {
+    for x in super_admin_ids {
+        if x==id {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  *method:cici_match
  *desc:验证白名单 验证是不是管理员
@@ -30,7 +39,8 @@ pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
         println!("白名单:{}",path.clone());
         return true;
     }
-    if !user.is_empty() && user == "admin" {
+    
+    if !user.is_empty() &&is_super_admin( &user,&CONTEXT.config.super_admin_ids) {
         println!("管理员");
         return true;
     }

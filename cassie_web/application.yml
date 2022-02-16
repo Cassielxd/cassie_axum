@@ -43,4 +43,5 @@ admin_white_list_api:
 api_white_list_api:
  - "/login"
 
-
+super_admin_ids:
+ - "1067246875800000001"
