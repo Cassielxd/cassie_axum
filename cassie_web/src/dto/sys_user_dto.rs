@@ -1,6 +1,5 @@
 use crate::entity::sys_entitys::SysUser;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 use validator_derive::Validate;
 #[derive(Clone, Debug, Serialize, Validate,Deserialize)]
 pub struct SysUserDTO {

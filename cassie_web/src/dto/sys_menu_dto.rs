@@ -18,6 +18,7 @@ pub struct SysMenuDTO {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
+    pub method:Option<String>
 }
 impl_field_name_method!(SysMenuDTO {
     id,
@@ -50,6 +51,7 @@ impl Into<SysMenu> for SysMenuDTO {
             create_date: self.create_date,
             updater: self.updater,
             update_date: self.update_date,
+            method:self.method,
         }
     }
 }
@@ -70,6 +72,7 @@ impl From<SysMenu> for SysMenuDTO {
             create_date: arg.create_date,
             updater: arg.updater,
             update_date: arg.update_date,
+            method:arg.method,
         }
     }
 }

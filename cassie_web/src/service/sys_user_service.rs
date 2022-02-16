@@ -1,3 +1,4 @@
+use crate::REQUEST_CONTEXT;
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
 use rbatis::wrapper::Wrapper;
 
@@ -22,18 +23,23 @@ impl Default for SysUserService{
 impl SysUserService {
     pub async fn save_info(&self, arg: SysUserDTO) {
         let role_id = arg.role_id.clone();
-        let username = arg.username.clone();
         let mut entity: SysUser = arg.into();
-
+        let tls = REQUEST_CONTEXT.clone();
+        let (creator,agency_code) = if let Some(a) = tls.get() {
+            (a.uid as i64,a.agency_code.clone())
+        } else {
+            (0,"".to_string())
+        };
+        entity.agency_code = Some(agency_code.clone());
         /*保存到数据库*/
-        self.save(&mut entity).await;
+       let uid = self.save(&mut entity).await;
         if let Some(rid) = role_id {
             let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
             let mut lock = cached_enforcer.write().await;
             lock.add_grouping_policy(vec![
-                username.unwrap().to_string(),
+                uid.unwrap().to_string(),
                 rid.to_string(),
-                "superadmin".to_owned(),
+                agency_code.clone(),
             ]);
             drop(lock);
         }

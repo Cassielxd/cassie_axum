@@ -69,7 +69,7 @@ impl<B> FromRequest<B> for Auth
                     });
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
-                        username: data.username,
+                        uid: data.id.to_string(),
                         agency_code: Option::from(data.agency_code),
                     };
                     /*casbin 验证有效性 处理返回结果集*/

@@ -56,10 +56,10 @@ impl SysRoleMenuService {
             page_size: None,
         };
         let tls = REQUEST_CONTEXT.clone();
-        let creator = if let Some(a) = tls.get() {
-            a.uid as i64
+        let (creator,agency_code) = if let Some(a) = tls.get() {
+            (a.uid as i64,a.agency_code.clone())
         } else {
-            0
+            (0,"".to_string())
         };
         let menus = CONTEXT.sys_menu_service.list(&query).await;
         if let Ok(list) = menus {
@@ -75,10 +75,10 @@ impl SysRoleMenuService {
                 });
 
                 rules.push(vec![
-                    role_id.clone().to_string(),  //角色编码
-                    "superadmin".to_owned(),      //租户
+                    role_id.to_string(),  //角色编码
+                    agency_code.clone(),      //租户
                     menu.url.unwrap_or_default(), //资源
-                    "POST".to_owned(),            //请求方式
+                    menu.method.unwrap_or_default().to_uppercase(),            //请求方式
                 ]);
             }
             //保存角色菜单关系

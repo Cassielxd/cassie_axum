@@ -272,6 +272,7 @@ pub struct SysMenu {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
+    pub method:Option<String>
 }
 impl_field_name_method!(SysMenu {
     id,
@@ -286,7 +287,8 @@ impl_field_name_method!(SysMenu {
     creator,
     create_date,
     updater,
-    update_date
+    update_date,
+    method
 });
 /**
 *struct:CommonField
