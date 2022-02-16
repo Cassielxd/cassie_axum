@@ -4,7 +4,7 @@ use axum::{
     extract::{FromRequest, RequestParts},
 };
 
-use crate::cici_casbin::casbin_service::CasbinVals;
+use crate::{cici_casbin::casbin_service::CasbinVals, config::CASSIE_CONFIG};
 use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
 
 use cassie_common::{RespVO};
@@ -39,7 +39,7 @@ impl<B> FromRequest<B> for Auth
         let headers = req.headers().unwrap();
         let token = headers.get("access_token").unwrap_or(&value);
         /*判断是否在白名单里 如果不在进行验证*/
-        if !is_white_list_api(&path, &CONTEXT.config.admin_white_list_api) {
+        if !is_white_list_api(&path, &CASSIE_CONFIG.admin_white_list_api) {
             let token_value = token.to_str().unwrap_or("");
             /*token为空提示登录*/
             if token_value.is_empty() {
@@ -100,7 +100,7 @@ impl<B> FromRequest<B> for Auth
  */
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
-    let token = JWTToken::verify(&CONTEXT.config.jwt_secret, token);
+    let token = JWTToken::verify(&CASSIE_CONFIG.jwt_secret, token);
     match token {
         Ok(token) => {
             return Ok(token);

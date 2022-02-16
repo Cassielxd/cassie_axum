@@ -11,7 +11,7 @@ use casbin::{CachedEnforcer, CoreApi, Result as CasbinResult};
 
 use async_std::sync::RwLock;
 use cassie_casbin_adapter::cici_adapter::CICIAdapter;
-use crate::{cici_casbin::cici_match, service::CONTEXT, dao::init_rbatis};
+use crate::{cici_casbin::cici_match, dao::init_rbatis};
 
 
 #[derive(Clone)]
@@ -46,7 +46,7 @@ impl CasbinService {
                 .await
                 .unwrap()
             /*初始化适配器*/;
-            let a = CICIAdapter::new(init_rbatis(&CONTEXT.config).await);
+            let a = CICIAdapter::new(init_rbatis().await);
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
             /* 添加自定义验证方法 */
             cached_enforcer.add_function("ciciMatch", cici_match);

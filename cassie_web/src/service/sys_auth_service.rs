@@ -1,3 +1,4 @@
+use crate::config::CASSIE_CONFIG;
 use crate::dto::sign_in::SignInDTO;
 use crate::entity::sys_entitys::SysUser;
 use cassie_common::error::Error;
@@ -72,9 +73,9 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn is_need_wait_login_ex(&self) -> Result<()> {
-        if CONTEXT.config.login_fail_retry > 0 {
+        if CASSIE_CONFIG.login_fail_retry > 0 {
             let num: Option<u64> = CONTEXT.cache_service.get_json(REDIS_KEY_RETRY).await?;
-            if num.unwrap_or(0) >= CONTEXT.config.login_fail_retry {
+            if num.unwrap_or(0) >= CASSIE_CONFIG.login_fail_retry {
                 let wait_sec: i64 = CONTEXT.cache_service.ttl(REDIS_KEY_RETRY).await?;
                 if wait_sec > 0 {
                     return Err(Error::from(format!(
@@ -94,11 +95,11 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn add_retry_login_limit_num(&self) -> Result<()> {
-        if CONTEXT.config.login_fail_retry > 0 {
+        if CASSIE_CONFIG.login_fail_retry > 0 {
             let num: Option<u64> = CONTEXT.cache_service.get_json(REDIS_KEY_RETRY).await?;
             let mut num = num.unwrap_or(0);
-            if num > CONTEXT.config.login_fail_retry {
-                num = CONTEXT.config.login_fail_retry;
+            if num > CASSIE_CONFIG.login_fail_retry {
+                num = CASSIE_CONFIG.login_fail_retry;
             }
             num += 1;
             CONTEXT
@@ -107,7 +108,7 @@ impl SysAuthService {
                     REDIS_KEY_RETRY,
                     &num.to_string(),
                     Some(Duration::from_secs(
-                        CONTEXT.config.login_fail_retry_wait_sec as u64,
+                        CASSIE_CONFIG.login_fail_retry_wait_sec as u64,
                     )),
                 )
                 .await?;
@@ -154,7 +155,7 @@ impl SysAuthService {
             agency_code: agency_code.unwrap_or_default(),
             exp: DateTimeNative::now().timestamp_millis() as usize,
         };
-        sign_vo.access_token = jwt_token.create_token(&CONTEXT.config.jwt_secret)?;
+        sign_vo.access_token = jwt_token.create_token(&CASSIE_CONFIG.jwt_secret)?;
         return Ok(sign_vo);
     }
 }

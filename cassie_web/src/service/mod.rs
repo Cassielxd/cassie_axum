@@ -23,10 +23,8 @@ use rbatis::rbatis::Rbatis;
 pub use self::cache_service::*;
 pub use self::mem_service::*;
 pub use self::redis_service::*;
-use crate::config::config::ApplicationConfig;
 
 pub struct ServiceContext {
-    pub config: ApplicationConfig,
     pub rbatis: Rbatis,
     pub cache_service: CacheService,
     /*权限服务 */
@@ -45,20 +43,19 @@ pub struct ServiceContext {
 
 impl Default for ServiceContext {
     fn default() -> Self {
-        let config = ApplicationConfig::default();
+        
         Self {
             rbatis: async_std::task::block_on(async {
-                crate::dao::init_rbatis(&config).await
+                crate::dao::init_rbatis().await
             }),
-            cache_service: CacheService::new(&config).unwrap(),
+            cache_service: CacheService::new().unwrap(),
             sys_auth_service: Default::default(),
             sys_user_service: Default::default(),
             sys_role_service: Default::default(),
             sys_menu_service: Default::default(),
             sys_params_service: Default::default(),
             sys_dict_type_service: Default::default(),
-            sys_dict_value_service: Default ::default(),
-            config,
+            sys_dict_value_service: Default ::default()
 
         }
     }

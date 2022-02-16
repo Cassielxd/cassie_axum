@@ -4,20 +4,22 @@ use fast_log::plugin::file_split::{Packer, RollingType};
 use fast_log::plugin::packer::{LZ4Packer, ZipPacker, LogPacker, GZipPacker};
 use std::time::Duration;
 
+use super::CASSIE_CONFIG;
+
 pub fn init_log() {
     //create log dir
-    std::fs::create_dir_all(&CONTEXT.config.log_dir);
+    std::fs::create_dir_all(&CASSIE_CONFIG.log_dir);
     //init fast log
     fast_log::init_split_log(
-        &CONTEXT.config.log_dir,
-        str_to_temp_size(&CONTEXT.config.log_temp_size),
-        str_to_rolling(&CONTEXT.config.log_rolling_type),
-        str_to_log_level(&CONTEXT.config.log_level),
+        &CASSIE_CONFIG.log_dir,
+        str_to_temp_size(&CASSIE_CONFIG.log_temp_size),
+        str_to_rolling(&CASSIE_CONFIG.log_rolling_type),
+        str_to_log_level(&CASSIE_CONFIG.log_level),
         None,
-        choose_packer(&CONTEXT.config.log_pack_compress),
-        CONTEXT.config.debug,
+        choose_packer(&CASSIE_CONFIG.log_pack_compress),
+        CASSIE_CONFIG.debug,
     );
-    if CONTEXT.config.debug == false {
+    if CASSIE_CONFIG.debug == false {
         println!("[cassie] release_mode is up! [file_log] open,[console_log] disabled!");
     }
 }

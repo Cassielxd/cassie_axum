@@ -1,12 +1,11 @@
 use axum::{extract::extractor_middleware, response::IntoResponse, routing::get, Router};
 use cassie_common::RespVO;
 use cassie_web::{
+    config::{log::init_log, CASSIE_CONFIG},
     middleware::auth::Auth,
-    routers::{admin, api},
-    service::CONTEXT, config::log::init_log,
+    routers::{admin, api}
 };
 use log::info;
-
 
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
@@ -23,14 +22,17 @@ async fn main() {
     init_log();
     info!(
         " - Local:   http://{}",
-        CONTEXT.config.server.replace("0.0.0.0", "127.0.0.1")
+        CASSIE_CONFIG.server.replace("0.0.0.0", "127.0.0.1")
     );
     //绑定端口 初始化 路由
     let app = Router::new()
         .route("/index", get(index))
-        .nest("/admin", admin::routers().layer(extractor_middleware::<Auth>()))
+        .nest(
+            "/admin",
+            admin::routers().layer(extractor_middleware::<Auth>()),
+        )
         .nest("/api", api::routers());
-    axum::Server::bind(&CONTEXT.config.server.parse().unwrap())
+    axum::Server::bind(&CASSIE_CONFIG.server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
