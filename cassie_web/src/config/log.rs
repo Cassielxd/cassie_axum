@@ -1,4 +1,4 @@
-use crate::service::CONTEXT;
+use crate::CONTEXT;
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::{Packer, RollingType};
 use fast_log::plugin::packer::{LZ4Packer, ZipPacker, LogPacker, GZipPacker};

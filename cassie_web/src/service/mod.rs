@@ -20,6 +20,8 @@ pub use sys_dict_service::*;
 pub use sys_params_service::*;
 use rbatis::rbatis::Rbatis;
 
+use crate::config::config::ApplicationConfig;
+
 pub use self::cache_service::*;
 pub use self::mem_service::*;
 pub use self::redis_service::*;
@@ -41,8 +43,8 @@ pub struct ServiceContext {
     pub sys_dict_value_service: SysDictDataService,
 }
 
-impl Default for ServiceContext {
-    fn default() -> Self {
+impl  ServiceContext {
+    pub fn default() -> Self {
         
         Self {
             rbatis: async_std::task::block_on(async {
@@ -61,6 +63,3 @@ impl Default for ServiceContext {
     }
 }
 
-lazy_static! {
-    pub static ref CONTEXT: ServiceContext = ServiceContext::default();
-}

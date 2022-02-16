@@ -2,7 +2,7 @@ use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
 use crate::request::SysMenuQuery;
 use crate::service::crud_service::CrudService;
-use crate::service::CONTEXT;
+use crate::CONTEXT;
 
 use rbatis::wrapper::Wrapper;
 /**

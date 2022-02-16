@@ -23,10 +23,13 @@ pub mod request;
 use request::*;
 use std::sync::Arc;
 use thread_local::ThreadLocal;
-/*初始化请求上下文*/
-lazy_static! {
-    pub static ref REQUEST_CONTEXT: Arc<ThreadLocal<RequestModel>> =
-        Arc::new(ThreadLocal::default());
-}
 
+use crate::{config::config::ApplicationConfig, service::ServiceContext};
+//初始化静态上下文
+lazy_static! {
+    pub static ref CASSIE_CONFIG: ApplicationConfig = ApplicationConfig::default();
+    pub static ref CONTEXT: ServiceContext = ServiceContext::default();
+    pub static ref REQUEST_CONTEXT: Arc<ThreadLocal<RequestModel>> =
+    Arc::new(ThreadLocal::default());
+}
 

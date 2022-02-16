@@ -5,7 +5,7 @@ use validator::Validate;
 use axum::response::{Response, IntoResponse};
 use axum::Json;
 use axum::body::Body;
-use crate::service::CONTEXT;
+use crate::CONTEXT;
 use std::time::Duration;
 use captcha::Captcha;
 use captcha::filters::{Noise, Wave, Dots};

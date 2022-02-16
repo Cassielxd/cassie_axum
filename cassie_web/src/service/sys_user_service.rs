@@ -1,8 +1,8 @@
-use crate::REQUEST_CONTEXT;
+use crate::{REQUEST_CONTEXT, CONTEXT};
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
 use rbatis::wrapper::Wrapper;
 
-use super::{crud_service::CrudService, CONTEXT};
+use super::{crud_service::CrudService};
 use crate::cici_casbin::CASBIN_CONTEXT;
 use crate::entity::sys_entitys::CommonField;
 use casbin::MgmtApi;

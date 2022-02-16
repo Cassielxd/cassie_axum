@@ -3,7 +3,7 @@ pub mod casbin_service;
 use casbin::rhai::ImmutableString;
 
 use crate::{cici_casbin::casbin_service::CasbinService, config::CASSIE_CONFIG};
-use crate::service::CONTEXT;
+use crate::CONTEXT;
 use casbin::function_map::{key_match2};
 
 ///是否处在白名单接口中

@@ -8,7 +8,7 @@ use crate::{cici_casbin::casbin_service::CasbinVals, config::CASSIE_CONFIG};
 use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
 
 use cassie_common::{RespVO};
-use crate::service::CONTEXT;
+use crate::CONTEXT;
 use axum::http::HeaderValue;
 use crate::vo::jwt::JWTToken;
 use crate::{RequestModel, REQUEST_CONTEXT};
