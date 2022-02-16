@@ -1,13 +1,11 @@
 use super::{
-    CONTEXT, crud_service::CrudService,
-    sys_role_data_scope_service::SysRoleDataScopeService, sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService,
+    crud_service::CrudService, sys_role_data_scope_service::SysRoleDataScopeService,
+    sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService, CONTEXT,
 };
 use crate::entity::sys_entitys::CommonField;
+use crate::{dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery};
 use cassie_common::error::Result;
 use cassie_common::utils::string::IsEmpty;
-use crate::{
-    dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery,
-};
 
 /**
 *struct:SysRoleService
@@ -20,12 +18,12 @@ pub struct SysRoleService {
     pub sys_role_menu_service: SysRoleMenuService,
     pub sys_role_data_scope_service: SysRoleDataScopeService,
 }
-impl  Default for SysRoleService {
+impl Default for SysRoleService {
     fn default() -> Self {
-        SysRoleService{
+        SysRoleService {
             sys_role_user_service: Default::default(),
             sys_role_menu_service: Default::default(),
-            sys_role_data_scope_service: Default::default()
+            sys_role_data_scope_service: Default::default(),
         }
     }
 }
@@ -54,19 +52,23 @@ impl SysRoleService {
     pub async fn save_role(&self, sys_role: SysRoleDTO) {
         let dept_id_list = sys_role.dept_id_list.clone();
         let menu_id_list = sys_role.menu_id_list.clone();
-        let mut entity = sys_role.into();
-        //保存角色
-        let role_id = self.save(&mut entity).await;
-        if let Ok(id) = role_id {
-            //保存角色菜单关系
-            self.sys_role_menu_service
-                .save_or_update(id, menu_id_list.clone())
-                .await;
-            //保存角色数据权限关系
-            self.sys_role_data_scope_service
-                .save_or_update(id, dept_id_list)
-                .await;
-        }
+        let mut entity: SysRole = sys_role.into();
+        //保存或更新角色
+        let id = if let Some(id) = entity.id {
+            self.update_by_id(id.to_string(), &entity).await;
+            id
+        } else {
+            let role_id = self.save(&mut entity).await;
+            role_id.unwrap()
+        };
+        //保存角色菜单关系
+        self.sys_role_menu_service
+            .save_or_update(id, menu_id_list.clone())
+            .await;
+        //保存角色数据权限关系
+        self.sys_role_data_scope_service
+            .save_or_update(id, dept_id_list)
+            .await;
     }
 }
 
