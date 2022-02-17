@@ -8,7 +8,6 @@ use crate::{cici_casbin::casbin_service::CasbinVals, config::CASSIE_CONFIG};
 use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
 
 use cassie_common::{RespVO};
-use crate::CONTEXT;
 use axum::http::HeaderValue;
 use crate::vo::jwt::JWTToken;
 use crate::{RequestModel, REQUEST_CONTEXT};
@@ -29,8 +28,7 @@ impl<B> FromRequest<B> for Auth
     type Rejection = Error;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        /*获取验证的  casbin_service*/
-        let mut service = CASBIN_CONTEXT.clone();
+       
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();
@@ -72,6 +70,9 @@ impl<B> FromRequest<B> for Auth
                         uid: data.id.to_string(),
                         agency_code: Option::from(data.agency_code),
                     };
+                    
+                     /*获取验证的  casbin_service*/
+                    let mut service = CASBIN_CONTEXT.clone();
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {
                         return Ok(Self {});

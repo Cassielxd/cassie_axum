@@ -96,7 +96,7 @@ CREATE TABLE `casbin_rule`  (
 -- Records of casbin_rule
 -- ----------------------------
 -- ----------------------------
-INSERT INTO `casbin_rule` VALUES (1, 'g', 'lixingdong1', 'admin', 'superadmin', '', '', '');
+INSERT INTO `casbin_rule` VALUES (1, 'g', '1067246875800000002', 'admin', 'superadmin', '', '', '');
 INSERT INTO `casbin_rule` VALUES (3, 'p', 'admin', 'superadmin', '/', 'GET', '', '');
 INSERT INTO `casbin_rule` VALUES (18, 'p', 'admin', 'superadmin', '/dict/type', 'GET', '', '');
 INSERT INTO `casbin_rule` VALUES (20, 'p', 'admin', 'superadmin', '/dict/type/:id', 'GET', '', '');

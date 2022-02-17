@@ -2,17 +2,14 @@
 
 use std::sync::Arc;
 
-use casbin::{prelude::{TryIntoAdapter, TryIntoModel}, DefaultModel};
+use casbin::{
+    prelude::{TryIntoAdapter, TryIntoModel},
+    CachedEnforcer, CoreApi, DefaultModel, Result as CasbinResult,
+};
 
-
-use casbin::{CachedEnforcer, CoreApi, Result as CasbinResult};
-
-
-
+use crate::{cici_casbin::cici_match, dao::init_rbatis};
 use async_std::sync::RwLock;
 use cassie_casbin_adapter::cici_adapter::CICIAdapter;
-use crate::{cici_casbin::cici_match, dao::init_rbatis};
-
 
 #[derive(Clone)]
 pub struct CasbinVals {
@@ -93,15 +90,15 @@ impl CasbinService {
 
             match lock.enforce_mut(vecs) {
                 Ok(true) => {
-                    drop(lock) ;
+                    drop(lock);
                     true
-                },
-                Ok(false) =>{
-                    drop(lock) ;
+                }
+                Ok(false) => {
+                    drop(lock);
                     false
-                } ,
-                Err(_) =>{
-                    drop(lock) ;
+                }
+                Err(_) => {
+                    drop(lock);
                     false
                 }
             }
@@ -110,4 +107,3 @@ impl CasbinService {
         }
     }
 }
-
