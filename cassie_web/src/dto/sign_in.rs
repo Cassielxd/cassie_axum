@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 /// 登陆
-use validator::Validate;
 use validator_derive::Validate;
 
 #[derive(Serialize, Deserialize, Validate, Clone, Debug)]

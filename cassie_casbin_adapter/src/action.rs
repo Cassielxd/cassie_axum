@@ -1,3 +1,4 @@
+#![allow(unused_must_use)]
 use casbin::{Filter, Result};
 use rbatis::{rbatis::Rbatis, crud::{CRUD, CRUDMut, Skip}};
 
@@ -144,7 +145,7 @@ impl CICICasinService {
                 v4: v4.to_string(),
                 v5: v5.to_string(),
             };
-            tx.save::<CasbinRule>(&e, &[Skip::Column("id")]).await;
+            tx.save::<CasbinRule>(&e, &[Skip::Column(CasbinRule::id())]).await;
         }
         tx.commit().await.unwrap();
         println!("保存策略!!!!!!!!!!!!!!!");

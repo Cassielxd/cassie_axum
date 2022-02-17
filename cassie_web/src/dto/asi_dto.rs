@@ -1,6 +1,5 @@
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 use validator_derive::Validate;
 
 #[derive(Clone, Debug, Serialize,Validate, Deserialize)]

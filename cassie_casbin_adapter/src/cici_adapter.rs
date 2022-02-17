@@ -1,3 +1,5 @@
+#![allow(unused_variables)]
+#![allow(unused_must_use)]
 use casbin::{Adapter, Filter, Model, Result};
 use async_trait::async_trait;
 use rbatis::rbatis::Rbatis;

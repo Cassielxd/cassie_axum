@@ -35,13 +35,15 @@ login_fail_retry_wait_sec: 30
 
 
 
-#接口白名单（免登陆直接访问）
+#管理端接口白名单（免登陆直接访问）
 admin_white_list_api:
  - "/login"
  - "/captcha/:uuid"
 
+#api接口白名单（免登陆直接访问）
 api_white_list_api:
  - "/login"
 
+#api超级管理员id直接跳过api权限
 super_admin_ids:
  - "1067246875800000001"

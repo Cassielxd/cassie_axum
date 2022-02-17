@@ -20,8 +20,6 @@ pub use sys_dict_service::*;
 pub use sys_params_service::*;
 use rbatis::rbatis::Rbatis;
 
-use crate::config::config::ApplicationConfig;
-
 pub use self::cache_service::*;
 pub use self::mem_service::*;
 pub use self::redis_service::*;

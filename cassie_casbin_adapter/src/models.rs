@@ -1,3 +1,5 @@
+#![allow(unused_variables)]
+#![allow(unused_must_use)]
 /**
 *struct:CasbinRule
 *desc:casbin_rule 框架权限表
