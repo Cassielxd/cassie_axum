@@ -6,6 +6,7 @@ use cassie_web::{
     routers::{admin, api}
 };
 use log::info;
+use tokio::time;
 
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
@@ -32,8 +33,18 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
+        tokio::spawn(print());
     axum::Server::bind(&CASSIE_CONFIG.server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
+        
+       
+}
+async fn print() {
+    let mut interval = time::interval(time::Duration::from_secs(1));
+    loop {
+        interval.tick().await;
+        println!("2333");
+    }
 }

@@ -29,7 +29,6 @@ use crate::{config::config::ApplicationConfig, service::ServiceContext};
 lazy_static! {
     pub static ref CASSIE_CONFIG: ApplicationConfig = ApplicationConfig::default();
     pub static ref CONTEXT: ServiceContext = ServiceContext::default();
-    pub static ref REQUEST_CONTEXT: Arc<ThreadLocal<RequestModel>> =
-    Arc::new(ThreadLocal::default());
+    pub static ref REQUEST_CONTEXT: Arc<ThreadLocal<RequestModel>> = Arc::new(ThreadLocal::default());
 }
 
