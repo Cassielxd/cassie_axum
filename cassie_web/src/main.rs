@@ -7,7 +7,6 @@ use cassie_web::{
     routers::{admin, api}, nacos::{ping_schedule, register_service}
 };
 use log::info;
-
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
 }
@@ -35,11 +34,12 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
-        
+        tokio::spawn(ping_schedule());
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
-        ping_schedule();
+        
+        
         
 }

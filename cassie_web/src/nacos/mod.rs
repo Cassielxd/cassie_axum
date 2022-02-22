@@ -1,10 +1,11 @@
-use std::time::Duration;
 use async_std::task;
+use log::info;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use tokio::time;
 use crate::CASSIE_CONFIG;
 const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'{').add(b'}').add(b':').add(b',');
 pub fn register_service() {
-    println!("register service: {:?}", CASSIE_CONFIG.nacos_server);
+    info!("register service: {:?}", CASSIE_CONFIG.nacos_server);
 
     task::spawn(
         async {
@@ -16,7 +17,13 @@ pub fn register_service() {
                 CASSIE_CONFIG.host,
                 CASSIE_CONFIG.port).as_str()
             ).send().unwrap().text();
-            println!("{:?}", body);
+
+            match body{
+                Ok(r)=>info!("nacos 注册成功"),
+                Err(e) => info!("{:?}",e),
+
+            }
+           
         }
     );
 }
@@ -38,15 +45,15 @@ fn ping() {
                         encode
                 ).as_str()
             ).send().unwrap().text();
-            println!("ping result:{:?}", _body);
         }
     );
 }
 
-pub fn ping_schedule() {
-    println!("ping schedule");
+pub async fn ping_schedule() {
+    info!("nacos心跳检测开始");
+    let mut interval = time::interval(time::Duration::from_secs(10));
     loop {
-        std::thread::sleep(Duration::from_secs(1));
+        interval.tick().await;
         ping();
     }
 }
