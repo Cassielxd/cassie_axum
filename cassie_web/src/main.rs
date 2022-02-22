@@ -34,11 +34,12 @@ async fn main() {
         .route("/index", get(index))
         .nest(
             "/admin",
-            admin::routers().layer(extractor_middleware::<Auth>()),
+            admin::routers()
+            .layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
     //nacos 心跳检测
-    tokio::spawn(ping_schedule());
+    tokio::task::spawn(ping_schedule());
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await

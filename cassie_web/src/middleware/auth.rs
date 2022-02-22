@@ -102,12 +102,5 @@ impl<B> FromRequest<B> for Auth
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
     let token = JWTToken::verify(&CASSIE_CONFIG.jwt_secret, token);
-    match token {
-        Ok(token) => {
-            return Ok(token);
-        }
-        Err(e) => {
-            return Err(cassie_common::error::Error::from(e.to_string()));
-        }
-    }
+    token
 }

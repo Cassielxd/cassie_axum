@@ -41,8 +41,8 @@ impl CasbinService {
             /*加载模型文件*/
             let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
                 .await
-                .unwrap()
-            /*初始化适配器*/;
+                .unwrap();
+            /*初始化适配器*/
             let a = CICIAdapter::new(init_rbatis().await);
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
             /* 添加自定义验证方法 */
