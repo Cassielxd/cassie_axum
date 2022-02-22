@@ -33,6 +33,7 @@ rust axum web 是rust开发的web手脚架项目
 2. orm框架选用Ribatis
 3. casbin-rs集成,适配器编写
 4. 用户权限jwt 融合casbin-rs
+5. 完成nacos注册和心跳集成
 
 #### 使用说明
 
@@ -88,6 +89,14 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+
+2022.2.22
+完成nacos注册和心跳
+nacos 配置 application.yml
+```yml
+nacos_server: "http://127.0.0.1:8848/nacos"
+application_name: "cassie_admin"
+```
 
 2022.2.15
 ```rust
