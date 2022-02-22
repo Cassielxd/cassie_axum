@@ -26,6 +26,7 @@ async fn main() {
         CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),
         CASSIE_CONFIG.port
     );
+    //nacos 服务注册
     register_service().await;
     let server = format!("{}:{}", CASSIE_CONFIG.host, CASSIE_CONFIG.port);
     //绑定端口 初始化 路由
@@ -36,6 +37,7 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
+    //nacos 心跳检测
     tokio::spawn(ping_schedule());
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())

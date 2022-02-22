@@ -52,15 +52,8 @@ impl CICICasinService {
         let list = self
             .rbatis
             .fetch_list_by_wrapper::<CasbinRule>(self.rbatis.new_wrapper())
-            .await;
-        /*这里多此一举的写法是为了 兼容 casbin的Result 这个贱人封装的有问题*/
-        let mut result = Vec::new();
-        if let Ok(l) = list {
-            for i in l {
-                result.push(i);
-            }
-        }
-        Ok(result)
+            .await.map_err(|e|casbin::error::Error::IoError(e.into()));
+        list
     }
     pub(crate) async fn load_filtered_policy<'a>(&self,filter_x: &Filter<'_>) -> Result<Vec<CasbinRule>> {
         let (g_filter, p_filter) = filtered_where_values(filter_x);
