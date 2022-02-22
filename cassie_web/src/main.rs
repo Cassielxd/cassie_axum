@@ -1,10 +1,11 @@
 use axum::{extract::extractor_middleware, response::IntoResponse, routing::get, Router};
 use cassie_common::RespVO;
 use cassie_web::{
-    CASSIE_CONFIG,
-    config::{log::init_log},
+    config::log::init_log,
     middleware::auth::Auth,
-    routers::{admin, api}, nacos::{ping_schedule, register_service}
+    nacos::{ping_schedule, register_service},
+    routers::{admin, api},
+    CASSIE_CONFIG,
 };
 use log::info;
 pub async fn index() -> impl IntoResponse {
@@ -22,10 +23,11 @@ async fn main() {
     init_log();
     info!(
         " - Local:   http://{}:{}",
-        CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),CASSIE_CONFIG.port
+        CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),
+        CASSIE_CONFIG.port
     );
-    register_service();
-   let server= format!("{}:{}",CASSIE_CONFIG.host,CASSIE_CONFIG.port);
+    register_service().await;
+    let server = format!("{}:{}", CASSIE_CONFIG.host, CASSIE_CONFIG.port);
     //绑定端口 初始化 路由
     let app = Router::new()
         .route("/index", get(index))
@@ -34,12 +36,9 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
-        tokio::spawn(ping_schedule());
+    tokio::spawn(ping_schedule());
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
-        
-        
-        
 }
