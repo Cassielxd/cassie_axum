@@ -19,6 +19,7 @@ pub mod dto;
 pub mod vo;
 pub mod admin;
 pub mod request;
+pub mod nacos;
 
 use request::*;
 use std::sync::Arc;

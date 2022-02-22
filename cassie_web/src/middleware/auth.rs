@@ -4,7 +4,7 @@ use axum::{
     extract::{FromRequest, RequestParts},
 };
 
-use crate::{cici_casbin::casbin_service::CasbinVals, config::CASSIE_CONFIG};
+use crate::{cici_casbin::casbin_service::CasbinVals, CASSIE_CONFIG};
 use crate::cici_casbin::{CASBIN_CONTEXT, is_white_list_api};
 
 use cassie_common::{RespVO};

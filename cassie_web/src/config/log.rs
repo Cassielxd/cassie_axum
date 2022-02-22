@@ -3,7 +3,8 @@ use fast_log::plugin::file_split::{Packer, RollingType};
 use fast_log::plugin::packer::{LZ4Packer, ZipPacker, LogPacker, GZipPacker};
 use std::time::Duration;
 
-use super::CASSIE_CONFIG;
+use crate::CASSIE_CONFIG;
+
 
 pub fn init_log() {
     //create log dir

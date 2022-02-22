@@ -1,6 +1,6 @@
 [workspace]
-members=[
+members = [
     "cassie_common",
     "cassie_web",
     "cassie_casbin_adapter"
-    ]
+]

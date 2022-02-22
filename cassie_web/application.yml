@@ -3,7 +3,8 @@ debug: true
 #名称
 server_name: "cassieWeb"
 #server 地址
-server: "0.0.0.0:9999"
+host: "0.0.0.0"
+port: "9999"
 #缓存介质类型,单选("mem","redis")
 cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)
@@ -33,7 +34,9 @@ login_fail_retry: 3
 #登陆失败重试次数限制超过后提示的等待时间（秒）
 login_fail_retry_wait_sec: 30
 
+nacos_server: "http://127.0.0.1:8848/nacos"
 
+application_name: "cassie_admin"
 
 #管理端接口白名单（免登陆直接访问）
 admin_white_list_api:

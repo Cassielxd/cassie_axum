@@ -1,4 +1,4 @@
-use crate::config::CASSIE_CONFIG;
+use crate::CASSIE_CONFIG;
 /* use rbatis::plugin::logic_delete::RbatisLogicDeletePlugin; */
 use rbatis::rbatis::Rbatis;
 

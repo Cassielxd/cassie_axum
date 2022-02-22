@@ -1,4 +1,5 @@
-use crate::config::CASSIE_CONFIG;
+
+use crate::CASSIE_CONFIG;
 use crate::dto::sign_in::SignInDTO;
 use crate::entity::sys_entitys::SysUser;
 use cassie_common::error::Error;

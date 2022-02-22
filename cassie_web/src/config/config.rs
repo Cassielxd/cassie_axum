@@ -3,7 +3,8 @@
 pub struct ApplicationConfig {
     pub debug: bool,
     ///当前服务地址
-    pub server: String,
+    pub host: String,
+    pub port: String,
     ///redis地址
     pub redis_url: String,
     /// 数据库地址
@@ -36,6 +37,9 @@ pub struct ApplicationConfig {
     pub login_fail_retry: u64,
     ///重试等待时间
     pub login_fail_retry_wait_sec: u64,
+
+    pub nacos_server:String,
+    pub application_name:String
 }
 
 ///默认配置

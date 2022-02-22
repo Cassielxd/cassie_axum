@@ -512,6 +512,7 @@ dependencies = [
  "jsonwebtoken",
  "lazy_static",
  "log",
+ "percent-encoding",
  "rbatis",
  "rbson",
  "redis",

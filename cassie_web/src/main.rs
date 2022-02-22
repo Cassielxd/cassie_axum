@@ -1,9 +1,10 @@
 use axum::{extract::extractor_middleware, response::IntoResponse, routing::get, Router};
 use cassie_common::RespVO;
 use cassie_web::{
-    config::{log::init_log, CASSIE_CONFIG},
+    CASSIE_CONFIG,
+    config::{log::init_log},
     middleware::auth::Auth,
-    routers::{admin, api}
+    routers::{admin, api}, nacos::{ping_schedule, register_service}
 };
 use log::info;
 
@@ -21,9 +22,11 @@ pub async fn index() -> impl IntoResponse {
 async fn main() {
     init_log();
     info!(
-        " - Local:   http://{}",
-        CASSIE_CONFIG.server.replace("0.0.0.0", "127.0.0.1")
+        " - Local:   http://{}:{}",
+        CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),CASSIE_CONFIG.port
     );
+    register_service();
+   let server= format!("{}:{}",CASSIE_CONFIG.host,CASSIE_CONFIG.port);
     //绑定端口 初始化 路由
     let app = Router::new()
         .route("/index", get(index))
@@ -32,8 +35,11 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
-    axum::Server::bind(&CASSIE_CONFIG.server.parse().unwrap())
+        
+    axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
+        ping_schedule();
+        
 }
