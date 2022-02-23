@@ -37,7 +37,7 @@ pub struct ApplicationConfig {
     pub login_fail_retry: u64,
     ///重试等待时间
     pub login_fail_retry_wait_sec: u64,
-
+    pub nacos_flag:bool,
     pub nacos_server:String,
     pub application_name:String
 }

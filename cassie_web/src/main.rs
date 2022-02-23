@@ -3,11 +3,12 @@ use cassie_common::RespVO;
 use cassie_web::{
     config::log::init_log,
     middleware::auth::Auth,
-    nacos::{ping_schedule, register_service},
+    nacos::{register_service},
     routers::{admin, api},
     CASSIE_CONFIG,
 };
 use log::info;
+
 pub async fn index() -> impl IntoResponse {
     RespVO::from(&"hello world".to_string()).resp_json()
 }
@@ -21,11 +22,7 @@ pub async fn index() -> impl IntoResponse {
 #[tokio::main]
 async fn main() {
     init_log();
-    info!(
-        " - Local:   http://{}:{}",
-        CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),
-        CASSIE_CONFIG.port
-    );
+    info!(" - Local:   http://{}:{}",CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),CASSIE_CONFIG.port);
     //nacos 服务注册
     register_service().await;
     let server = format!("{}:{}", CASSIE_CONFIG.host, CASSIE_CONFIG.port);
@@ -35,11 +32,10 @@ async fn main() {
         .nest(
             "/admin",
             admin::routers()
-            .layer(extractor_middleware::<Auth>()),
+                .layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers());
-    //nacos 心跳检测
-    tokio::task::spawn(ping_schedule());
+
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await

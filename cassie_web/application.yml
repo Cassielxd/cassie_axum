@@ -33,7 +33,7 @@ sms_cache_send_key_prefix: "sms:send:"
 login_fail_retry: 3
 #登陆失败重试次数限制超过后提示的等待时间（秒）
 login_fail_retry_wait_sec: 30
-
+nacos_flag: true
 nacos_server: "http://127.0.0.1:8848/nacos"
 
 application_name: "cassie_admin"
