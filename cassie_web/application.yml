@@ -3,8 +3,9 @@ debug: true
 #名称
 server_name: "cassieWeb"
 #server 地址
-host: "0.0.0.0"
-port: "9999"
+server:
+  host: "0.0.0.0"
+  port: "9999"
 #缓存介质类型,单选("mem","redis")
 cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)
@@ -33,20 +34,30 @@ sms_cache_send_key_prefix: "sms:send:"
 login_fail_retry: 3
 #登陆失败重试次数限制超过后提示的等待时间（秒）
 login_fail_retry_wait_sec: 30
-nacos_flag: true
-nacos_server: "http://127.0.0.1:8848/nacos"
 
-application_name: "cassie_admin"
+nacos:
+  nacos_flag: false
+  nacos_server: "http://127.0.0.1:8848/nacos"
+  application_name: "cassie_admin"
+
+
 
 #管理端接口白名单（免登陆直接访问）
 admin_white_list_api:
- - "/login"
- - "/captcha/:uuid"
+  - "/login"
+  - "/captcha/:uuid"
 
 #api接口白名单（免登陆直接访问）
 api_white_list_api:
- - "/login"
+  - "/login"
 
 #api超级管理员id直接跳过api权限
 super_admin_ids:
- - "1067246875800000001"
+  - "1067246875800000001"
+
+
+tenant:
+  enable: false
+  column: "agency_code"
+  ignore_table:
+    - "sys_log_login"

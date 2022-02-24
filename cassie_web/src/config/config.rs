@@ -1,10 +1,26 @@
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct NacosConfig{
+    pub nacos_flag:bool,
+    pub nacos_server:String,
+    pub application_name:String
+}
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct ServerConfig{
+        ///当前服务地址
+    pub host: String,
+    pub port: String,
+}
+
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct TenantConfig{
+    pub enable: bool,
+    pub column: String,
+    pub ignore_table:Vec<String>,
+}
 ///服务启动配置
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct ApplicationConfig {
     pub debug: bool,
-    ///当前服务地址
-    pub host: String,
-    pub port: String,
     ///redis地址
     pub redis_url: String,
     /// 数据库地址
@@ -37,9 +53,13 @@ pub struct ApplicationConfig {
     pub login_fail_retry: u64,
     ///重试等待时间
     pub login_fail_retry_wait_sec: u64,
-    pub nacos_flag:bool,
-    pub nacos_server:String,
-    pub application_name:String
+    //server 配置
+    pub server:ServerConfig,
+    //nacos 配置
+    pub nacos:NacosConfig,
+    //租户 配置
+    pub tenant:TenantConfig
+ 
 }
 
 ///默认配置

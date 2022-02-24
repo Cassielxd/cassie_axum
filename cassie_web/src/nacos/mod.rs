@@ -7,15 +7,15 @@ const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'{').add(b'}').ad
 
 //nacos服务注册
 pub async fn register_service() {
-    if CASSIE_CONFIG.nacos_flag {
-        info!("register service: {:?}", CASSIE_CONFIG.nacos_server);
+    if CASSIE_CONFIG.nacos.nacos_flag {
+        info!("register service: {:?}", CASSIE_CONFIG.nacos.nacos_server);
         let client = reqwest::Client::new();
         let body = client.post(
             format!("{}/v1/ns/instance?serviceName={}&ip={}&port={}",
-                    CASSIE_CONFIG.nacos_server,
-                    CASSIE_CONFIG.application_name,
-                    CASSIE_CONFIG.host,
-                    CASSIE_CONFIG.port).as_str()
+                    CASSIE_CONFIG.nacos.nacos_server,
+                    CASSIE_CONFIG.nacos.application_name,
+                    CASSIE_CONFIG.server.host,
+                    CASSIE_CONFIG.server.port).as_str()
         ).send().await.unwrap().text().await;
         match body {
             Ok(s) => {
@@ -32,13 +32,13 @@ pub async fn ping() {
     //
     // nacos 文档中没有说明 metadata 必选, 测试发现，如果没有 metadata 信息， java 端会有错误
     //
-    let beat = format!("{{\"serviceName\":\"{}\",\"ip\":\"{}\",\"port\":\"{}\",\"weight\":1,\"metadata\":{{}}}}", CASSIE_CONFIG.application_name, CASSIE_CONFIG.host, CASSIE_CONFIG.port);
+    let beat = format!("{{\"serviceName\":\"{}\",\"ip\":\"{}\",\"port\":\"{}\",\"weight\":1,\"metadata\":{{}}}}", CASSIE_CONFIG.nacos.application_name, CASSIE_CONFIG.server.host, CASSIE_CONFIG.server.port);
     let encode = utf8_percent_encode(&beat, FRAGMENT).to_string();
     let client = reqwest::Client::new();
     client.put(
         format!("{}/v1/ns/instance/beat?serviceName={}&beat={}",
-                CASSIE_CONFIG.nacos_server,
-                CASSIE_CONFIG.application_name,
+                CASSIE_CONFIG.nacos.nacos_server,
+                CASSIE_CONFIG.nacos.application_name,
                 encode
         ).as_str()
     ).send().await;

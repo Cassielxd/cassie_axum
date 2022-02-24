@@ -520,6 +520,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml",
+ "sqlparser",
  "thread_local",
  "tokio",
  "validator",
@@ -2766,6 +2767,15 @@ dependencies = [
  "itertools",
  "nom",
  "unicode_categories",
+]
+
+[[package]]
+name = "sqlparser"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8f192f29f4aa49e57bebd0aa05858e0a1f32dd270af36efe49edb82cbfffab6"
+dependencies = [
+ "log",
 ]
 
 [[package]]

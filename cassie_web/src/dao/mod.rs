@@ -1,5 +1,5 @@
 use crate::CASSIE_CONFIG;
-/* use rbatis::plugin::logic_delete::RbatisLogicDeletePlugin; */
+use rbatis::plugin::logic_delete::RbatisLogicDeletePlugin;
 use rbatis::rbatis::Rbatis;
 
 pub mod mapper;
@@ -23,6 +23,7 @@ pub async fn init_rbatis() -> Rbatis {
         .await
         .expect("rbatis link database fail!");
     println!("rbatis link database success!");
+
     return rbatis;
 }
 

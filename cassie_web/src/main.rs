@@ -22,10 +22,10 @@ pub async fn index() -> impl IntoResponse {
 #[tokio::main]
 async fn main() {
     init_log();
-    info!(" - Local:   http://{}:{}",CASSIE_CONFIG.host.replace("0.0.0.0", "127.0.0.1"),CASSIE_CONFIG.port);
+    info!(" - Local:   http://{}:{}",CASSIE_CONFIG.server.host.replace("0.0.0.0", "127.0.0.1"),CASSIE_CONFIG.server.port);
     //nacos 服务注册
     register_service().await;
-    let server = format!("{}:{}", CASSIE_CONFIG.host, CASSIE_CONFIG.port);
+    let server = format!("{}:{}", CASSIE_CONFIG.server.host, CASSIE_CONFIG.server.port);
     //绑定端口 初始化 路由
     let app = Router::new()
         .route("/index", get(index))
