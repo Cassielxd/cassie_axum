@@ -1,7 +1,7 @@
-use cassie_common::error::Result;
-use crate::CASSIE_CONFIG;
 use crate::service::{MemService, RedisService};
+use crate::CASSIE_CONFIG;
 use async_trait::async_trait;
+use cassie_common::error::Result;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::time::Duration;
@@ -16,7 +16,6 @@ pub trait ICacheService: Sync + Send {
 
     async fn ttl(&self, k: &str) -> Result<i64>;
 }
-
 pub struct CacheService {
     pub inner: Box<dyn ICacheService>,
 }
@@ -26,18 +25,21 @@ impl CacheService {
         match CASSIE_CONFIG.cache_type.as_str() {
             "mem" => {
                 println!(" cache_type: mem");
-                Ok(Self{
-                    inner:Box::new(MemService::default())
+                Ok(Self {
+                    inner: Box::new(MemService::default()),
                 })
             }
             "redis" => {
                 println!("cache_type: redis");
-                Ok(Self{
-                    inner:Box::new(RedisService::new(&CASSIE_CONFIG.redis_url))
+                Ok(Self {
+                    inner: Box::new(RedisService::new(&CASSIE_CONFIG.redis_url)),
                 })
             }
             e => {
-                panic!("unknown of cache_type: \"{}\",current support 'mem' or 'redis'", e);
+                panic!(
+                    "unknown of cache_type: \"{}\",current support 'mem' or 'redis'",
+                    e
+                );
             }
         }
     }

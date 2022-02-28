@@ -2,5 +2,6 @@
 members = [
     "cassie_common",
     "cassie_web",
-    "cassie_casbin_adapter"
+    "cassie_casbin_adapter",
+    "cassie_tests",
 ]

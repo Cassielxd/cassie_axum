@@ -1,8 +1,8 @@
-use crate::entity::sys_entitys::CommonField;
 use crate::entity::pagedata::PageData;
-use cassie_common::error::Result;
-use crate::{REQUEST_CONTEXT, CONTEXT};
+use crate::entity::sys_entitys::CommonField;
+use crate::{CONTEXT, REQUEST_CONTEXT};
 use async_trait::async_trait;
+use cassie_common::error::Result;
 use rbatis::crud::{CRUDTable, Skip, CRUD};
 use rbatis::plugin::page::{Page, PageRequest};
 use rbatis::plugin::snowflake::new_snowflake_id;
@@ -11,7 +11,6 @@ use rbatis::DateTimeNative;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::convert::From;
-
 /**
  *struct:CrudService
  *desc:orm基础CRUD实现
@@ -20,10 +19,10 @@ use std::convert::From;
  */
 #[async_trait]
 pub trait CrudService<Entity, Dto, Params>: Sync + Send
-    where
-        Entity: CRUDTable + DeserializeOwned,
-        Dto: From<Entity> + Send + Sync + Serialize,
-        Params: Send + Sync + Serialize,
+where
+    Entity: CRUDTable + DeserializeOwned,
+    Dto: From<Entity> + Send + Sync + Serialize,
+    Params: Send + Sync + Serialize,
 {
     /**
      * 获取查询条件Wrapper
@@ -106,11 +105,7 @@ pub trait CrudService<Entity, Dto, Params>: Sync + Send
         /*设置创建人*/
         let id = new_snowflake_id();
         let tls = REQUEST_CONTEXT.clone();
-        let creator = if let Some(a) = tls.get() {
-            a.uid
-        } else {
-            0
-        };
+        let creator = if let Some(a) = tls.get() { a.uid } else { 0 };
         /*设置公共字段*/
         self.set_save_common_fields(
             CommonField {

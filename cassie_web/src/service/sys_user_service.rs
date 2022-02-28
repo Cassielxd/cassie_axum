@@ -1,8 +1,8 @@
-use crate::{REQUEST_CONTEXT, CONTEXT};
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
+use crate::{CONTEXT, REQUEST_CONTEXT};
 use rbatis::wrapper::Wrapper;
 
-use super::{crud_service::CrudService};
+use super::crud_service::CrudService;
 use crate::cici_casbin::CASBIN_CONTEXT;
 use crate::entity::sys_entitys::CommonField;
 use casbin::MgmtApi;
@@ -19,7 +19,6 @@ impl Default for SysUserService {
         SysUserService {}
     }
 }
-
 impl SysUserService {
     pub async fn save_info(&self, arg: SysUserDTO) {
         let role_id = arg.role_id.clone();
