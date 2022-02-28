@@ -1,15 +1,12 @@
-use crate::{
-    entity::PageData,
-    service::{crud_service::CrudService},CONTEXT,
-};
-use crate::request::SysRoleQuery;
-use axum::extract::{Query, Path};
-use cassie_common::RespVO;
-use crate::dto::sys_role_dto::SysRoleDTO;
-use axum::{Json};
-use axum::response::IntoResponse;
 use crate::cici_casbin::CASBIN_CONTEXT;
+use crate::dto::sys_role_dto::SysRoleDTO;
+use crate::request::SysRoleQuery;
+use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
+use axum::extract::{Path, Query};
+use axum::response::IntoResponse;
+use axum::Json;
 use casbin::MgmtApi;
+use cassie_common::RespVO;
 
 /**
  *method:/role/page
@@ -24,8 +21,8 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.0.page_no.clone(),
-                page_size: arg.0.page_size.clone(),
+                page_no: arg.page_no.clone(),
+                page_size: arg.page_size.clone(),
             },
         )
         .await;
@@ -110,4 +107,3 @@ pub async fn casbin_test() -> impl IntoResponse {
     let res = Ok("保存成功".to_string());
     RespVO::from_result(&res).resp_json()
 }
-

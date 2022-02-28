@@ -1,22 +1,25 @@
-use crate::dto::sign_in::{SignInDTO};
-use cassie_common::RespVO;
-use cassie_common::error::Error;
-use validator::Validate;
-use axum::response::{Response, IntoResponse};
-use axum::Json;
-use axum::body::Body;
+use crate::dto::sign_in::SignInDTO;
 use crate::CONTEXT;
-use std::time::Duration;
-use captcha::Captcha;
-use captcha::filters::{Noise, Wave, Dots};
+use axum::body::Body;
 use axum::extract::Path;
-
+use axum::response::{IntoResponse, Response};
+use axum::Json;
+use captcha::filters::{Dots, Noise, Wave};
+use captcha::Captcha;
+use cassie_common::error::Error;
+use cassie_common::RespVO;
+use std::time::Duration;
+use validator::Validate;
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
     if let Err(e) = sign.validate() {
         return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
     }
-    if let Ok(code) = CONTEXT.cache_service.get_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap())).await {
+    if let Ok(code) = CONTEXT
+        .cache_service
+        .get_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .await
+    {
         if !code.eq(&sign.vcode.clone().unwrap()) {
             return RespVO::<()>::from_error("-1", &Error::E("验证码错误".to_string())).resp_json();
         }
@@ -46,7 +49,8 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
                 &format!("captch:uuid_{}", uuid.clone()),
                 captcha_str.as_str(),
                 Some(Duration::from_secs(180)),
-            ).await;
+            )
+            .await;
     });
     Response::builder()
         .header("Access-Control-Allow-Origin", "*")

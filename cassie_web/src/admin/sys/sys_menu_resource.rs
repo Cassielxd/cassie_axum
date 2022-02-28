@@ -1,7 +1,14 @@
-use axum::{extract::{Query, Path}, response::IntoResponse, Json};
+use axum::{
+    extract::{Path, Query},
+    response::IntoResponse,
+    Json,
+};
 use cassie_common::RespVO;
 
-use crate::{request::SysMenuQuery, CONTEXT,service::{ crud_service::CrudService}, entity::PageData, dto::sys_menu_dto::SysMenuDTO};
+use crate::{
+    dto::sys_menu_dto::SysMenuDTO, entity::PageData, request::SysMenuQuery,
+    service::crud_service::CrudService, CONTEXT,
+};
 
 /**
  *method:/menu
@@ -10,7 +17,7 @@ use crate::{request::SysMenuQuery, CONTEXT,service::{ crud_service::CrudService}
  *email:348040933@qq.com
  */
 
-pub async fn page(arg:  Option<Query<SysMenuQuery>>) -> impl IntoResponse {
+pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_menu_service
@@ -46,4 +53,3 @@ pub async fn save(Json(arg): Json<SysMenuDTO>) -> impl IntoResponse {
     CONTEXT.sys_menu_service.save_or_update(arg).await;
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
-
