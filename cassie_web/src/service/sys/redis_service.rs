@@ -3,9 +3,10 @@ use std::time::Duration;
 use redis::aio::Connection;
 
 use cassie_common::error::{Error, Result};
-use crate::service::ICacheService;
 use async_trait::async_trait;
 use redis::RedisResult;
+
+use super::cache_service::ICacheService;
 ///Redis缓存服务
 pub struct RedisService {
     pub client: redis::Client,

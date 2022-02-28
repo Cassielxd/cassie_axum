@@ -1,5 +1,4 @@
 use crate::CASSIE_CONFIG;
-use rbatis::plugin::logic_delete::RbatisLogicDeletePlugin;
 use rbatis::rbatis::Rbatis;
 
 pub mod mapper;

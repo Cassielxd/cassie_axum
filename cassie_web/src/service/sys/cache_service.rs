@@ -1,5 +1,7 @@
-use crate::service::{MemService, RedisService};
+
 use crate::CASSIE_CONFIG;
+use crate::service::mem_service::MemService;
+use crate::service::redis_service::RedisService;
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use serde::de::DeserializeOwned;

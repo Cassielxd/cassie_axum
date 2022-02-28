@@ -1,11 +1,12 @@
 use cassie_common::error::Result;
-use crate::service::ICacheService;
 use async_trait::async_trait;
 use indexmap::IndexMap;
 use std::collections::hash_map::RandomState;
 use std::ops::Sub;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
+
+use super::cache_service::ICacheService;
 
 ///内存缓存服务
 pub struct MemService {
