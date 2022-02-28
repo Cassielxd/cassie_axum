@@ -1,13 +1,16 @@
-use crate::admin::sys::{
+use crate::admin::{sys::{
     sys_auth_resource, sys_dict_type_resource, sys_dict_value_resource, sys_menu_resource,
     sys_params_resource, sys_role_resource, sys_user_resource,
-};
+}, asi::{asi_group_controller, asi_group_column_controller}};
 use axum::{
     routing::{get, post},
     Router,
 };
 pub fn routers() -> Router {
     Router::new()
+        //-------------------------------------登录服务-------------------------------------------------------
+        .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
+        .route("/login", post(sys_auth_resource::login))
         //-------------------------------------菜单服务-------------------------------------------------------
         .route("/menu", get(sys_menu_resource::page))
         .route("/menu/:id", get(sys_menu_resource::get_by_id))
@@ -34,7 +37,16 @@ pub fn routers() -> Router {
         .route("/dict/value", get(sys_dict_value_resource::page))
         .route("/dict/value/save", post(sys_dict_value_resource::save))
         .route("/dict/value/:id", get(sys_dict_value_resource::get_by_id))
-        //-------------------------------------登录服务-------------------------------------------------------
-        .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
-        .route("/login", post(sys_auth_resource::login))
+        //-------------------------------------动态表单服务-------------------------------------------------------
+        .route("/asi/group", get(asi_group_controller::page))
+        .route("/asi/group/:id", get(asi_group_controller::get_by_id))
+        .route("/asi/group/save", post(asi_group_controller::save))
+
+        .route("/asi/column", get(asi_group_column_controller::page))
+        .route("/asi/column/:id", get(asi_group_column_controller::get_by_id))
+        .route("/asi/column/save/:group_id", post(asi_group_column_controller::save))
+
+        .route("/asi/values", get(asi_group_column_controller::page))
+        .route("/asi/values/:id", get(asi_group_column_controller::get_by_id))
+        .route("/asi/values/save", post(asi_group_column_controller::save))
 }
