@@ -96,25 +96,31 @@ CREATE TABLE `casbin_rule`  (
 -- Records of casbin_rule
 -- ----------------------------
 -- ----------------------------
-INSERT INTO `casbin_rule` VALUES (1, 'g', '1067246875800000002', 'admin', 'superadmin', '', '', '');
-INSERT INTO `casbin_rule` VALUES (3, 'p', 'admin', 'superadmin', '/', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (18, 'p', 'admin', 'superadmin', '/dict/type', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (20, 'p', 'admin', 'superadmin', '/dict/type/:id', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (19, 'p', 'admin', 'superadmin', '/dict/type/save', 'POST', '', '');
-INSERT INTO `casbin_rule` VALUES (21, 'p', 'admin', 'superadmin', '/dict/value', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (23, 'p', 'admin', 'superadmin', '/dict/value/:id', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (22, 'p', 'admin', 'superadmin', '/dict/value/save', 'POST', '', '');
-INSERT INTO `casbin_rule` VALUES (14, 'p', 'admin', 'superadmin', '/params', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (16, 'p', 'admin', 'superadmin', '/params/:id', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (15, 'p', 'admin', 'superadmin', '/params/list', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (17, 'p', 'admin', 'superadmin', '/params/save', 'POST', '', '');
-INSERT INTO `casbin_rule` VALUES (6, 'p', 'admin', 'superadmin', '/role', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (13, 'p', 'admin', 'superadmin', '/role/casbin_test', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (12, 'p', 'admin', 'superadmin', '/role/save', 'POST', '', '');
-INSERT INTO `casbin_rule` VALUES (2, 'p', 'admin', 'superadmin', '/user', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (7, 'p', 'admin', 'superadmin', '/user/:id', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (4, 'p', 'admin', 'superadmin', '/user/list', 'GET', '', '');
-INSERT INTO `casbin_rule` VALUES (5, 'p', 'admin', 'superadmin', '/user/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (1, 'g', '1067246875800000002', 'admin', 'superadmin', '', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (3, 'p', 'admin', 'superadmin', '/', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (29, 'p', 'admin', 'superadmin', '/asi/column', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (28, 'p', 'admin', 'superadmin', '/asi/column/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (27, 'p', 'admin', 'superadmin', '/asi/column/save/:group_id', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (25, 'p', 'admin', 'superadmin', '/asi/group', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (26, 'p', 'admin', 'superadmin', '/asi/group/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (24, 'p', 'admin', 'superadmin', '/asi/group/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (18, 'p', 'admin', 'superadmin', '/dict/type', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (20, 'p', 'admin', 'superadmin', '/dict/type/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (19, 'p', 'admin', 'superadmin', '/dict/type/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (21, 'p', 'admin', 'superadmin', '/dict/value', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (23, 'p', 'admin', 'superadmin', '/dict/value/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (22, 'p', 'admin', 'superadmin', '/dict/value/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (14, 'p', 'admin', 'superadmin', '/params', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (16, 'p', 'admin', 'superadmin', '/params/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (15, 'p', 'admin', 'superadmin', '/params/list', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (17, 'p', 'admin', 'superadmin', '/params/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (6, 'p', 'admin', 'superadmin', '/role', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (13, 'p', 'admin', 'superadmin', '/role/casbin_test', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (12, 'p', 'admin', 'superadmin', '/role/save', 'POST', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (2, 'p', 'admin', 'superadmin', '/user', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (7, 'p', 'admin', 'superadmin', '/user/:id', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (4, 'p', 'admin', 'superadmin', '/user/list', 'GET', '', '');
+INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (5, 'p', 'admin', 'superadmin', '/user/save', 'POST', '', '');
 
 -- ----------------------------
 -- Table structure for cicc_wechat_user
