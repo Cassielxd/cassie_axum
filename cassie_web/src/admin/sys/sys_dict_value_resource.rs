@@ -1,15 +1,11 @@
-use crate::{
-    entity::PageData,
-    service::{crud_service::CrudService}, CONTEXT,
-};
-use cassie_common::RespVO;
+use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
 use axum::response::IntoResponse;
 use axum::Json;
+use cassie_common::RespVO;
 
-
-use axum::extract::{Path, Query};
-use crate::request::SysDictQuery;
 use crate::dto::sys_dict_dto::SysDictDataDTO;
+use crate::request::SysDictQuery;
+use axum::extract::{Path, Query};
 
 /**
  *method:/dict/type/page
@@ -18,7 +14,7 @@ use crate::dto::sys_dict_dto::SysDictDataDTO;
  *email:348040933@qq.com
  */
 
-pub async fn page(arg:  Option<Query<SysDictQuery>>) -> impl IntoResponse {
+pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_dict_value_service
@@ -55,4 +51,3 @@ pub async fn save(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
     let vo = CONTEXT.sys_dict_value_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
-

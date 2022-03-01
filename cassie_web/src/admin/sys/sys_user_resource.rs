@@ -1,15 +1,13 @@
 use crate::{
-    dto::sys_user_dto::SysUserDTO,
-    entity::PageData,
-    request::SysUserQuery,
-    service::{crud_service::CrudService},CONTEXT,
+    dto::sys_user_dto::SysUserDTO, entity::PageData, request::SysUserQuery,
+    service::crud_service::CrudService, CONTEXT,
 };
-use cassie_common::RespVO;
+use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::Json;
 use cassie_common::error::Error;
+use cassie_common::RespVO;
 use validator::Validate;
-use axum::extract::{Path, Query};
 
 /**
  *method:/user/page
@@ -54,7 +52,6 @@ pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
-
 /**
  *method:/user/save
  *desc:用户保存
@@ -68,8 +65,5 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
     }
     CONTEXT.sys_user_service.save_info(user).await;
 
-
     return RespVO::from(&"保存成功".to_string()).resp_json();
 }
-
-

@@ -2,16 +2,18 @@ use rbatis::rbatis::Rbatis;
 
 pub mod asi;
 pub mod sys;
+
 pub use sys::*;
 
 use self::{
+    asi::asi_service::AsiGroupService,
     cache_service::CacheService,
     sys_auth_service::SysAuthService,
     sys_dict_service::{SysDictDataService, SysDictTypeService},
     sys_menu_service::SysMenuService,
     sys_params_service::SysParamsService,
     sys_role_service::SysRoleService,
-    sys_user_service::SysUserService, asi::asi_service::AsiGroupService,
+    sys_user_service::SysUserService,
 };
 
 pub struct ServiceContext {
@@ -30,7 +32,7 @@ pub struct ServiceContext {
     pub sys_dict_type_service: SysDictTypeService,
     pub sys_dict_value_service: SysDictDataService,
 
-    pub asi_service:AsiGroupService
+    pub asi_service: AsiGroupService,
 }
 
 impl ServiceContext {
@@ -45,7 +47,7 @@ impl ServiceContext {
             sys_params_service: Default::default(),
             sys_dict_type_service: Default::default(),
             sys_dict_value_service: Default::default(),
-            asi_service:Default::default()
+            asi_service: Default::default(),
         }
     }
 }

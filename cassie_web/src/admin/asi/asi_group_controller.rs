@@ -1,9 +1,16 @@
-use axum::{extract::{Query, Path}, response::IntoResponse, Json};
+use axum::{
+    extract::{Path, Query},
+    response::IntoResponse,
+    Json,
+};
 use cassie_common::RespVO;
 
-use crate::{request::AsiQuery, CONTEXT, entity::PageData, service::crud_service::CrudService, dto::asi_dto::AsiGroupDTO};
+use crate::{
+    dto::asi_dto::AsiGroupDTO, entity::PageData, request::AsiQuery,
+    service::crud_service::CrudService, CONTEXT,
+};
 
-pub async fn page(arg:  Option<Query<AsiQuery>>) -> impl IntoResponse {
+pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
     let vo = CONTEXT
         .asi_service
