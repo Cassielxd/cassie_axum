@@ -1,5 +1,9 @@
-use axum::{extract::extractor_middleware, response::IntoResponse, routing::get, Router};
-use cassie_common::RespVO;
+use axum::{
+    extract::extractor_middleware,
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
+};
 use cassie_web::{
     config::log::init_log,
     middleware::auth::Auth,
@@ -10,7 +14,19 @@ use cassie_web::{
 use log::info;
 
 pub async fn index() -> impl IntoResponse {
-    RespVO::from(&"hello world".to_string()).resp_json()
+    Html(
+        "<!DOCTYPE html>
+    <html lang='zh-Hans'>
+      <head>
+        <meta charset='UTF-8' />
+        <title>axum.rs</title>
+      </head>
+      <body>
+        <p>欢迎使用 cassie</p>
+        <p>有疑问请加QQ:348040933</p>
+      </body>
+    </html>",
+    )
 }
 
 /**
@@ -35,7 +51,7 @@ async fn main() {
     );
     //绑定端口 初始化 路由
     let app = Router::new()
-        .route("/index", get(index))
+        .route("/", get(index))
         .nest(
             "/admin",
             admin::routers().layer(extractor_middleware::<Auth>()),
