@@ -22,7 +22,8 @@ pub async fn index() -> impl IntoResponse {
         <title>axum.rs</title>
       </head>
       <body>
-        <p>欢迎使用 cassie</p>
+        <p>欢迎使用 cassie axum</p>
+        <p>这是一个学习性质的项目，又不懂的地方先看注释</p>
         <p>有疑问请加QQ:348040933</p>
       </body>
     </html>",
