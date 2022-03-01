@@ -11,6 +11,7 @@ pub fn is_white_list_api(path: &str,white_list_api: &Vec<String>) -> bool {
         return true;
     }
     for x in white_list_api {
+        //匹配 user/:id 模式 
         if key_match2(path,x) || x.contains(path) {
             return true;
         }
