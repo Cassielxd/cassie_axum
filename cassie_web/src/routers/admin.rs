@@ -1,7 +1,7 @@
 use crate::admin::{sys::{
     sys_auth_resource, sys_dict_type_resource, sys_dict_value_resource, sys_menu_resource,
     sys_params_resource, sys_role_resource, sys_user_resource,
-}, asi::{asi_group_controller, asi_group_column_controller}};
+}, asi::{asi_group_controller, asi_group_column_controller, asi_group_values_controller}};
 use axum::{
     routing::{get, post},
     Router,
@@ -46,7 +46,7 @@ pub fn routers() -> Router {
         .route("/asi/column/:id", get(asi_group_column_controller::get_by_id))
         .route("/asi/column/save/:group_id", post(asi_group_column_controller::save))
 
-        .route("/asi/values", get(asi_group_column_controller::page))
-        .route("/asi/values/:id", get(asi_group_column_controller::get_by_id))
-        .route("/asi/values/save", post(asi_group_column_controller::save))
+        .route("/asi/values", get(asi_group_values_controller::page))
+        .route("/asi/values/:id", get(asi_group_values_controller::get_by_id))
+        .route("/asi/values/save", post(asi_group_values_controller::save))
 }

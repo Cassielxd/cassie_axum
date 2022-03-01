@@ -30,7 +30,7 @@ impl_field_name_method!(AsiGroup {
 *author:String
 *email:348040933@qq.com
 */
-#[crud_table(table_name:asi_system_group_column)]
+#[crud_table(table_name:asi_group_column)]
 #[derive(Clone, Debug)]
 pub struct AsiGroupColumn{
     pub id: Option<i64>,
@@ -72,7 +72,7 @@ impl_field_name_method!(AsiGroupColumn {
  *author:String
  *email:348040933@qq.com
  */
-#[crud_table(table_name:asi_system_group_values)]
+#[crud_table(table_name:asi_group_values)]
 #[derive(Clone, Debug)]
 pub struct AsiGroupValues{
     pub id: Option<i64>,

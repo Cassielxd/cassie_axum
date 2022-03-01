@@ -57,4 +57,4 @@ log = "0.4"
 fast_log = { version="1.4", features = ["lz4","zip", "gzip"]}
 
 percent-encoding = "2.1.0"
-
+tower = { version = "0.4", features = ["full"] }

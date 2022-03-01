@@ -44,23 +44,31 @@ impl From<AsiGroup> for AsiGroupDTO {
             cate_id: arg.cate_id,
             name: arg.name,
             info: arg.info,
-            group_code: arg.agency_code,
-            agency_code: arg.group_code
+            group_code: arg.group_code,
+            agency_code: arg.agency_code
         }
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize,Validate)]
 pub struct AsiGroupColumnDTO{
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,
     pub group_code: Option<String>,
+    #[validate(required)]
+    #[validate(length(min = 2, message="最少2个字符"))]
     pub column_code: Option<String>,
+    #[validate(required)]
+    #[validate(length(min = 2, message="最少2个字符"))]
     pub column_name: Option<String>,
+    #[validate(required)]
     pub data_type: Option<String>,
+    #[validate(required)]
     pub example_value: Option<String>,
+    #[validate(required)]
     pub max_length: Option<i64>,
+    #[validate(required)]
     pub is_required: Option<String>,
     pub display_order: Option<i8>,
     pub default_value: Option<String>,
@@ -126,14 +134,17 @@ impl From<AsiGroupColumn> for AsiGroupColumnDTO {
 }
 
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize,Validate)]
 pub struct AsiGroupValuesDTO{
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,
     pub group_code: Option<String>,
+    #[validate(required)]
     pub column_code: Option<String>,
+    #[validate(required)]
     pub column_value: Option<String>,
+    #[validate(required)]
     pub ref_id: Option<i64>,
 }
 impl_field_name_method!(AsiGroupValuesDTO {
