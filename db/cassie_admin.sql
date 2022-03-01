@@ -5260,4 +5260,8 @@ CREATE TABLE `tb_product_params`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品参数管理' ROW_FORMAT = Dynamic;
 
-SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO `asi_group`(`id`, `cate_id`, `name`, `info`, `group_code`, `agency_code`) VALUES (341134937002479616, 1, '测试分组', '用户测试使用', 'product', 'super_admin');
+
+INSERT INTO `asi_group_column`(`id`, `agency_code`, `product_code`, `group_code`, `column_code`, `column_name`, `data_type`, `example_value`, `max_length`, `is_required`, `display_order`, `default_value`, `display_length`, `is_display`) VALUES (341141075899060224, 'superadmin', 'text', 'product', 'name', '姓名', '1', '李兴栋', 100, 'Y', 1, '', 100, '2');
+INSERT INTO `asi_group_column`(`id`, `agency_code`, `product_code`, `group_code`, `column_code`, `column_name`, `data_type`, `example_value`, `max_length`, `is_required`, `display_order`, `default_value`, `display_length`, `is_display`) VALUES (341141075899060225, 'superadmin', 'text', 'product', 'age', '年龄', '1', '18', 100, 'Y', 1, '', 100, '1');
