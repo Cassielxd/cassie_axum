@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::dao::mapper::{menu_List, user_menu_List};
 use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
@@ -41,11 +43,37 @@ impl SysMenuService {
                 .await
                 .unwrap()
         };
-        let mut vec = vec![];
-        for r in result.unwrap() {
-            vec.push(SysMenuDTO::from(r));
+        Ok(self.build(result.unwrap()))
+    }
+
+    fn build(&self,menus:Vec<SysMenu>)->Vec<SysMenuDTO>{
+        let mut result = HashMap::with_capacity(menus.capacity());
+        let mut data = vec![];
+        for x in menus {
+            result.insert(x.id.clone().unwrap_or_default(), x);
         }
-        Ok(vec)
+        for (k, v) in &result {
+            if v.pid.unwrap()==0 {
+                let mut top = SysMenuDTO::from(v.clone());
+                self.loop_find_childs(&mut top,&result);
+                data.push(top);
+            }
+        }
+        data
+    }
+    
+    fn loop_find_childs(&self,arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>){
+        let mut childs = vec![];
+        for (key, x) in all {
+            if x.pid.is_some() && x.pid.eq(&arg.id) {
+                let mut item = SysMenuDTO::from(x.clone());
+                self.loop_find_childs(&mut item, all);
+                childs.push(item);
+            }
+        }
+        if !childs.is_empty() {
+            arg.children = Some(childs);
+        }
     }
 }
 impl Default for SysMenuService {
@@ -68,21 +96,3 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
     }
 }
 
-fn build(menus:Vec<SysMenuDTO>,pid:i64){
-    let mut root_tree_list = vec![];
-    for menu in menus.iter() {
-        if menu.pid.unwrap() == 0 {
-            root_tree_list.push(menu.clone()); 
-        }
-    }
-
-}
-
-fn find_children<'a>(menus:&'a Vec<&'a SysMenuDTO>, menu:&'a mut SysMenuDTO){
-   for elem in menus {
-       if menu.id == elem.pid {
-         let  children =  &mut menu.children.as_ref().unwrap();
-         
-       }
-   }
-}
