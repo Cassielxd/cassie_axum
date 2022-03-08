@@ -262,6 +262,7 @@ pub struct SysMenu {
     pub id: Option<i64>,
     pub pid: Option<i64>,
     pub url: Option<String>,
+    pub name:Option<String>,
     pub menu_type: Option<u8>,
     pub open_style: Option<u8>,
     pub icon: Option<String>,
