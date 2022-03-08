@@ -7,8 +7,8 @@ pub mod utils;
 use error::{Error};
 use axum::{body::Body, response::Response};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-pub const CODE_SUCCESS: &str = "SUCCESS";
-pub const CODE_FAIL: &str = "FAIL";
+pub const CODE_SUCCESS:i8  = 0;
+pub const CODE_FAIL:i8  = -1;
 
 /// http接口返回模型结构，提供基础的 code，msg，data 等json数据结构
 #[derive(Debug, Serialize, Deserialize, Clone)]

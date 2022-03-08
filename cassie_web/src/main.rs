@@ -1,3 +1,5 @@
+use std::{fs::File, time::Duration};
+
 use axum::{
     extract::extractor_middleware,
     response::{Html, IntoResponse},
@@ -12,6 +14,8 @@ use cassie_web::{
     CASSIE_CONFIG,
 };
 use log::info;
+use reqwest::Method;
+use tower_http::cors::{Any, CorsLayer};
 
 pub async fn index() -> impl IntoResponse {
     Html(
@@ -50,6 +54,12 @@ async fn main() {
         "{}:{}",
         CASSIE_CONFIG.server.host, CASSIE_CONFIG.server.port
     );
+    let cors = CorsLayer::new()
+        .allow_methods(Any)
+        .allow_origin(Any)
+        .allow_headers(Any)
+        .max_age(Duration::from_secs(60) * 10);
+
     //绑定端口 初始化 路由
     let app = Router::new()
         .route("/", get(index))
@@ -57,7 +67,8 @@ async fn main() {
             "/admin",
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
-        .nest("/api", api::routers());
+        .nest("/api", api::routers())
+        .layer(cors);
 
     axum::Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())

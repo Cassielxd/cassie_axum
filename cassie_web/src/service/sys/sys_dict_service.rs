@@ -1,4 +1,4 @@
-use crate::CONTEXT;
+use crate::{CONTEXT, RB};
 use crate::entity::sys_entitys::CommonField;
 use crate::{
     dto::sys_dict_dto::{SysDictDataDTO, SysDictTypeDTO},
@@ -23,7 +23,7 @@ impl  Default for SysDictTypeService {
 }
 impl CrudService<SysDictType, SysDictTypeDTO, SysDictQuery> for SysDictTypeService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysDictType) {
@@ -47,7 +47,7 @@ impl  Default for SysDictDataService {
 }
 impl CrudService<SysDictData, SysDictDataDTO, SysDictQuery> for SysDictDataService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysDictData) {

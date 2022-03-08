@@ -1,5 +1,5 @@
 use rbatis::DateTimeNative;
-use crate::{REQUEST_CONTEXT, CONTEXT};
+use crate::{REQUEST_CONTEXT, CONTEXT, RB};
 use super::{crud_service::CrudService};
 use crate::entity::sys_entitys::CommonField;
 use crate::{
@@ -52,7 +52,7 @@ impl SysRoleDataScopeService {
 }
 impl CrudService<SysRoleDataScope, SysRoleDataScopeDTO, SysRoleQuery> for SysRoleDataScopeService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleDataScope) {
         data.id = common.id;

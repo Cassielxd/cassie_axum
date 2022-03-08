@@ -1,7 +1,7 @@
 
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
-use crate::{AsiQuery, REQUEST_CONTEXT, CONTEXT};
+use crate::{AsiQuery, REQUEST_CONTEXT, CONTEXT, RB};
 use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO, AsiGroupValuesDTO};
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
 use crate::entity::sys_entitys::CommonField;
@@ -30,8 +30,8 @@ impl AsiGroupService {
     pub async fn save_group(&self, group: AsiGroupDTO) -> Result<i64> {
         /*查询有没有重复的*/
         let g = group.group_code.clone();
-        let count = crate::CONTEXT.rbatis.fetch_count_by_wrapper::<AsiGroup>(
-            CONTEXT.rbatis.new_wrapper().eq(AsiGroup::group_code(), g.unwrap())).await;
+        let count = crate::RB.fetch_count_by_wrapper::<AsiGroup>(
+            RB.new_wrapper().eq(AsiGroup::group_code(), g.unwrap())).await;
         if let Ok(c) = count {
             return Err(cassie_common::error::Error::from("group_code已经存在".to_string()));
         }
@@ -54,7 +54,7 @@ impl Default for AsiGroupService {
 
 impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroup) {
@@ -107,7 +107,7 @@ impl Default for AsiGroupColumnService {
 
 impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery> for AsiGroupColumnService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroupColumn) {
@@ -143,7 +143,7 @@ impl AsiGroupValuesService {
 
 impl CrudService<AsiGroupValues, AsiGroupValuesDTO, AsiQuery> for AsiGroupValuesService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroupValues) {

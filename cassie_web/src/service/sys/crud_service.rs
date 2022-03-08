@@ -1,6 +1,6 @@
 use crate::entity::pagedata::PageData;
 use crate::entity::sys_entitys::CommonField;
-use crate::{CONTEXT, REQUEST_CONTEXT};
+use crate::{CONTEXT, REQUEST_CONTEXT, RB};
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use rbatis::crud::{CRUDTable, Skip, CRUD};
@@ -42,8 +42,7 @@ where
         let page_request =
             PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
         //执行分页查询
-        let data_page: Page<Entity> = CONTEXT
-            .rbatis
+        let data_page: Page<Entity> = RB
             .fetch_page_by_wrapper(wrapper, &page_request)
             .await?;
         //将Entity实体转换成 Vo对象返回
@@ -67,7 +66,7 @@ where
         //构建查询条件
         let wrapper = Self::get_wrapper(arg);
         //执行查询
-        let list: Vec<Entity> = CONTEXT.rbatis.fetch_list_by_wrapper(wrapper).await?;
+        let list: Vec<Entity> = RB.fetch_list_by_wrapper(wrapper).await?;
         let mut vos = vec![];
         //将Entity实体转换成 Vo对象 返回
         for x in list {
@@ -79,8 +78,8 @@ where
      * 根据id查询条件查询单个值
      */
     async fn get(&self, id: String) -> Result<Dto> {
-        let wrapper = CONTEXT.rbatis.new_wrapper().eq("id", id);
-        let detail: Entity = CONTEXT.rbatis.fetch_by_wrapper(wrapper).await?;
+        let wrapper = RB.new_wrapper().eq("id", id);
+        let detail: Entity = RB.fetch_by_wrapper(wrapper).await?;
         let vo = Dto::from(detail);
         return Ok(vo);
     }
@@ -88,9 +87,8 @@ where
      * 根据id更新实体
      */
     async fn update_by_id(&self, id: String, mut data: &Entity) {
-        let wrapper = CONTEXT.rbatis.new_wrapper().eq("id", id);
-        CONTEXT
-            .rbatis
+        let wrapper = RB.new_wrapper().eq("id", id);
+        RB
             .update_by_wrapper(
                 &mut data,
                 wrapper,
@@ -117,27 +115,26 @@ where
             },
             data,
         );
-        let result = CONTEXT.rbatis.save(data, &[]).await?;
+        let result = RB.save(data, &[]).await?;
         return Ok(id);
     }
     /**
      * 批量保存实体
      */
     async fn save_batch(&self, mut list: &Vec<Entity>) {
-        CONTEXT.rbatis.save_batch(&mut list, &[]).await;
+        RB.save_batch(&mut list, &[]).await;
     }
     /**
      * 删除实体 逻辑删除
      */
     async fn del(&self, id: &u64) {
-        CONTEXT.rbatis.remove_by_column::<Entity, _>("id", id).await;
+        RB.remove_by_column::<Entity, _>("id", id).await;
     }
     /**
      * 根据字段实体
      */
     async fn del_by_column(&self, column: &str, column_value: &str) {
-        CONTEXT
-            .rbatis
+        RB
             .remove_by_column::<Entity, _>(column, column_value)
             .await;
     }
@@ -145,8 +142,7 @@ where
      * 批量删除实体 逻辑删除
      */
     async fn del_batch(&self, ids: &Vec<u64>) {
-        CONTEXT
-            .rbatis
+        RB
             .remove_batch_by_column::<Entity, _>("id", ids)
             .await;
     }

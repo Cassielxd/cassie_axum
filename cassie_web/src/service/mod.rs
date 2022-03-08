@@ -1,4 +1,4 @@
-use rbatis::rbatis::Rbatis;
+
 
 pub mod asi;
 pub mod sys;
@@ -17,7 +17,6 @@ use self::{
 };
 
 pub struct ServiceContext {
-    pub rbatis: Rbatis,
     pub cache_service: CacheService,
     /*权限服务 */
     pub sys_auth_service: SysAuthService,
@@ -38,7 +37,6 @@ pub struct ServiceContext {
 impl ServiceContext {
     pub fn default() -> Self {
         Self {
-            rbatis: async_std::task::block_on(async { crate::dao::init_rbatis().await }),
             cache_service: CacheService::new().unwrap(),
             sys_auth_service: Default::default(),
             sys_user_service: Default::default(),

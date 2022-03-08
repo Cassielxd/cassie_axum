@@ -56,6 +56,7 @@ where
                         username: data.username.clone(),
                         agency_code: data.agency_code.clone(),
                         product_code: "".to_string(),
+                        super_admin:data.super_admin,
                     });
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {

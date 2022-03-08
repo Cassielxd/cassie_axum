@@ -1,5 +1,5 @@
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
-use crate::{CONTEXT, REQUEST_CONTEXT};
+use crate::{CONTEXT, REQUEST_CONTEXT, RB};
 use rbatis::wrapper::Wrapper;
 
 use super::crud_service::CrudService;
@@ -50,7 +50,7 @@ impl SysUserService {
 
 impl CrudService<SysUser, SysUserDTO, SysUserQuery> for SysUserService {
     fn get_wrapper(arg: &SysUserQuery) -> Wrapper {
-        CONTEXT.rbatis.new_wrapper().eq(SysUser::del_flag(), 0)
+        RB.new_wrapper().eq(SysUser::del_flag(), 0)
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysUser) {

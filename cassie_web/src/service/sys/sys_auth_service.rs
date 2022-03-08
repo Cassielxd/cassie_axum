@@ -1,5 +1,6 @@
 
 use crate::CASSIE_CONFIG;
+use crate::RB;
 use crate::dto::sign_in::SignInDTO;
 use crate::entity::sys_entitys::SysUser;
 use cassie_common::error::Error;
@@ -38,11 +39,9 @@ impl SysAuthService {
         self.is_need_wait_login_ex().await?;
         /*验证码 验证*/
 
-        let user: Option<SysUser> = CONTEXT
-            .rbatis
+        let user: Option<SysUser> = RB
             .fetch_by_wrapper(
-                CONTEXT
-                    .rbatis
+                RB
                     .new_wrapper()
                     .eq(SysUser::username(), &arg.username),
             )
@@ -123,9 +122,8 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn get_user_info_by_token(&self, token: &JWTToken) -> Result<SignInVO> {
-        let user: Option<SysUser> = CONTEXT
-            .rbatis
-            .fetch_by_wrapper(CONTEXT.rbatis.new_wrapper().eq(SysUser::id(), &token.id))
+        let user: Option<SysUser> = RB
+            .fetch_by_wrapper(RB.new_wrapper().eq(SysUser::id(), &token.id))
             .await?;
         let user = user.ok_or_else(|| Error::from(format!("账号:{} 不存在!", token.username)))?;
         return self.get_user_info(&user).await;
@@ -152,6 +150,7 @@ impl SysAuthService {
         //提前查找所有权限，避免在各个函数方法中重复查找
         let jwt_token = JWTToken {
             id: user_id,
+            super_admin:user.super_admin.clone().unwrap_or_default(),
             username: user.username.clone().unwrap_or(String::new()),
             agency_code: agency_code.unwrap_or_default(),
             exp: DateTimeNative::now().timestamp_millis() as usize,

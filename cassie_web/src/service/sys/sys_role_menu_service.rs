@@ -1,7 +1,7 @@
 use crate::{
     dto::sys_role_dto::SysRoleMenuDTO, entity::sys_entitys::SysRoleMenu, request::SysRoleQuery,
 };
-use crate::{REQUEST_CONTEXT, CONTEXT};
+use crate::{REQUEST_CONTEXT, CONTEXT, RB};
 use super::{crud_service::CrudService};
 use crate::cici_casbin::CASBIN_CONTEXT;
 use crate::entity::sys_entitys::CommonField;
@@ -25,13 +25,11 @@ impl  Default for SysRoleMenuService {
 impl SysRoleMenuService {
     pub async fn get_menu_id_list(&self, role_id: i64) -> Vec<i64> {
         //构建查询条件
-        let wrapper = CONTEXT
-            .rbatis
+        let wrapper = RB
             .new_wrapper()
             .eq(SysRoleMenu::role_id(), role_id);
         //执行查询
-        let list = CONTEXT
-            .rbatis
+        let list = RB
             .fetch_list_by_wrapper::<SysRoleMenu>(wrapper)
             .await;
 
@@ -106,7 +104,7 @@ impl SysRoleMenuService {
 
 impl CrudService<SysRoleMenu, SysRoleMenuDTO, SysRoleQuery> for SysRoleMenuService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        CONTEXT.rbatis.new_wrapper()
+        RB.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleMenu) {
         data.id = common.id;

@@ -31,6 +31,13 @@ pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
         .await;
     RespVO::from_result(&vo).resp_json()
 }
+pub async fn nav() -> impl IntoResponse {
+    let vo = CONTEXT
+        .sys_menu_service
+        .get_user_menu_list()
+        .await;
+    RespVO::from_result(&vo).resp_json()
+}
 
 /**
  *method:get_by_id
