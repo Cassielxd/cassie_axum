@@ -101,13 +101,13 @@ where
      */
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
-        let id = new_snowflake_id();
+        
         let tls = REQUEST_CONTEXT.clone();
         let creator = if let Some(a) = tls.get() { a.uid } else { 0 };
         /*设置公共字段*/
         self.set_save_common_fields(
             CommonField {
-                id: Some(id),
+                id: Some(0),
                 creator: Some(creator),
                 create_date: Some(DateTimeNative::now()),
                 updater: None,
@@ -115,8 +115,8 @@ where
             },
             data,
         );
-        let result = RB.save(data, &[]).await?;
-        return Ok(id);
+        let result = RB.save(data, &[Skip::Column("id")]).await?;
+        return Ok(result.last_insert_id.unwrap());
     }
     /**
      * 批量保存实体
