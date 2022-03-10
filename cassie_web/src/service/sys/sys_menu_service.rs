@@ -29,6 +29,13 @@ impl SysMenuService {
             role_id.unwrap()
         };
     }
+
+    pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
+    
+        let result = menu_List("zh-CN", "0").await.unwrap();
+        Ok(self.build(result.unwrap()))
+    }
+
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
         let tls = REQUEST_CONTEXT.clone();
         let (uid, super_admin) = if let Some(a) = tls.get() {

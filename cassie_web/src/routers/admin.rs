@@ -16,6 +16,7 @@ pub fn routers() -> Router {
         .route("/login", post(sys_auth_resource::login))
         //-------------------------------------菜单服务-------------------------------------------------------
         .route("/menu", get(sys_menu_resource::page))
+        .route("/menu/list", get(sys_menu_resource::list))
         .route("/menu/nav", get(sys_menu_resource::nav))
         .route("/menu/:id", get(sys_menu_resource::get_by_id))
         .route("/menu/save", post(sys_menu_resource::save))
