@@ -38,12 +38,26 @@ pub fn routers() -> Router {
         .route("/params/:id", get(sys_params_resource::get_by_id))
         //-------------------------------------字典服务-------------------------------------------------------
         .route("/dict/type/all", get(sys_dict_type_resource::all))
-        .route("/dict/type", get(sys_dict_type_resource::page))
-        .route("/dict/type/save", post(sys_dict_type_resource::save))
-        .route("/dict/type/:id", get(sys_dict_type_resource::get_by_id))
-        .route("/dict/value", get(sys_dict_value_resource::page))
-        .route("/dict/value/save", post(sys_dict_value_resource::save))
-        .route("/dict/value/:id", get(sys_dict_value_resource::get_by_id))
+        .route(
+            "/dict/type",
+            get(sys_dict_type_resource::page)
+                .post(sys_dict_type_resource::save)
+                .put(sys_dict_type_resource::edit),
+        )
+        .route(
+            "/dict/type/:id",
+            get(sys_dict_type_resource::get_by_id).delete(sys_dict_type_resource::delete),
+        )
+        .route(
+            "/dict/value",
+            get(sys_dict_value_resource::page)
+                .post(sys_dict_value_resource::save)
+                .put(sys_dict_value_resource::edit),
+        )
+        .route(
+            "/dict/value/:id",
+            get(sys_dict_value_resource::get_by_id).delete(sys_dict_value_resource::delete),
+        )
         //-------------------------------------动态表单服务-------------------------------------------------------
         .route("/asi/group", get(asi_group_controller::page))
         .route("/asi/group/:id", get(asi_group_controller::get_by_id))

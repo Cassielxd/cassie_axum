@@ -52,6 +52,16 @@ pub async fn save(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
+pub async fn edit(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
+    let id = arg.id.clone();
+    let mut entity = arg.into();
+    CONTEXT.sys_dict_type_service.update_by_id(id.unwrap().to_string(),&mut entity).await;
+    RespVO::from(&"更新成功".to_string()).resp_json()
+}
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT.sys_dict_type_service.del(&id).await;
+   RespVO::from(&"删除成功".to_string()).resp_json()
+}
 
 pub async fn all() -> impl IntoResponse {
     let vo = CONTEXT

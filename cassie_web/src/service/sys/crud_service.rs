@@ -127,7 +127,7 @@ where
     /**
      * 删除实体 逻辑删除
      */
-    async fn del(&self, id: &u64) {
+    async fn del(&self, id: &String) {
         RB.remove_by_column::<Entity, _>("id", id).await;
     }
     /**
