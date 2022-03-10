@@ -74,7 +74,7 @@ pub async fn info() -> impl IntoResponse {
 pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
     let user = arg;
     if let Err(e) = user.validate() {
-        return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
+        return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
     CONTEXT.sys_user_service.save_info(user).await;
 

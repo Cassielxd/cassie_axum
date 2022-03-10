@@ -28,12 +28,12 @@ pub async fn save(Path(group_id): Path<String>,Json(arg): Json<Vec<AsiGroupColum
     let gid = group_id;
     let group = CONTEXT.asi_service.get(gid).await;
     if !group.is_ok(){
-        return RespVO::<()>::from_error("-1", &Error::E("业务分类没有定义".to_string())).resp_json();
+        return RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json();
     }
     /*执行验证逻辑*/
     for dto in &arg {
         if let Err(e) = dto.validate() {
-            return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
+            return RespVO::<()>::from_error( &Error::E(e.to_string())).resp_json();
         }
     }
     /*执行保存逻辑*/

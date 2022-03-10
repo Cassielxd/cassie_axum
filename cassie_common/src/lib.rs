@@ -13,7 +13,7 @@ pub const CODE_FAIL:i8  = -1;
 /// http接口返回模型结构，提供基础的 code，msg，data 等json数据结构
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RespVO<T> {
-    pub code: Option<String>,
+    pub code: Option<i8>,
     pub msg: Option<String>,
     pub data: Option<T>,
 }
@@ -25,13 +25,13 @@ where
     pub fn from_result(arg: &Result<T, Error>) -> Self {
         if arg.is_ok() {
             Self {
-                code: Some(CODE_SUCCESS.to_string()),
+                code: Some(CODE_SUCCESS),
                 msg: None,
                 data: arg.clone().ok(),
             }
         } else {
             Self {
-                code: Some(CODE_FAIL.to_string()),
+                code: Some(CODE_FAIL),
                 msg: Some(arg.clone().err().unwrap().to_string()),
                 data: None,
             }
@@ -40,31 +40,24 @@ where
     
     pub fn from(arg: &T) -> Self {
         Self {
-            code: Some(CODE_SUCCESS.to_string()),
+            code: Some(CODE_SUCCESS),
             msg: None,
             data: Some(arg.clone()),
         }
     }
 
-    pub fn from_error(code: &str, arg: &Error) -> Self {
-        let mut code_str = code.to_string();
-        if code_str.is_empty() {
-            code_str = CODE_FAIL.to_string();
-        }
+    pub fn from_error(arg: &Error) -> Self {
+        
         Self {
-            code: Some(code_str),
+            code: Some(CODE_FAIL),
             msg: Some(arg.to_string()),
             data: None,
         }
     }
 
-    pub fn from_error_info(code: &str, info: &str) -> Self {
-        let mut code_str = code.to_string();
-        if code_str.is_empty() {
-            code_str = CODE_FAIL.to_string();
-        }
+    pub fn from_error_info(code: i8, info: &str) -> Self {
         Self {
-            code: Some(code_str),
+            code: Some(code),
             msg: Some(info.to_string()),
             data: None,
         }

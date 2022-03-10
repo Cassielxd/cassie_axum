@@ -13,7 +13,7 @@ use validator::Validate;
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
     if let Err(e) = sign.validate() {
-        return RespVO::<()>::from_error("-1", &Error::E(e.to_string())).resp_json();
+        return RespVO::<()>::from_error( &Error::E(e.to_string())).resp_json();
     }
     if let Ok(code) = CONTEXT
         .cache_service
@@ -21,7 +21,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
         .await
     {
         if !code.eq(&sign.vcode.clone().unwrap()) {
-            return RespVO::<()>::from_error("-1", &Error::E("验证码错误".to_string())).resp_json();
+            return RespVO::<()>::from_error(&Error::E("验证码错误".to_string())).resp_json();
         }
     }
     let vo = CONTEXT.sys_auth_service.sign_in(&sign).await;
@@ -30,7 +30,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
 
 pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
     if uuid.is_empty() {
-        return RespVO::<()>::from_error("-1", &Error::from("uuid不能为空!")).resp_json();
+        return RespVO::<()>::from_error(&Error::from("uuid不能为空!")).resp_json();
     }
     let mut captcha = Captcha::new();
     captcha

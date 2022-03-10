@@ -35,7 +35,7 @@ where
         let headers = req.headers().unwrap();
         let token = headers.get("access_token").unwrap_or(&value);
         let mut resp: RespVO<String> = RespVO {
-            code: Some("-1".to_string()),
+            code: Some(-1),
             msg: Some(format!("请登录")),
             data: None,
         };
