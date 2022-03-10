@@ -53,7 +53,7 @@ api_white_list_api:
 
 #api超级管理员id直接跳过api权限
 super_admin_ids:
-  - "1067246875800000001"
+  - "1"
 
 
 tenant:

@@ -21,6 +21,7 @@ pub fn routers() -> Router {
         .route("/menu/save", post(sys_menu_resource::save))
         //-------------------------------------用户服务-------------------------------------------------------
         .route("/user", get(sys_user_resource::page))
+        .route("/user/info", get(sys_user_resource::info))
         .route("/user/list", get(sys_user_resource::list))
         .route("/user/save", post(sys_user_resource::save))
         .route("/user/:id", get(sys_user_resource::get_user_by_id))
@@ -35,6 +36,7 @@ pub fn routers() -> Router {
         .route("/params/save", post(sys_params_resource::save))
         .route("/params/:id", get(sys_params_resource::get_by_id))
         //-------------------------------------字典服务-------------------------------------------------------
+        .route("/dict/type/all", get(sys_dict_type_resource::all))
         .route("/dict/type", get(sys_dict_type_resource::page))
         .route("/dict/type/save", post(sys_dict_type_resource::save))
         .route("/dict/type/:id", get(sys_dict_type_resource::get_by_id))

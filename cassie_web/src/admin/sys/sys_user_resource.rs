@@ -1,3 +1,4 @@
+use crate::REQUEST_CONTEXT;
 use crate::{
     dto::sys_user_dto::SysUserDTO, entity::PageData, request::SysUserQuery,
     service::crud_service::CrudService, CONTEXT,
@@ -49,6 +50,18 @@ pub async fn list(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
  */
 pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let vo = CONTEXT.sys_user_service.get(id).await;
+    RespVO::from_result(&vo).resp_json()
+}
+
+
+pub async fn info() -> impl IntoResponse {
+    let tls = REQUEST_CONTEXT.clone();
+        let uid = if let Some(a) = tls.get() {
+            a.uid
+        } else {
+            0
+        };
+    let vo = CONTEXT.sys_user_service.get(uid.to_string()).await;
     RespVO::from_result(&vo).resp_json()
 }
 

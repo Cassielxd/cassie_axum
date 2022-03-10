@@ -21,7 +21,7 @@ pub struct SysDictTypeDTO {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
-    pub values:Option<Vec<SysDictDataDTO>>
+    pub data_list:Option<Vec<SysDictDataDTO>>
 }
 impl_field_name_method!(SysDictTypeDTO {
     id,
@@ -63,7 +63,7 @@ impl From<SysDictType> for SysDictTypeDTO {
             create_date: arg.create_date,
             updater: arg.updater,
             update_date: arg.update_date,
-            values:Option::Some(Vec::<SysDictDataDTO>::new())
+            data_list:Option::Some(Vec::<SysDictDataDTO>::new())
         }
     }
 }

@@ -51,3 +51,10 @@ pub async fn save(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
     let vo = CONTEXT.sys_dict_type_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
+
+
+pub async fn all() -> impl IntoResponse {
+    let vo = CONTEXT
+        .sys_dict_type_service.get_all_list().await;
+    RespVO::from_result(&vo).resp_json()
+}

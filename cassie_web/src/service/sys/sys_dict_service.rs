@@ -7,7 +7,7 @@ use crate::{
 use crate::{CONTEXT, RB};
 
 use super::crud_service::CrudService;
-
+use cassie_common::error::Result;
 /**
 *struct:SysDictTypeService
 *desc:定义type处理逻辑
@@ -17,7 +17,7 @@ use super::crud_service::CrudService;
 pub struct SysDictTypeService {}
 
 impl SysDictTypeService {
-    pub async fn get_all_list(&self) {
+    pub async fn get_all_list(&self) -> Result<Vec<SysDictTypeDTO>> {
         let q = SysDictQuery {
             id: None,
             dict_type_id: None,
@@ -26,20 +26,19 @@ impl SysDictTypeService {
             page_no: None,
             page_size: None,
         };
-        let dict = self.list(&q).await;
-        let dict_value = CONTEXT.sys_dict_value_service.list(&q).await;
-        if let Ok(mut dlist) = dict {
-            for mut d in dlist {
-                if let Ok(ref dva) = dict_value {
-                    for dv in dva {
-                        if d.id == dv.dict_type_id {
-                            //添加到
-                          
-                        }
-                    }
+        let mut dict = self.list(&q).await?;
+        let dict_value = CONTEXT.sys_dict_value_service.list(&q).await?;
+        for mut d in &mut dict {
+            let mut data = vec![];
+            for dv in &dict_value {
+                if d.id == dv.dict_type_id {
+                    //添加到
+                    data.push(dv.clone());
                 }
             }
+            d.data_list = Option::Some(data);
         }
+        Ok(dict)
     }
 }
 
