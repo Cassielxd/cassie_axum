@@ -58,6 +58,10 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let dto = CONTEXT.sys_menu_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT.sys_menu_service.del(&id).await;
+    RespVO::from(&"删除成功".to_string()).resp_json()
+}
 
 /**
  *method:save
@@ -69,3 +73,5 @@ pub async fn save(Json(arg): Json<SysMenuDTO>) -> impl IntoResponse {
     CONTEXT.sys_menu_service.save_or_update(arg).await;
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
+
+

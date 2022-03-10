@@ -14,7 +14,6 @@ use cassie_web::{
     CASSIE_CONFIG,
 };
 use log::info;
-use reqwest::Method;
 use tower_http::cors::{Any, CorsLayer};
 
 pub async fn index() -> impl IntoResponse {

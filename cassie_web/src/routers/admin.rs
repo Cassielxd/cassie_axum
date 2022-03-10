@@ -15,11 +15,18 @@ pub fn routers() -> Router {
         .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
         .route("/login", post(sys_auth_resource::login))
         //-------------------------------------菜单服务-------------------------------------------------------
-        .route("/menu", get(sys_menu_resource::page))
         .route("/menu/list", get(sys_menu_resource::list))
         .route("/menu/nav", get(sys_menu_resource::nav))
-        .route("/menu/:id", get(sys_menu_resource::get_by_id))
-        .route("/menu/save", post(sys_menu_resource::save))
+        .route(
+            "/menu/:id",
+            get(sys_menu_resource::get_by_id).delete(sys_menu_resource::delete),
+        )
+        .route(
+            "/menu",
+            get(sys_menu_resource::page)
+                .post(sys_menu_resource::save)
+                .put(sys_menu_resource::save),
+        )
         //-------------------------------------用户服务-------------------------------------------------------
         .route("/user", get(sys_user_resource::page))
         .route("/user/info", get(sys_user_resource::info))
