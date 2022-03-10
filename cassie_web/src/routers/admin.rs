@@ -34,8 +34,7 @@ pub fn routers() -> Router {
         .route("/user/save", post(sys_user_resource::save))
         .route("/user/:id", get(sys_user_resource::get_user_by_id))
         //-------------------------------------角色服务-------------------------------------------------------
-        .route("/role", get(sys_role_resource::page))
-        .route("/role/save", post(sys_role_resource::save))
+        .route("/role", get(sys_role_resource::page).post(sys_role_resource::save).put(sys_role_resource::save))
         .route("/role/:id", get(sys_role_resource::get_by_id))
         .route("/role/casbin_test", get(sys_role_resource::casbin_test))
         //-------------------------------------参数服务-------------------------------------------------------

@@ -51,8 +51,7 @@ impl SysRoleService {
         }
     }
     pub async fn save_role(&self, sys_role: SysRoleDTO) {
-        let dept_id_list = sys_role.dept_id_list.clone();
-        let menu_id_list = sys_role.menu_id_list.clone();
+        let menu_id_list = sys_role.menuid_list.clone();
         let mut entity: SysRole = sys_role.into();
         //保存或更新角色
         let id = if let Some(id) = entity.id {
@@ -65,10 +64,6 @@ impl SysRoleService {
         //保存角色菜单关系
         self.sys_role_menu_service
             .save_or_update(id, menu_id_list.clone())
-            .await;
-        //保存角色数据权限关系
-        self.sys_role_data_scope_service
-            .save_or_update(id, dept_id_list)
             .await;
     }
 }

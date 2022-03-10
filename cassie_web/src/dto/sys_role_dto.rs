@@ -17,8 +17,7 @@ pub struct SysRoleDTO {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
-    pub menu_id_list: Option<Vec<i64>>,
-    pub dept_id_list: Option<Vec<i64>>,
+    pub menuid_list: Option<Vec<i64>>,
 }
 impl_field_name_method!(SysRoleDTO {
     id,
@@ -30,8 +29,7 @@ impl_field_name_method!(SysRoleDTO {
     create_date,
     updater,
     update_date,
-    menu_id_list,
-    dept_id_list
+    menuid_list
 });
 
 impl Into<SysRole> for SysRoleDTO {
@@ -62,8 +60,7 @@ impl From<SysRole> for SysRoleDTO {
             create_date: arg.create_date,
             updater: arg.updater,
             update_date: arg.update_date,
-            menu_id_list: None,
-            dept_id_list: None,
+            menuid_list: None
         }
     }
 }

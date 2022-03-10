@@ -29,8 +29,14 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let vo = CONTEXT.sys_role_service.get(id).await;
-    RespVO::from_result(&vo).resp_json()
+    let mut vo = CONTEXT.sys_role_service.get(id).await.unwrap();
+    let menu_list = CONTEXT
+        .sys_role_service
+        .sys_role_menu_service
+        .get_menu_id_list(vo.id.clone().unwrap())
+        .await;
+    vo.menuid_list = Option::from(menu_list);
+    RespVO::from(&vo).resp_json()
 }
 
 /**
