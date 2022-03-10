@@ -39,10 +39,17 @@ pub fn routers() -> Router {
         .route("/role/:id", get(sys_role_resource::get_by_id))
         .route("/role/casbin_test", get(sys_role_resource::casbin_test))
         //-------------------------------------参数服务-------------------------------------------------------
-        .route("/params", get(sys_params_resource::page))
+        .route(
+            "/params",
+            get(sys_params_resource::page)
+                .post(sys_params_resource::save)
+                .put(sys_params_resource::edit),
+        )
         .route("/params/list", get(sys_params_resource::list))
-        .route("/params/save", post(sys_params_resource::save))
-        .route("/params/:id", get(sys_params_resource::get_by_id))
+        .route(
+            "/params/:id",
+            get(sys_params_resource::get_by_id).delete(sys_params_resource::delete),
+        )
         //-------------------------------------字典服务-------------------------------------------------------
         .route("/dict/type/all", get(sys_dict_type_resource::all))
         .route(

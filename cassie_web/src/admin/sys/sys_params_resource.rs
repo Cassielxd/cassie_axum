@@ -32,8 +32,20 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from_result(&dto).resp_json()
 }
 
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT.sys_params_service.del(&id).await;
+    RespVO::from(&"删除成功".to_string()).resp_json()
+}
+
 pub async fn save(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
     let mut entity = arg.into();
     let vo = CONTEXT.sys_params_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
+}
+
+pub async fn edit(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
+    let id = arg.id.clone();
+    let mut entity = arg.into();
+    CONTEXT.sys_params_service.update_by_id(id.unwrap().to_string(),&mut entity).await;
+    RespVO::from(&"更新成功".to_string()).resp_json()
 }
