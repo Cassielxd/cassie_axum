@@ -12,10 +12,10 @@ pub async fn user_menu_List(language: &str, user_id: &str, t: &str) -> Option<Ve
     todo!()
 }
 #[py_sql(RB,"select t1.*
-            from sys_menu t1 where t1.del_flag = 0
+            from sys_menu t1 where t1.del_flag = 0 
         if t !='':
            and t1.menu_type = #{t}
-       order by t1.sort asc
+          order by t1.sort asc
         ")]
 pub async fn menu_List(language: &str,t: &str) -> Option<Vec<SysMenu>> {
     todo!()

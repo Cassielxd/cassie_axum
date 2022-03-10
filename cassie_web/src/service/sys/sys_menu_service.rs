@@ -32,7 +32,7 @@ impl SysMenuService {
 
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
     
-        let result = menu_List("zh-CN", "0").await.unwrap();
+        let result = menu_List("zh-CN", "").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
 
