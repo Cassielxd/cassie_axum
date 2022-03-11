@@ -61,8 +61,9 @@ pub async fn info() -> impl IntoResponse {
         } else {
             0
         };
-    let vo = CONTEXT.sys_user_service.get(uid.to_string()).await;
-    RespVO::from_result(&vo).resp_json()
+    let mut vo = CONTEXT.sys_user_service.get(uid.to_string()).await.unwrap();
+    vo.password = None;
+    RespVO::from(&vo).resp_json()
 }
 
 /**
@@ -76,7 +77,13 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
     if let Err(e) = user.validate() {
         return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
+
     CONTEXT.sys_user_service.save_info(user).await;
 
     return RespVO::from(&"保存成功".to_string()).resp_json();
+}
+
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT.sys_user_service.delete_user(id).await;
+    RespVO::from(&"删除成功".to_string()).resp_json()
 }

@@ -15,6 +15,7 @@ pub struct SysUserDTO {
     pub email: Option<String>,
     #[validate(required)]
     pub mobile: Option<String>,
+    #[validate(required)]
     pub role_id: Option<i64>,
     pub dept_id: Option<i32>,
     pub super_admin: Option<i32>,

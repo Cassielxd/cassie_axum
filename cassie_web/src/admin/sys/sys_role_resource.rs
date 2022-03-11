@@ -28,6 +28,18 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
         .await;
     RespVO::from_result(&vo).resp_json()
 }
+
+pub async fn list(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
+    let arg = arg.unwrap();
+    let vo = CONTEXT
+        .sys_role_service
+        .list(
+            &arg
+        )
+        .await;
+    RespVO::from_result(&vo).resp_json()
+}
+
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let mut vo = CONTEXT.sys_role_service.get(id).await.unwrap();
     let menu_list = CONTEXT

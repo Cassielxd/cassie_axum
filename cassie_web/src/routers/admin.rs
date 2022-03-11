@@ -28,11 +28,16 @@ pub fn routers() -> Router {
                 .put(sys_menu_resource::save),
         )
         //-------------------------------------用户服务-------------------------------------------------------
-        .route("/user", get(sys_user_resource::page))
+        .route(
+            "/user",
+            get(sys_user_resource::page).post(sys_user_resource::save),
+        )
         .route("/user/info", get(sys_user_resource::info))
         .route("/user/list", get(sys_user_resource::list))
-        .route("/user/save", post(sys_user_resource::save))
-        .route("/user/:id", get(sys_user_resource::get_user_by_id))
+        .route(
+            "/user/:id",
+            get(sys_user_resource::get_user_by_id).delete(sys_user_resource::delete),
+        )
         //-------------------------------------角色服务-------------------------------------------------------
         .route(
             "/role",
@@ -42,10 +47,9 @@ pub fn routers() -> Router {
         )
         .route(
             "/role/:id",
-            get(sys_role_resource::get_by_id)
-            .delete(sys_role_resource::delete),
+            get(sys_role_resource::get_by_id).delete(sys_role_resource::delete),
         )
-        .route("/role/casbin_test", get(sys_role_resource::casbin_test))
+        .route("/role/list", get(sys_role_resource::list))
         //-------------------------------------参数服务-------------------------------------------------------
         .route(
             "/params",
@@ -56,8 +60,7 @@ pub fn routers() -> Router {
         .route("/params/list", get(sys_params_resource::list))
         .route(
             "/params/:id",
-            get(sys_params_resource::get_by_id)
-            .delete(sys_params_resource::delete),
+            get(sys_params_resource::get_by_id).delete(sys_params_resource::delete),
         )
         //-------------------------------------字典服务-------------------------------------------------------
         .route("/dict/type/all", get(sys_dict_type_resource::all))
@@ -69,8 +72,7 @@ pub fn routers() -> Router {
         )
         .route(
             "/dict/type/:id",
-            get(sys_dict_type_resource::get_by_id)
-            .delete(sys_dict_type_resource::delete),
+            get(sys_dict_type_resource::get_by_id).delete(sys_dict_type_resource::delete),
         )
         .route(
             "/dict/value",
@@ -80,8 +82,7 @@ pub fn routers() -> Router {
         )
         .route(
             "/dict/value/:id",
-            get(sys_dict_value_resource::get_by_id)
-            .delete(sys_dict_value_resource::delete),
+            get(sys_dict_value_resource::get_by_id).delete(sys_dict_value_resource::delete),
         )
         //-------------------------------------动态表单服务-------------------------------------------------------
         .route("/asi/group", get(asi_group_controller::page))
