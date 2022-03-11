@@ -1,6 +1,6 @@
 use crate::entity::pagedata::PageData;
 use crate::entity::sys_entitys::CommonField;
-use crate::{CONTEXT, REQUEST_CONTEXT, RB};
+use crate::{CONTEXT, RB, REQUEST_CONTEXT};
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use rbatis::crud::{CRUDTable, Skip, CRUD};
@@ -42,9 +42,7 @@ where
         let page_request =
             PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
         //执行分页查询
-        let data_page: Page<Entity> = RB
-            .fetch_page_by_wrapper(wrapper, &page_request)
-            .await?;
+        let data_page: Page<Entity> = RB.fetch_page_by_wrapper(wrapper, &page_request).await?;
         //将Entity实体转换成 Vo对象返回
         let mut vos = vec![];
         for x in data_page.records {
@@ -88,20 +86,19 @@ where
      */
     async fn update_by_id(&self, id: String, mut data: &Entity) {
         let wrapper = RB.new_wrapper().eq("id", id);
-        RB
-            .update_by_wrapper(
-                &mut data,
-                wrapper,
-                &[Skip::Column("id"), Skip::Column("create_date")],
-            )
-            .await;
+        RB.update_by_wrapper(
+            &mut data,
+            wrapper,
+            &[Skip::Column("id"), Skip::Column("create_date")],
+        )
+        .await;
     }
     /**
      * 保存实体
      */
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
-        
+
         let tls = REQUEST_CONTEXT.clone();
         let creator = if let Some(a) = tls.get() { a.uid } else { 0 };
         /*设置公共字段*/
@@ -134,16 +131,12 @@ where
      * 根据字段实体
      */
     async fn del_by_column(&self, column: &str, column_value: &str) {
-        RB
-            .remove_by_column::<Entity, _>(column, column_value)
-            .await;
+        RB.remove_by_column::<Entity, _>(column, column_value).await;
     }
     /**
      * 批量删除实体 逻辑删除
      */
     async fn del_batch(&self, ids: &Vec<u64>) {
-        RB
-            .remove_batch_by_column::<Entity, _>("id", ids)
-            .await;
+        RB.remove_batch_by_column::<Entity, _>("id", ids).await;
     }
 }

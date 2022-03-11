@@ -31,8 +31,7 @@ impl SysMenuService {
     }
 
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-    
-        let result = menu_List("zh-CN", "").await.unwrap();
+        let result = menu_List("").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
 
@@ -44,32 +43,30 @@ impl SysMenuService {
             (0, 0)
         };
         let result = if super_admin > 0 {
-            menu_List("zh-CN", "0").await.unwrap()
+            menu_List("0").await.unwrap()
         } else {
-            user_menu_List("zh-CN", uid.to_string().as_str(), "0")
-                .await
-                .unwrap()
+            user_menu_List(uid.to_string().as_str(), "0").await.unwrap()
         };
         Ok(self.build(result.unwrap()))
     }
 
-    fn build(&self,menus:Vec<SysMenu>)->Vec<SysMenuDTO>{
+    fn build(&self, menus: Vec<SysMenu>) -> Vec<SysMenuDTO> {
         let mut result = HashMap::with_capacity(menus.capacity());
         let mut data = vec![];
         for x in menus {
             result.insert(x.id.clone().unwrap_or_default(), x);
         }
         for (k, v) in &result {
-            if v.pid.unwrap()==0 {
+            if v.pid.unwrap() == 0 {
                 let mut top = SysMenuDTO::from(v.clone());
-                self.loop_find_childs(&mut top,&result);
+                self.loop_find_childs(&mut top, &result);
                 data.push(top);
             }
         }
         data
     }
-    
-    fn loop_find_childs(&self,arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>){
+
+    fn loop_find_childs(&self, arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>) {
         let mut childs = vec![];
         for (key, x) in all {
             if x.pid.is_some() && x.pid.eq(&arg.id) {
@@ -105,4 +102,3 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
         data.create_date = common.create_date;
     }
 }
-

@@ -37,8 +37,10 @@ impl SysRoleService {
             role_id: None,
             user_id: Some(uid_id),
             menu_id: None,
-            page_no: None,
-            page_size: None,
+            page: None,
+            limit: None,
+            order: None,
+            order_field: None,
         };
         let user_role = self.sys_role_user_service.list(&params).await;
         if let Ok(list) = user_role {

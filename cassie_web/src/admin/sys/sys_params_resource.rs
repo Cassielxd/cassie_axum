@@ -13,8 +13,8 @@ pub async fn page(arg: Option<Query<SysParamsQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.0.page_no.clone(),
-                page_size: arg.0.page_size.clone(),
+                page_no: arg.page.clone(),
+                page_size: arg.limit.clone(),
             },
         )
         .await;

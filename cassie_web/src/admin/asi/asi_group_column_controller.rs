@@ -10,8 +10,8 @@ pub async fn page(arg:  Option<Query<AsiQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.page_no.clone(),
-                page_size: arg.page_size.clone(),
+                page_no: arg.page.clone(),
+                page_size: arg.limit.clone(),
             },
         )
         .await;

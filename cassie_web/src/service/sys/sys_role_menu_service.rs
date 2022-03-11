@@ -46,9 +46,11 @@ impl SysRoleMenuService {
         let query = SysMenuQuery {
             ids: None,
             pids: menu_id_list.clone(),
-            page_no: None,
-            page_size: None,
             pid: None,
+            page: None,
+            limit: None,
+            order: None,
+            order_field: None,
         };
         let tls = REQUEST_CONTEXT.clone();
         let (creator, agency_code) = if let Some(a) = tls.get() {

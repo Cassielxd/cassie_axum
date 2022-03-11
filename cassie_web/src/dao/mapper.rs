@@ -8,7 +8,7 @@ use crate::RB;
            and t3.menu_type = #{t}
        order by t3.sort asc
         ")]
-pub async fn user_menu_List(language: &str, user_id: &str, t: &str) -> Option<Vec<SysMenu>> {
+pub async fn user_menu_List(user_id: &str, t: &str) -> Option<Vec<SysMenu>> {
     todo!()
 }
 #[py_sql(RB,"select t1.*
@@ -17,7 +17,7 @@ pub async fn user_menu_List(language: &str, user_id: &str, t: &str) -> Option<Ve
            and t1.menu_type = #{t}
           order by t1.sort asc
         ")]
-pub async fn menu_List(language: &str,t: &str) -> Option<Vec<SysMenu>> {
+pub async fn menu_List(t: &str) -> Option<Vec<SysMenu>> {
     todo!()
 }
 

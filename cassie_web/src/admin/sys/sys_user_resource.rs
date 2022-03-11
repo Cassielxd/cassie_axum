@@ -23,8 +23,8 @@ pub async fn page(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.page_no.clone(),
-                page_size: arg.page_size.clone(),
+                page_no: arg.page.clone(),
+                page_size: arg.limit.clone(),
             },
         )
         .await;
@@ -53,14 +53,9 @@ pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 
-
 pub async fn info() -> impl IntoResponse {
     let tls = REQUEST_CONTEXT.clone();
-        let uid = if let Some(a) = tls.get() {
-            a.uid
-        } else {
-            0
-        };
+    let uid = if let Some(a) = tls.get() { a.uid } else { 0 };
     let mut vo = CONTEXT.sys_user_service.get(uid.to_string()).await.unwrap();
     vo.password = None;
     RespVO::from(&vo).resp_json()

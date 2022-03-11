@@ -23,8 +23,10 @@ impl SysDictTypeService {
             dict_type_id: None,
             dict_type: None,
             dict_name: None,
-            page_no: None,
-            page_size: None,
+            page: None,
+            limit: None,
+            order: None,
+            order_field: None,
         };
         let mut dict = self.list(&q).await?;
         let dict_value = CONTEXT.sys_dict_value_service.list(&q).await?;

@@ -10,9 +10,11 @@ use serde::{Deserialize, Serialize};
 pub struct SysUserQuery {
     pub id: Option<i64>,
     pub username: Option<String>,
-    pub real_name: Option<String>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub gender: Option<String>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
 /**
 *struct:struct
@@ -26,8 +28,10 @@ pub struct SysDictQuery {
     pub dict_type_id: Option<i64>,
     pub dict_type: Option<String>,
     pub dict_name: Option<String>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
 /**
 *struct:SysParamsQuery
@@ -40,8 +44,10 @@ pub struct SysParamsQuery {
     pub id: Option<i64>,
     pub param_code: Option<String>,
     pub param_type: Option<u32>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
 /**
 *struct:SysRoleQuery
@@ -57,8 +63,10 @@ pub struct SysRoleQuery {
     pub role_id: Option<i64>,
     pub user_id: Option<i64>,
     pub menu_id: Option<i64>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
 /**
 *struct:SysMenuQuery
@@ -71,14 +79,18 @@ pub struct SysMenuQuery {
     pub ids: Option<Vec<i64>>,
     pub pids: Option<Vec<i64>>,
     pub pid: Option<i64>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AsiQuery {
     pub column_code: Option<String>,
     pub group_code: Option<String>,
-    pub page_no: Option<u64>,
-    pub page_size: Option<u64>,
+    pub page: Option<u64>,
+    pub limit: Option<u64>,
+    pub order: Option<String>,
+    pub order_field: Option<String>,
 }
