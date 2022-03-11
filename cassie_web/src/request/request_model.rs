@@ -69,6 +69,7 @@ pub struct SysRoleQuery {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SysMenuQuery {
     pub ids: Option<Vec<i64>>,
+    pub pids: Option<Vec<i64>>,
     pub pid: Option<i64>,
     pub page_no: Option<u64>,
     pub page_size: Option<u64>,

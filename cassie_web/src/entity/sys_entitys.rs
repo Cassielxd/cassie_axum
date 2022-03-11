@@ -270,7 +270,8 @@ pub struct SysMenu {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
-    pub method:Option<String>
+    pub method:Option<String>,
+    pub path: Option<String>,
 }
 impl_field_name_method!(SysMenu {
     id,

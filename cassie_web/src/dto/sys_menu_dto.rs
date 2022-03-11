@@ -19,6 +19,7 @@ pub struct SysMenuDTO {
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
     pub method:Option<String>,
+    pub path: Option<String>,
     pub children:Option<Vec<SysMenuDTO>>
 }
 impl_field_name_method!(SysMenuDTO {
@@ -52,6 +53,7 @@ impl Into<SysMenu> for SysMenuDTO {
             updater: self.updater,
             update_date: self.update_date,
             method:self.method,
+            path:self.path,
         }
     }
 }
@@ -73,6 +75,7 @@ impl From<SysMenu> for SysMenuDTO {
             updater: arg.updater,
             update_date: arg.update_date,
             method:arg.method,
+            path:arg.path,
             children: Some(Vec::<SysMenuDTO>::new()),
         }
     }

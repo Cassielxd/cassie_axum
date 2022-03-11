@@ -47,6 +47,7 @@ async fn main() {
         CASSIE_CONFIG.server.host.replace("0.0.0.0", "127.0.0.1"),
         CASSIE_CONFIG.server.port
     );
+    
     //nacos 服务注册
     register_service().await;
     let server = format!(

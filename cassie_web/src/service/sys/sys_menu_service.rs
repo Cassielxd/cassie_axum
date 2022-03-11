@@ -94,6 +94,9 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
         if let Some(id_list) = &arg.ids {
             wrapper = wrapper.r#in(SysMenu::id(), id_list);
         }
+        if let Some(id_list) = &arg.pids {
+            wrapper = wrapper.r#in(SysMenu::pid(), id_list);
+        }
         wrapper
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysMenu) {

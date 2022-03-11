@@ -172,20 +172,31 @@ impl CICICasinService {
 
     pub async fn remove_policy(&self,pt: &str, rule: Vec<String>) -> Result<bool> {
         let rule = normalize_casbin_rule(rule, 0);
-        self
-            .rbatis
-            .remove_by_wrapper::<CasbinRule>(
-                self
+       let mut wa = self
                     .rbatis
                     .new_wrapper()
-                    .eq(CasbinRule::ptype(), pt)
-                    .eq(CasbinRule::v0(), &rule[0].clone())
-                    .eq(CasbinRule::v1(), &rule[1].clone())
-                    .eq(CasbinRule::v2(), &rule[2].clone())
-                    .eq(CasbinRule::v3(), &rule[3].clone())
-                    .eq(CasbinRule::v4(), &rule[4].clone())
-                    .eq(CasbinRule::v5(), &rule[5].clone()),
-            )
+                    .eq(CasbinRule::ptype(), pt);
+                    if !rule[0].is_empty(){
+                        wa = wa.eq(CasbinRule::v0(), &rule[0].clone());
+                    }
+                    if !rule[1].is_empty(){
+                        wa = wa.eq(CasbinRule::v1(), &rule[1].clone());
+                    }
+                    if !rule[2].is_empty(){
+                        wa = wa.eq(CasbinRule::v2(), &rule[2].clone());
+                    }
+                    if !rule[3].is_empty(){
+                        wa = wa.eq(CasbinRule::v3(), &rule[3].clone());
+                    }
+                    if !rule[4].is_empty(){
+                        wa = wa.eq(CasbinRule::v4(), &rule[4].clone());
+                    }
+                    if !rule[5].is_empty(){
+                        wa = wa.eq(CasbinRule::v5(), &rule[5].clone());
+                    }
+        self
+            .rbatis
+            .remove_by_wrapper::<CasbinRule>(wa)
             .await;
         Ok(true)
     }

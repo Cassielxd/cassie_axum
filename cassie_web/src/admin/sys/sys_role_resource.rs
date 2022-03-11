@@ -39,6 +39,14 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     RespVO::from(&vo).resp_json()
 }
 
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT
+        .sys_role_service
+        .delete_by_role_id(id)
+        .await;
+    RespVO::from(&"删除成功".to_string()).resp_json()
+}
+
 /**
  *method:/role/save
  *desc:角色保存

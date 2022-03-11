@@ -50,6 +50,10 @@ impl SysRoleService {
             Ok(Vec::<i64>::new())
         }
     }
+    pub async fn delete_by_role_id(&self, id: String) {
+        self.del(&id).await;
+        self.sys_role_menu_service.delete_by_role_id(id.parse::<i64>().unwrap()).await;
+    }
     pub async fn save_role(&self, sys_role: SysRoleDTO) {
         let menu_id_list = sys_role.menuid_list.clone();
         let mut entity: SysRole = sys_role.into();

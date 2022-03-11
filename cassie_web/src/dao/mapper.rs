@@ -21,3 +21,19 @@ pub async fn menu_List(language: &str,t: &str) -> Option<Vec<SysMenu>> {
     todo!()
 }
 
+#[py_sql(RB,"select id,pid,url,name,menu_type,icon,permissions,sort,del_flag,creator,create_date,updater,update_date,method,path from sys_menu 
+ where pid in ( 
+
+    trim ',': for index,item in ids:
+       #{item},
+
+  ) or id in (
+
+    trim ',': for index,item in ids:
+        #{item},
+ )
+ ")]
+pub async fn get_menu_List_by_ids(ids:&Vec<i64>) -> Option<Vec<SysMenu>> {
+    todo!()
+}
+

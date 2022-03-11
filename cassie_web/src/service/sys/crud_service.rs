@@ -122,7 +122,7 @@ where
      * 批量保存实体
      */
     async fn save_batch(&self, mut list: &Vec<Entity>) {
-        RB.save_batch(&mut list, &[]).await;
+        RB.save_batch(&mut list, &[Skip::Column("id")]).await;
     }
     /**
      * 删除实体 逻辑删除
