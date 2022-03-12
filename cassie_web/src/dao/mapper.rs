@@ -1,3 +1,5 @@
+use rbatis::rbatis::Rbatis;
+
 use crate::entity::sys_entitys::SysMenu;
 use crate::RB;
 #[py_sql(RB,"select t3.* from sys_role_user t1
@@ -36,4 +38,5 @@ pub async fn menu_List(t: &str) -> Option<Vec<SysMenu>> {
 pub async fn get_menu_List_by_ids(ids:&Vec<i64>) -> Option<Vec<SysMenu>> {
     todo!()
 }
-
+#[py_sql(RB,"./sql_mapper.html")]
+pub async fn py_select_rb(t: &str) -> Option<SysMenu> {}
