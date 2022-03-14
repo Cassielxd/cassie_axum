@@ -7,7 +7,7 @@ author = "String<348040933@qq.com>"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.4.4"
+axum ={version="0.4.8",features = ["multipart"] } 
 tokio = { version = "1", features = ["full", "fs", "io-util", "sync"] }
 tower-http = { version = "0.2.0", features = ["cors"] }
 #serde and json

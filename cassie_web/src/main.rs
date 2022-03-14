@@ -4,7 +4,7 @@ use axum::{
     extract::extractor_middleware,
     response::{Html, IntoResponse},
     routing::get,
-    Router,
+    Router, Server,
 };
 use cassie_web::dao::mapper::get_menu_List_by_ids;
 use cassie_web::{
@@ -71,7 +71,7 @@ async fn main() {
         .nest("/api", api::routers())
         .layer(cors);
 
-    axum::Server::bind(&server.parse().unwrap())
+    Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
