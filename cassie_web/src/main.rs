@@ -1,4 +1,4 @@
-use std::{time::Duration};
+use std::time::Duration;
 
 use axum::{
     extract::extractor_middleware,
@@ -6,8 +6,10 @@ use axum::{
     routing::get,
     Router,
 };
+use cassie_web::dao::mapper::get_menu_List_by_ids;
 use cassie_web::{
     config::log::init_log,
+    dao::mapper,
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
@@ -47,7 +49,6 @@ async fn main() {
         CASSIE_CONFIG.server.host.replace("0.0.0.0", "127.0.0.1"),
         CASSIE_CONFIG.server.port
     );
-    
     //nacos 服务注册
     register_service().await;
     let server = format!(
