@@ -6,7 +6,7 @@ use crate::admin::{
     },
 };
 use axum::{
-    routing::{get, post},
+    routing::{delete, get, post, put},
     Router,
 };
 pub fn routers() -> Router {
@@ -84,19 +84,30 @@ pub fn routers() -> Router {
             "/dict/value/:id",
             get(sys_dict_value_resource::get_by_id).delete(sys_dict_value_resource::delete),
         )
-        //-------------------------------------动态表单服务-------------------------------------------------------
-        .route("/asi/group", get(asi_group_controller::page))
-        .route("/asi/group/:id", get(asi_group_controller::get_by_id))
-        .route("/asi/group/save", post(asi_group_controller::save))
+        //-------------------------------------动态表单分组服务-------------------------------------------------------
+        .route(
+            "/asi/group",
+            get(asi_group_controller::page)
+                .post(asi_group_controller::save)
+                .put(asi_group_controller::edit),
+        )
+        .route(
+            "/asi/group/:id",
+            get(asi_group_controller::get_by_id).delete(asi_group_controller::delete),
+        )
+        //-------------------------------------动态表单column服务-------------------------------------------------------
         .route("/asi/column", get(asi_group_column_controller::page))
         .route(
-            "/asi/column/:id",
-            get(asi_group_column_controller::get_by_id),
+            "/asi/column/list",
+            get(asi_group_column_controller::list)
+                .post(asi_group_column_controller::save)
+                .put(asi_group_column_controller::save),
         )
         .route(
-            "/asi/column/save/:group_id",
-            post(asi_group_column_controller::save),
+            "/asi/column/list/:group_code/:column_id",
+            get(asi_group_column_controller::get_by_id),
         )
+        //-------------------------------------动态表单value服务-------------------------------------------------------
         .route("/asi/values", get(asi_group_values_controller::page))
         .route(
             "/asi/values/:id",

@@ -73,15 +73,6 @@ where
         Ok(vos)
     }
     /**
-     * 根据id查询条件查询单个值
-     */
-    async fn get(&self, id: String) -> Result<Dto> {
-        let wrapper = RB.new_wrapper().eq("id", id);
-        let detail: Entity = RB.fetch_by_wrapper(wrapper).await?;
-        let vo = Dto::from(detail);
-        return Ok(vo);
-    }
-    /**
      * 根据id更新实体
      */
     async fn update_by_id(&self, id: String, mut data: &Entity) {
@@ -92,6 +83,15 @@ where
             &[Skip::Column("id"), Skip::Column("create_date")],
         )
         .await;
+    }
+    /**
+     * 根据id查询条件查询单个值
+     */
+    async fn get(&self, id: String) -> Result<Dto> {
+        let wrapper = RB.new_wrapper().eq("id", id);
+        let detail: Entity = RB.fetch_by_wrapper(wrapper).await?;
+        let vo = Dto::from(detail);
+        return Ok(vo);
     }
     /**
      * 保存实体
