@@ -11,25 +11,14 @@ use crate::{
     service::crud_service::CrudService, CONTEXT,
 };
 
-pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let arg = arg.unwrap();
-    let vo = CONTEXT
-        .asi_service
-        .asi_column
-        .page(
-            &arg,
-            PageData {
-                page_no: arg.page.clone(),
-                page_size: arg.limit.clone(),
-            },
-        )
-        .await;
+pub async fn list(
+    Path(group_code): Path<String>,
+    arg: Option<Query<AsiQuery>>,
+) -> impl IntoResponse {
+    let mut arg = arg.unwrap();
+    arg.0.group_code=Option::Some(group_code);
+    let vo = CONTEXT.asi_service.asi_column.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
-}
-
-pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let dto = CONTEXT.asi_service.asi_column.get(id).await;
-    RespVO::from_result(&dto).resp_json()
 }
 
 pub async fn save(
@@ -42,6 +31,6 @@ pub async fn save(
             return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
         }
     }
-    CONTEXT.asi_service.save_values(group_code,arg).await;
-    RespVO::from_result(&Ok("保存成功".to_string())).resp_json()
+    let res = CONTEXT.asi_service.save_values(group_code, arg).await;
+    RespVO::from_result(&res).resp_json()
 }

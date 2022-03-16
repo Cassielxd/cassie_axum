@@ -106,10 +106,6 @@ pub fn routers() -> Router {
         //-------------------------------------动态表单value服务-------------------------------------------------------
         .route(
             "/asi/values/:group_code",
-            get(asi_group_values_controller::page).post(asi_group_values_controller::save),
-        )
-        .route(
-            "/asi/values/:id",
-            get(asi_group_values_controller::get_by_id),
+            get(asi_group_values_controller::list).post(asi_group_values_controller::save),
         )
 }
