@@ -8,16 +8,16 @@
         <if test="t != ''">
             and t3.menu_type = #{t}
         </if>
-        order by t3.sort asc
+        ${' '}  order by t3.sort asc
     </select>
 
     <select id="menu_List" >
         select t1.*
-        from sys_menu t1 where t1.del_flag = 0
+        from sys_menu t1 where t1.del_flag = 0  
         <if test="t != ''">
-        and t1.menu_type = #{t}
+           and t1.menu_type = #{t}
         </if>
-        order by t1.sort asc
+        ${' '}  order by t1.sort asc
     </select>
 
     <select id="get_menu_List_by_ids" >

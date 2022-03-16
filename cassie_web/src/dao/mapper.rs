@@ -16,5 +16,5 @@ pub async fn menu_List(t: &str) -> Option<Vec<SysMenu>> {
 //根据id pid查询菜单
 #[html_sql(RB, "cassie_web/mapper/menu_mapper.html")]
 pub async fn get_menu_List_by_ids(ids: &Vec<i64>) -> Option<Vec<SysMenu>> {
-    todo!()
+    todo!() 
 }

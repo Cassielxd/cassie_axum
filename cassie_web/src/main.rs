@@ -6,10 +6,8 @@ use axum::{
     routing::get,
     Router, Server,
 };
-use cassie_web::dao::mapper::get_menu_List_by_ids;
 use cassie_web::{
     config::log::init_log,
-    dao::mapper,
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
@@ -43,7 +41,7 @@ pub async fn index() -> impl IntoResponse {
  */
 #[tokio::main]
 async fn main() {
-    init_log();
+    init_log(); 
     info!(
         " - Local:   http://{}:{}",
         CASSIE_CONFIG.server.host.replace("0.0.0.0", "127.0.0.1"),
