@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use crate::dto::asi_dto::{AsiGroupValuesDTO, AsiGroupColumnDTO};
 use cassie_common::error::Error;
 use cassie_common::error::Result;
-use chrono::format::format;
 
 pub fn validate_values(columns: &Vec<AsiGroupColumnDTO>,values: &Vec<AsiGroupValuesDTO>)->Result<()>{
       let mut v_map = HashMap::<String,AsiGroupValuesDTO>::new();

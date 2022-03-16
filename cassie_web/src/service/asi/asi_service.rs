@@ -2,12 +2,11 @@ use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO, AsiGroupValuesDTO};
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
-use crate::{AsiQuery, CONTEXT, RB, REQUEST_CONTEXT};
+use crate::{AsiQuery, RB, REQUEST_CONTEXT};
 
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 use rbatis::crud::CRUD;
-use rbatis::plugin::snowflake::new_snowflake_id;
 use rbatis::wrapper::Wrapper;
 
 use super::asi_validation::validate_values;
@@ -151,7 +150,6 @@ impl AsiGroupColumnService {
         /*构造信息*/
         for column in columns {
             let mut e: AsiGroupColumn = column.into();
-            e.id = Some(new_snowflake_id());
             e.group_code = group_code.clone();
             e.agency_code = Some(a.agency_code.clone());
             entitys.push(e);

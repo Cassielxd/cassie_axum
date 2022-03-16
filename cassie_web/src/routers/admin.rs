@@ -6,7 +6,7 @@ use crate::admin::{
     },
 };
 use axum::{
-    routing::{delete, get, post, put},
+    routing::{get, post},
     Router,
 };
 pub fn routers() -> Router {

@@ -7,7 +7,7 @@ use cassie_common::{error::Error, RespVO};
 use validator::Validate;
 
 use crate::{
-    dto::asi_dto::AsiGroupValuesDTO, entity::PageData, request::AsiQuery,
+    dto::asi_dto::AsiGroupValuesDTO, request::AsiQuery,
     service::crud_service::CrudService, CONTEXT,
 };
 
