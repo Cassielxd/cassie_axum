@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 11/03/2022 15:23:20
+ Date: 16/03/2022 17:28:51
 */
 
 SET NAMES utf8mb4;
@@ -22,29 +22,29 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group`;
 CREATE TABLE `asi_group`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据ID',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据ID',
   `cate_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类id',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据组名称',
   `info` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据提示',
-  `group_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据字段',
+  `group_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分组code',
+  `parent_group_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '父分组code',
+  `group_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'TABLE/FROM',
   `agency_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `config_name`(`group_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组合数据表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组合数据表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of asi_group
 -- ----------------------------
-INSERT INTO `asi_group` VALUES (326654624834654208, 1, '商品表单', '商品评价使用', 'pro_group', 'superadmin');
-INSERT INTO `asi_group` VALUES (326896622560743424, 2, '订单里使用表单', '订单里使用评价使用', 'order_group', 'superadmin');
-INSERT INTO `asi_group` VALUES (341134937002479616, 1, '测试分组', '用户测试使用', 'product', 'super_admin');
+INSERT INTO `asi_group` VALUES (1, 1, '轮播图', '描述', 'HOME_BANNER', 'HOME', 'table', 'SUPERADMIN');
 
 -- ----------------------------
 -- Table structure for asi_group_column
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group_column`;
 CREATE TABLE `asi_group_column`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据id',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据id',
   `agency_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户code',
   `product_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `group_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分组code',
@@ -57,30 +57,33 @@ CREATE TABLE `asi_group_column`  (
   `display_order` int(11) NULL DEFAULT NULL COMMENT '显示顺序',
   `default_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认value',
   `display_length` int(11) NULL DEFAULT NULL COMMENT '显示长度',
-  `is_display` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '是否显示',
+  `is_display` int(1) NULL DEFAULT NULL COMMENT '是否显示',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列定义' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列定义' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of asi_group_column
 -- ----------------------------
-INSERT INTO `asi_group_column` VALUES (341145117962407936, 'superadmin', 'text', 'product', 'name', '姓名', '1', '李兴栋', 100, 'Y', 1, '', 100, '2');
-INSERT INTO `asi_group_column` VALUES (341145117962407937, 'superadmin', 'text', 'product', 'age', '年龄', '1', '18', 100, 'Y', 1, '', 100, '1');
+INSERT INTO `asi_group_column` VALUES (1, 'superadmin', 'text', 'HOME_BANNER', 'image', '显示图片', 'img', '', 100, 'Y', 1, '', 100, 2);
+INSERT INTO `asi_group_column` VALUES (2, 'superadmin', 'text', 'HOME_BANNER', 'url', '跳转url', 'url', '', 100, 'Y', 1, '', 100, 1);
 
 -- ----------------------------
 -- Table structure for asi_group_values
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group_values`;
 CREATE TABLE `asi_group_values`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据id',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据id',
   `agency_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户code',
   `product_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `group_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分组code',
   `column_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '列code',
   `column_value` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '值',
   `ref_id` bigint(32) NULL DEFAULT NULL COMMENT '业务主键',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列数据' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `group_code`(`group_code`) USING BTREE,
+  INDEX `ref_id`(`ref_id`) USING BTREE,
+  INDEX `group_code_ref_id`(`group_code`, `ref_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列数据' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for casbin_rule
@@ -621,40 +624,6 @@ CREATE TABLE `cici_system_config_tab`  (
   `sort` int(11) NOT NULL DEFAULT 0 COMMENT '排序',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '配置分类表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for mp_account
--- ----------------------------
-DROP TABLE IF EXISTS `mp_account`;
-CREATE TABLE `mp_account`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
-  `app_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppID',
-  `app_secret` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppSecret',
-  `token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'Token',
-  `aes_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'EncodingAESKey',
-  `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
-  `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
-  `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '公众号账号管理' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for mp_menu
--- ----------------------------
-DROP TABLE IF EXISTS `mp_menu`;
-CREATE TABLE `mp_menu`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
-  `menu` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单json数据',
-  `app_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppID',
-  `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
-  `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
-  `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_app_id`(`app_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '公众号自定义菜单' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_dept
