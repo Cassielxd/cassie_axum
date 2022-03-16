@@ -103,15 +103,13 @@ pub fn routers() -> Router {
                 .post(asi_group_column_controller::save)
                 .put(asi_group_column_controller::save),
         )
-        .route(
-            "/asi/column/list/:group_code/:column_id",
-            get(asi_group_column_controller::get_by_id),
-        )
         //-------------------------------------动态表单value服务-------------------------------------------------------
-        .route("/asi/values", get(asi_group_values_controller::page))
+        .route(
+            "/asi/values/:group_code",
+            get(asi_group_values_controller::page).post(asi_group_values_controller::save),
+        )
         .route(
             "/asi/values/:id",
             get(asi_group_values_controller::get_by_id),
         )
-        .route("/asi/values/save", post(asi_group_values_controller::save))
 }
