@@ -52,7 +52,12 @@ impl AsiGroupService {
         entity.agency_code = Some(a.agency_code.clone());
         self.save(&mut entity).await
     }
-
+    /**
+     *method:save_values_for_from
+     *desc:保存列下面对应的值 from
+     *author:String
+     *email:348040933@qq.com
+     */
     pub async fn save_values_for_from(
         &self,
         id: String,
@@ -100,6 +105,13 @@ impl AsiGroupService {
 
         return Ok(true);
     }
+
+    /**
+     *method:save_values_for_table
+     *desc:保存列下面对应的值 table
+     *author:String
+     *email:348040933@qq.com
+     */
     pub async fn save_values_for_table(
         &self,
         id: String,
@@ -220,7 +232,6 @@ impl AsiGroupService {
                 Some(doc) => {
                     let mut d = HashMap::new();
                     //使用已经定义的列进行获取
-
                     for c in &columns {
                         if doc.contains_key(c.column_code.clone().unwrap()) {
                             d.insert(
@@ -350,7 +361,8 @@ impl AsiGroupValuesService {}
 
 fn build_table(group: &AsiGroupDTO) -> String {
     format!(
-        "{}-{}-{}",
+        "{}-{}-{}-{}",
+        group.agency_code.clone().unwrap(),
         group.group_type.clone().unwrap(),
         group.parent_group_code.clone().unwrap(),
         group.group_code.clone().unwrap()
