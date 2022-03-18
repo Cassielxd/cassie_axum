@@ -177,6 +177,14 @@ impl AsiGroupService {
             let mut doc = Document::new();
             doc.insert("_id", Uuid::new().to_string());
             doc.insert("entity_id", id.clone());
+            doc.insert(
+                AsiGroupDTO::agency_code().to_string(),
+                group.agency_code.clone().unwrap(),
+            );
+            doc.insert(
+                AsiGroupDTO::group_code().to_string(),
+                group.group_code.clone().unwrap(),
+            );
             for (key, value) in values {
                 doc.insert(key, value);
             }
@@ -212,6 +220,7 @@ impl AsiGroupService {
                 Some(doc) => {
                     let mut d = HashMap::new();
                     //使用已经定义的列进行获取
+
                     for c in &columns {
                         if doc.contains_key(c.column_code.clone().unwrap()) {
                             d.insert(
@@ -222,6 +231,18 @@ impl AsiGroupService {
                             d.insert(c.column_code.clone().unwrap(), Bson::String("".to_string()));
                         }
                     }
+                    d.insert(
+                        AsiGroupDTO::agency_code().to_string(),
+                        doc.get(AsiGroupDTO::agency_code().to_string())
+                            .unwrap()
+                            .clone(),
+                    );
+                    d.insert(
+                        AsiGroupDTO::group_code().to_string(),
+                        doc.get(AsiGroupDTO::group_code().to_string())
+                            .unwrap()
+                            .clone(),
+                    );
                     r.push(d);
                 }
             }
