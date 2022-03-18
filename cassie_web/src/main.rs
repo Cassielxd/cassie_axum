@@ -11,7 +11,7 @@ use cassie_web::{
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
-    CASSIE_CONFIG, dao::init_mongdb,
+    CASSIE_CONFIG,
 };
 use log::info;
 use tower_http::cors::{Any, CorsLayer};
@@ -41,7 +41,7 @@ pub async fn index() -> impl IntoResponse {
  */
 #[tokio::main]
 async fn main() {
-    init_log(); 
+    init_log();
     info!(
         " - Local:   http://{}:{}",
         CASSIE_CONFIG.server.host.replace("0.0.0.0", "127.0.0.1"),

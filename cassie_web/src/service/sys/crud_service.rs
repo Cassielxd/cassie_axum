@@ -57,6 +57,21 @@ where
             search_count: data_page.search_count,
         })
     }
+    async fn fetch_list_by_column(
+        &self,
+        column: &str,
+        column_values: &Vec<String>,
+    ) -> Result<Vec<Dto>> {
+        //执行查询
+        let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
+        let mut vos = vec![];
+        //将Entity实体转换成 Vo对象 返回
+        for x in list {
+            vos.push(Dto::from(x));
+        }
+        Ok(vos)
+    }
+
     /**
      * 公共列表查询方法
      */
@@ -73,7 +88,6 @@ where
         Ok(vos)
     }
 
-    
     /**
      * 根据id更新实体
      */

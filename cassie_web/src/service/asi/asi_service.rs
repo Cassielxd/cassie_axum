@@ -118,21 +118,17 @@ impl AsiGroupService {
         args: HashMap<String, Vec<HashMap<String, String>>>,
     ) -> Result<bool> {
         for (key, value) in args {
-            let query = AsiQuery {
-                column_code: None,
-                group_code: Option::Some(key.clone()),
-                page: None,
-                limit: None,
-                order: None,
-                order_field: None,
-            };
+            let searchc = vec![key.clone()];
             //获取分组定义信息
-            let group = self.list(&query).await;
+            let group = self.fetch_list_by_column("group_code", &searchc).await;
             match group {
                 Ok(data) => {
                     let g = data.get(0).unwrap();
                     //获取定义列信息
-                    let columns = self.asi_column.list(&query).await;
+                    let columns = self
+                        .asi_column
+                        .fetch_list_by_column("group_code", &searchc)
+                        .await;
                     match columns {
                         Ok(cloums_list) => {
                             ///验证数据定义
@@ -210,15 +206,11 @@ impl AsiGroupService {
         id: &String,
         group: &AsiGroupDTO,
     ) -> Result<Vec<HashMap<String, Bson>>> {
-        let query = AsiQuery {
-            column_code: None,
-            group_code: group.group_code.clone(),
-            page: None,
-            limit: None,
-            order: None,
-            order_field: None,
-        };
-        let columns = self.asi_column.list(&query).await.unwrap();
+        let columns = self
+            .asi_column
+            .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
+            .await
+            .unwrap();
 
         let collection = MDB.collection::<Document>(build_table(group).as_str());
         let filter = doc! { "entity_id": id.clone() };
