@@ -205,20 +205,25 @@ impl AsiGroupService {
         let mut result = collection.find(filter, None).await.unwrap();
         let mut r = Vec::new();
         while let Ok(a) = result.try_next().await {
-            if let Some(doc) = a {
-                let mut d = HashMap::new();
-
-                for c in &columns {
-                    if doc.contains_key(c.column_code.clone().unwrap()) {
-                        d.insert(
-                            c.column_code.clone().unwrap(),
-                            doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
-                        );
-                    }
+            match a {
+                None => {
+                    break;
                 }
-                r.push(d);
-            } else {
-                break;
+                Some(doc) => {
+                    let mut d = HashMap::new();
+                    //使用已经定义的列进行获取
+                    for c in &columns {
+                        if doc.contains_key(c.column_code.clone().unwrap()) {
+                            d.insert(
+                                c.column_code.clone().unwrap(),
+                                doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
+                            );
+                        } else {
+                            d.insert(c.column_code.clone().unwrap(), Bson::String("".to_string()));
+                        }
+                    }
+                    r.push(d);
+                }
             }
         }
         Ok(r)
