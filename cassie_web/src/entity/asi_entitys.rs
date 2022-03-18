@@ -13,6 +13,8 @@ pub struct AsiGroup {
     pub info: Option<String>,
     pub group_code: Option<String>,
     pub agency_code: Option<String>,
+    pub group_type: Option<String>,
+    pub parent_group_code: Option<String>,
 }
 
 impl_field_name_method!(AsiGroup {

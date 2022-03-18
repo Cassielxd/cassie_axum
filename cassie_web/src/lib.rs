@@ -22,6 +22,7 @@ pub mod routers;
 pub mod service;
 pub mod vo;
 pub mod utils;
+use mongodb::Database;
 use rbatis::rbatis::Rbatis;
 use request::*;
 use std::sync::Arc;
@@ -30,6 +31,9 @@ use thread_local::ThreadLocal;
 use crate::{config::config::ApplicationConfig, service::ServiceContext};
 //初始化静态上下文延迟加载
 lazy_static! {
+    
+    pub static ref MDB:Database=async_std::task::block_on(async { crate::dao::init_mongdb().await });
+
     pub static ref RB:Rbatis=async_std::task::block_on(async { crate::dao::init_rbatis().await });
     //环境配置
     pub static ref CASSIE_CONFIG: ApplicationConfig = ApplicationConfig::default();

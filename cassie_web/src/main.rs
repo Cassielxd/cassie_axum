@@ -11,7 +11,7 @@ use cassie_web::{
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
-    CASSIE_CONFIG,
+    CASSIE_CONFIG, dao::init_mongdb,
 };
 use log::info;
 use tower_http::cors::{Any, CorsLayer};

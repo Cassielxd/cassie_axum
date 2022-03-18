@@ -23,6 +23,8 @@ pub struct ApplicationConfig {
     pub debug: bool,
     ///redis地址
     pub redis_url: String,
+    //mongodb_url地址
+    pub mongodb_url: String,
     /// 数据库地址
     pub database_url: String,
     /// 逻辑删除字段

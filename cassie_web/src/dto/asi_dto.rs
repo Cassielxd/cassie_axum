@@ -13,6 +13,8 @@ pub struct AsiGroupDTO {
     #[validate(length(min = 6, message="分组编码最少6个字"))]
     pub group_code: Option<String>,
     pub agency_code: Option<String>,
+    pub group_type: Option<String>,
+    pub parent_group_code: Option<String>,
 }
 
 impl_field_name_method!(AsiGroupDTO {
@@ -32,7 +34,9 @@ impl Into< AsiGroup> for AsiGroupDTO {
             name: self.name,
             info: self.info,
             group_code: self.group_code,
-            agency_code: self.agency_code
+            agency_code: self.agency_code,
+            group_type: self.group_type,
+            parent_group_code: self.parent_group_code,
         }
     }
 }
@@ -45,7 +49,9 @@ impl From<AsiGroup> for AsiGroupDTO {
             name: arg.name,
             info: arg.info,
             group_code: arg.group_code,
-            agency_code: arg.agency_code
+            agency_code: arg.agency_code,
+            group_type: arg.group_type,
+            parent_group_code: arg.parent_group_code,
         }
     }
 }

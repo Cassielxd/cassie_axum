@@ -1,15 +1,18 @@
+use std::collections::HashMap;
+
 use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO, AsiGroupValuesDTO};
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
-use crate::{AsiQuery, RB, REQUEST_CONTEXT};
+use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
 
 use cassie_common::error::Error;
 use cassie_common::error::Result;
+use mongodb::bson::{bson, doc, Document};
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
 
-use super::asi_validation::validate_values;
+use super::asi_validation::{validate_value, validate_values};
 /**
  *struct:AsiGroupService
  *desc:动态表单基础service
@@ -48,34 +51,81 @@ impl AsiGroupService {
         self.save(&mut entity).await
     }
 
-    pub async fn save_values(
+    pub async fn save_values_for_from(
         &self,
-        group_code: String,
-        args: Vec<AsiGroupValuesDTO>,
+        id: String,
+        args: HashMap<String, HashMap<String, String>>,
     ) -> Result<bool> {
+        for (key, value) in args {
+            let query = AsiQuery {
+                column_code: None,
+                group_code: Option::Some(key.clone()),
+                page: None,
+                limit: None,
+                order: None,
+                order_field: None,
+            };
+            //获取分组定义信息
+            let group = self.list(&query).await;
+            match group {
+                Ok(data) => {
+                    let g = data.get(0).unwrap();
+                    //获取定义列信息
+                    let columns = self.asi_column.list(&query).await;
+                    match columns {
+                        Ok(cloums_list) => {
+                            ///验证数据定义
+                            match validate_value(&cloums_list, &value) {
+                                Ok(_) => {
+                                    //验证通过 保存数据
+                                    self.asi_values.save_from_values(&id, g, value).await;
+                                }
+                                Err(e) => {
+                                    return Err(e);
+                                }
+                            }
+                        }
+                        Err(_) => {
+                            return Err(Error::from("列定义不存在!"));
+                        }
+                    }
+                }
+                Err(_) => {
+                    return Err(Error::from("业务定义不存在!"));
+                }
+            }
+        }
+
+        return Ok(true);
+    }
+    pub async fn save_values_for_table(
+        &self,
+        id: String,
+        args: HashMap<String, Vec<HashMap<String, String>>>,
+    ) -> Result<bool> {
+       for (key,value) in args {
         let query = AsiQuery {
             column_code: None,
-            group_code: Option::Some(group_code),
+            group_code: Option::Some(key.clone()),
             page: None,
             limit: None,
             order: None,
             order_field: None,
         };
-
         //获取分组定义信息
         let group = self.list(&query).await;
-
         match group {
             Ok(data) => {
+                let g = data.get(0).unwrap();
                 //获取定义列信息
                 let columns = self.asi_column.list(&query).await;
                 match columns {
                     Ok(cloums_list) => {
                         ///验证数据定义
-                        match validate_values(&cloums_list, &args) {
+                        match validate_values(&cloums_list, &value) {
                             Ok(_) => {
                                 //验证通过 保存数据
-                                self.asi_values.save_batch_values(args).await;
+                                self.asi_values.save_table_values(&id, g, value).await;
                             }
                             Err(e) => {
                                 return Err(e);
@@ -91,7 +141,8 @@ impl AsiGroupService {
                 return Err(Error::from("业务定义不存在!"));
             }
         }
-
+       }
+        
         return Ok(true);
     }
 }
@@ -192,22 +243,48 @@ impl Default for AsiGroupValuesService {
 }
 
 impl AsiGroupValuesService {
-    pub async fn save_batch_values(&self, values: Vec<AsiGroupValuesDTO>) {
-        let mut entitys = vec![];
-        for value in values {
-            let  e: AsiGroupValues = value.into();
-            entitys.push(e);
+    pub async fn save_from_values(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+        values: HashMap<String, String>,
+    ) {
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+
+        let mut doc = Document::new();
+        doc.insert("_id", id.clone());
+        doc.insert("entity_id", id.clone());
+        for (key, value) in values {
+            doc.insert(key, value);
         }
-        self.save_batch(&mut entitys).await;
+        collection.insert_one(doc, None).await;
+    }
+
+    pub async fn save_table_values(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+        values_map: Vec<HashMap<String, String>>,
+    ) {
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+        let mut docs = vec![];
+        for values in values_map {
+            let mut doc = Document::new();
+            doc.insert("entity_id", id.clone());
+            for (key, value) in values {
+                doc.insert(key, value);
+            }
+            docs.push(doc);
+        }
+        collection.insert_many(docs, None);
     }
 }
 
-impl CrudService<AsiGroupValues, AsiGroupValuesDTO, AsiQuery> for AsiGroupValuesService {
-    fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        RB.new_wrapper()
-    }
-
-    fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroupValues) {
-        data.id = common.id;
-    }
+fn build_table(group: &AsiGroupDTO) -> String {
+    format!(
+        "{}-{}-{}",
+        group.group_type.clone().unwrap(),
+        group.parent_group_code.clone().unwrap(),
+        group.group_code.clone().unwrap()
+    )
 }
