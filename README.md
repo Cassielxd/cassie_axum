@@ -92,6 +92,19 @@ String <348040933@qq.com>
 代码每天都在更新,大家每天及时更新
 #### 更新日志
 
+
+2022.3.18
+完成动态表单功能
+mongodb 配置 application.yml
+```yml
+mongodb_url: "mongodb://localhost:27017"
+```
+1. 业务分组定义 
+2. colums定义 mysql存储
+3. value使用 mongodb存储
+4. 表单类型分为 from 和table
+5. entity_id 是业务id
+
 2022.2.22
 完成nacos注册和心跳
 nacos 配置 application.yml
