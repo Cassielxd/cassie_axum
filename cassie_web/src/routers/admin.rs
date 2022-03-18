@@ -98,7 +98,7 @@ pub fn routers() -> Router {
         //-------------------------------------动态表单column服务-------------------------------------------------------
         .route("/asi/column", get(asi_group_column_controller::page))
         .route(
-            "/asi/column/list",
+            "/asi/column/list/:group_id",
             get(asi_group_column_controller::list)
                 .post(asi_group_column_controller::save)
                 .put(asi_group_column_controller::save),
@@ -108,7 +108,10 @@ pub fn routers() -> Router {
             "/asi/values/:id/from",
             post(asi_group_values_controller::save_from),
         ).route(
-            "/asi/values/:group_code",
+            "/asi/values/:id/table",
+            post(asi_group_values_controller::save_table),
+        ).route(
+            "/asi/values/:id/",
             get(asi_group_values_controller::list),
         )
 }

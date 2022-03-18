@@ -1,18 +1,20 @@
-use std::collections::HashMap;
-
 use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO, AsiGroupValuesDTO};
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
 use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
+use cassie_common::error::Result;
+use futures::{TryFutureExt, TryStreamExt};
+use std::collections::HashMap;
 
 use cassie_common::error::Error;
-use cassie_common::error::Result;
-use mongodb::bson::{bson, doc, Document};
+use mongodb::bson::{bson, doc, Bson, Document, Uuid};
+use mongodb::options::FindOptions;
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
 
 use super::asi_validation::{validate_value, validate_values};
+
 /**
  *struct:AsiGroupService
  *desc:动态表单基础service
@@ -78,7 +80,7 @@ impl AsiGroupService {
                             match validate_value(&cloums_list, &value) {
                                 Ok(_) => {
                                     //验证通过 保存数据
-                                    self.asi_values.save_from_values(&id, g, value).await;
+                                    self.save_from_values(&id, g, value).await;
                                 }
                                 Err(e) => {
                                     return Err(e);
@@ -103,47 +105,123 @@ impl AsiGroupService {
         id: String,
         args: HashMap<String, Vec<HashMap<String, String>>>,
     ) -> Result<bool> {
-       for (key,value) in args {
+        for (key, value) in args {
+            let query = AsiQuery {
+                column_code: None,
+                group_code: Option::Some(key.clone()),
+                page: None,
+                limit: None,
+                order: None,
+                order_field: None,
+            };
+            //获取分组定义信息
+            let group = self.list(&query).await;
+            match group {
+                Ok(data) => {
+                    let g = data.get(0).unwrap();
+                    //获取定义列信息
+                    let columns = self.asi_column.list(&query).await;
+                    match columns {
+                        Ok(cloums_list) => {
+                            ///验证数据定义
+                            match validate_values(&cloums_list, &value) {
+                                Ok(_) => {
+                                    //验证通过 保存数据
+                                    self.save_table_values(&id, g, value).await;
+                                }
+                                Err(e) => {
+                                    return Err(e);
+                                }
+                            }
+                        }
+                        Err(_) => {
+                            return Err(Error::from("列定义不存在!"));
+                        }
+                    }
+                }
+                Err(_) => {
+                    return Err(Error::from("业务定义不存在!"));
+                }
+            }
+        }
+
+        return Ok(true);
+    }
+
+    pub async fn save_from_values(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+        values: HashMap<String, String>,
+    ) {
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+
+        let mut doc = Document::new();
+        doc.insert("_id", id.clone());
+        doc.insert("entity_id", id.clone());
+        for (key, value) in values {
+            doc.insert(key, value);
+        }
+        collection.insert_one(doc, None).await;
+    }
+
+    pub async fn save_table_values(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+        values_map: Vec<HashMap<String, String>>,
+    ) {
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+        let mut docs = vec![];
+        for values in values_map {
+            let mut doc = Document::new();
+            doc.insert("_id", Uuid::new().to_string());
+            doc.insert("entity_id", id.clone());
+            for (key, value) in values {
+                doc.insert(key, value);
+            }
+            docs.push(doc);
+        }
+        collection.insert_many(docs, None).await;
+    }
+    ///查询values
+    pub async fn value_list(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+    ) -> Result<Vec<HashMap<String, Bson>>> {
         let query = AsiQuery {
             column_code: None,
-            group_code: Option::Some(key.clone()),
+            group_code: group.group_code.clone(),
             page: None,
             limit: None,
             order: None,
             order_field: None,
         };
-        //获取分组定义信息
-        let group = self.list(&query).await;
-        match group {
-            Ok(data) => {
-                let g = data.get(0).unwrap();
-                //获取定义列信息
-                let columns = self.asi_column.list(&query).await;
-                match columns {
-                    Ok(cloums_list) => {
-                        ///验证数据定义
-                        match validate_values(&cloums_list, &value) {
-                            Ok(_) => {
-                                //验证通过 保存数据
-                                self.asi_values.save_table_values(&id, g, value).await;
-                            }
-                            Err(e) => {
-                                return Err(e);
-                            }
-                        }
-                    }
-                    Err(_) => {
-                        return Err(Error::from("列定义不存在!"));
+        let columns = self.asi_column.list(&query).await.unwrap();
+
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+        let filter = doc! { "entity_id": id.clone() };
+        let mut result = collection.find(filter, None).await.unwrap();
+        let mut r = Vec::new();
+        while let Ok(a) = result.try_next().await {
+            if let Some(doc) = a {
+                let mut d = HashMap::new();
+
+                for c in &columns {
+                    if doc.contains_key(c.column_code.clone().unwrap()) {
+                        d.insert(
+                            c.column_code.clone().unwrap(),
+                            doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
+                        );
                     }
                 }
-            }
-            Err(_) => {
-                return Err(Error::from("业务定义不存在!"));
+                r.push(d);
+            } else {
+                break;
             }
         }
-       }
-        
-        return Ok(true);
+        Ok(r)
     }
 }
 
@@ -242,43 +320,7 @@ impl Default for AsiGroupValuesService {
     }
 }
 
-impl AsiGroupValuesService {
-    pub async fn save_from_values(
-        &self,
-        id: &String,
-        group: &AsiGroupDTO,
-        values: HashMap<String, String>,
-    ) {
-        let collection = MDB.collection::<Document>(build_table(group).as_str());
-
-        let mut doc = Document::new();
-        doc.insert("_id", id.clone());
-        doc.insert("entity_id", id.clone());
-        for (key, value) in values {
-            doc.insert(key, value);
-        }
-        collection.insert_one(doc, None).await;
-    }
-
-    pub async fn save_table_values(
-        &self,
-        id: &String,
-        group: &AsiGroupDTO,
-        values_map: Vec<HashMap<String, String>>,
-    ) {
-        let collection = MDB.collection::<Document>(build_table(group).as_str());
-        let mut docs = vec![];
-        for values in values_map {
-            let mut doc = Document::new();
-            doc.insert("entity_id", id.clone());
-            for (key, value) in values {
-                doc.insert(key, value);
-            }
-            docs.push(doc);
-        }
-        collection.insert_many(docs, None);
-    }
-}
+impl AsiGroupValuesService {}
 
 fn build_table(group: &AsiGroupDTO) -> String {
     format!(

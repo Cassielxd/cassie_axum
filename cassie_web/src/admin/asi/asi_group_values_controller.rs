@@ -12,13 +12,17 @@ use crate::{ request::AsiQuery,
 };
 
 pub async fn list(
-    Path(group_code): Path<String>,
+    Path(id): Path<String>,
     arg: Option<Query<AsiQuery>>,
 ) -> impl IntoResponse {
-    let mut arg = arg.unwrap();
-    arg.0.group_code=Option::Some(group_code);
-    let vo = CONTEXT.asi_service.asi_column.list(&arg).await;
-    RespVO::from_result(&vo).resp_json()
+    let  arg = arg.unwrap();
+    let vo = CONTEXT.asi_service.list(&arg).await;
+    if let Ok(r)= vo {
+          let group = r.get(0);
+         let r = CONTEXT.asi_service.value_list(&id,&group.unwrap()).await;
+        return RespVO::from_result(&r).resp_json();
+    }
+     RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json()
 }
 
 pub async fn save_from(
