@@ -7,13 +7,13 @@ use cassie_common::error::Result;
 use futures::{TryFutureExt, TryStreamExt};
 use std::collections::HashMap;
 
+use super::asi_validation::{validate_value, validate_values};
 use cassie_common::error::Error;
+use cassie_common::utils::string::IsEmpty;
 use mongodb::bson::{bson, doc, Bson, Document, Uuid};
 use mongodb::options::FindOptions;
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
-
-use super::asi_validation::{validate_value, validate_values};
 
 /**
  *struct:AsiGroupService
@@ -246,6 +246,10 @@ impl AsiGroupService {
                             .unwrap()
                             .clone(),
                     );
+                    d.insert(
+                        "_id".to_string(),
+                        doc.get("_id".to_string()).unwrap().clone(),
+                    );
                     r.push(d);
                 }
             }
@@ -265,11 +269,9 @@ impl Default for AsiGroupService {
 
 impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        let mut wrapper = RB.new_wrapper();
-        if arg.group_code.is_some() {
-            wrapper = wrapper.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap());
-        }
-        wrapper
+        RB.new_wrapper().do_if(!arg.group_code.is_empty(), |w| {
+            w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
+        })
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroup) {
@@ -324,11 +326,9 @@ impl Default for AsiGroupColumnService {
 
 impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery> for AsiGroupColumnService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        let mut wrapper = RB.new_wrapper();
-        if arg.group_code.is_some() {
-            wrapper = wrapper.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap());
-        }
-        wrapper
+        RB.new_wrapper().do_if(!arg.group_code.is_empty(), |w| {
+            w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
+        })
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroupColumn) {
