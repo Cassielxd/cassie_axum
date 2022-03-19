@@ -5,6 +5,7 @@ use crate::service::crud_service::CrudService;
 use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
 use futures::TryStreamExt;
+use mongodb::options::UpdateModifications;
 use std::collections::HashMap;
 
 use super::asi_validation::{validate_value, validate_values};
@@ -63,41 +64,29 @@ impl AsiGroupService {
         args: HashMap<String, HashMap<String, String>>,
     ) -> Result<bool> {
         for (key, value) in args {
-            let query = AsiQuery {
-                column_code: None,
-                group_code: Option::Some(key.clone()),
-                page: None,
-                limit: None,
-                order: None,
-                order_field: None,
-            };
+            let searchc = vec![key.clone()];
             //获取分组定义信息
-            let group = self.list(&query).await;
-            match group {
-                Ok(data) => {
-                    let g = data.get(0).unwrap();
-                    //获取定义列信息
-                    let columns = self.asi_column.list(&query).await;
-                    match columns {
-                        Ok(cloums_list) => {
-                            //验证数据定义
-                            match validate_value(&cloums_list, &value) {
-                                Ok(_) => {
-                                    //验证通过 保存数据
-                                    self.save_from_values(&id, g, value).await;
-                                }
-                                Err(e) => {
-                                    return Err(e);
-                                }
-                            }
-                        }
-                        Err(_) => {
-                            return Err(Error::from("列定义不存在!"));
-                        }
-                    }
+            let group = self
+                .fetch_list_by_column("group_code", &searchc)
+                .await
+                .map_err(|e| Error::E("业务分组定义不存在!".to_string()))
+                .unwrap();
+            let g = group.get(0).unwrap();
+            //获取定义列信息
+            let columns = self
+                .asi_column
+                .fetch_list_by_column("group_code", &searchc)
+                .await
+                .map_err(|e| Error::E("列定义不存在!".to_string()))
+                .unwrap();
+            //验证数据定义
+            match validate_value(&columns, &value) {
+                Ok(_) => {
+                    //验证通过 保存数据
+                    self.save_from_values(&id, g, value).await;
                 }
-                Err(_) => {
-                    return Err(Error::from("业务定义不存在!"));
+                Err(e) => {
+                    return Err(e);
                 }
             }
         }
@@ -119,40 +108,64 @@ impl AsiGroupService {
         for (key, value) in args {
             let searchc = vec![key.clone()];
             //获取分组定义信息
-            let group = self.fetch_list_by_column("group_code", &searchc).await;
-            match group {
-                Ok(data) => {
-                    let g = data.get(0).unwrap();
-                    //获取定义列信息
-                    let columns = self
-                        .asi_column
-                        .fetch_list_by_column("group_code", &searchc)
-                        .await;
-                    match columns {
-                        Ok(cloums_list) => {
-                            //验证数据定义
-                            match validate_values(&cloums_list, &value) {
-                                Ok(_) => {
-                                    //验证通过 保存数据
-                                    self.save_table_values(&id, g, value).await;
-                                }
-                                Err(e) => {
-                                    return Err(e);
-                                }
-                            }
-                        }
-                        Err(_) => {
-                            return Err(Error::from("列定义不存在!"));
-                        }
-                    }
+            let group = self
+                .fetch_list_by_column("group_code", &searchc)
+                .await
+                .map_err(|e| Error::E("业务分组定义不存在!".to_string()))
+                .unwrap();
+            let g = group.get(0).unwrap();
+            //获取定义列信息
+            let columns = self
+                .asi_column
+                .fetch_list_by_column("group_code", &searchc)
+                .await
+                .map_err(|e| Error::E("列定义不存在!".to_string()))
+                .unwrap();
+            //验证数据定义
+            match validate_values(&columns, &value) {
+                Ok(_) => {
+                    //验证通过 保存数据
+                    self.save_table_values(&id, g, value).await;
                 }
-                Err(_) => {
-                    return Err(Error::from("业务定义不存在!"));
+                Err(e) => {
+                    return Err(e);
                 }
             }
         }
 
         return Ok(true);
+    }
+    //构建插入语句
+    fn build_data(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+        values: &HashMap<String, String>,
+    ) -> (bool, Document) {
+        let mut insert = false;
+        let mut doc = Document::new();
+        doc.insert("entity_id", id.clone());
+        doc.insert(
+            AsiGroupDTO::agency_code().to_string(),
+            group.agency_code.clone().unwrap(),
+        );
+        doc.insert(
+            AsiGroupDTO::group_code().to_string(),
+            group.group_code.clone().unwrap(),
+        );
+        for (key, value) in values {
+            doc.insert(key, value);
+        }
+        /*新增 如果values 已经有了_id会被覆盖 */
+        if !doc.contains_key("_id") {
+            insert = true;
+            if group.group_type.eq(&Option::Some("FROM".to_string())) {
+                doc.insert("_id", id.clone());
+            } else {
+                doc.insert("_id", Uuid::new().to_string());
+            }
+        }
+        (insert, doc)
     }
 
     pub async fn save_from_values(
@@ -161,15 +174,19 @@ impl AsiGroupService {
         group: &AsiGroupDTO,
         values: HashMap<String, String>,
     ) {
+        let (insert, doc) = self.build_data(id, group, &values);
         let collection = MDB.collection::<Document>(build_table(group).as_str());
-
-        let mut doc = Document::new();
-        doc.insert("_id", id.clone());
-        doc.insert("entity_id", id.clone());
-        for (key, value) in values {
-            doc.insert(key, value);
+        if insert {
+            collection.insert_one(doc, None).await;
+        } else {
+            let mut query = Document::new();
+            query.insert("_id", doc.get("_id"));
+            let mut update_doc = Document::new();
+            update_doc.insert("$set", doc);
+            collection
+                .update_one(query, UpdateModifications::Document(update_doc), None)
+                .await;
         }
-        collection.insert_one(doc, None).await;
     }
 
     pub async fn save_table_values(
@@ -179,25 +196,30 @@ impl AsiGroupService {
         values_map: Vec<HashMap<String, String>>,
     ) {
         let collection = MDB.collection::<Document>(build_table(group).as_str());
-        let mut docs = vec![];
-        for values in values_map {
-            let mut doc = Document::new();
-            doc.insert("_id", Uuid::new().to_string());
-            doc.insert("entity_id", id.clone());
-            doc.insert(
-                AsiGroupDTO::agency_code().to_string(),
-                group.agency_code.clone().unwrap(),
-            );
-            doc.insert(
-                AsiGroupDTO::group_code().to_string(),
-                group.group_code.clone().unwrap(),
-            );
-            for (key, value) in values {
-                doc.insert(key, value);
+        let mut insert_docs = vec![];
+        let mut update_docs = vec![];
+        for values in values_map.iter() {
+            let (insert, doc) = self.build_data(id, group, values);
+            if insert {
+                insert_docs.push(doc);
+            } else {
+                update_docs.push(doc);
             }
-            docs.push(doc);
         }
-        collection.insert_many(docs, None).await;
+        if !insert_docs.is_empty() {
+            collection.insert_many(insert_docs, None).await;
+        }
+        if !update_docs.is_empty() {
+            for i in update_docs {
+                let mut doc = Document::new();
+                doc.insert("_id", i.get("_id"));
+                let mut update_doc = Document::new();
+                update_doc.insert("$set", i);
+                collection
+                    .update_one(doc, UpdateModifications::Document(update_doc), None)
+                    .await;
+            }
+        }
     }
     ///查询values
     pub async fn value_list(
@@ -215,43 +237,41 @@ impl AsiGroupService {
         let filter = doc! { "entity_id": id.clone() };
         let mut result = collection.find(filter, None).await.unwrap();
         let mut r = Vec::new();
-        while let Ok(a) = result.try_next().await {
-            match a {
-                None => {
-                    break;
-                }
-                Some(doc) => {
-                    let mut d = HashMap::new();
-                    //使用已经定义的列进行获取
-                    for c in &columns {
-                        if doc.contains_key(c.column_code.clone().unwrap()) {
-                            d.insert(
-                                c.column_code.clone().unwrap(),
-                                doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
-                            );
-                        } else {
-                            d.insert(c.column_code.clone().unwrap(), Bson::String("".to_string()));
-                        }
-                    }
+        while let Some(doc) = result
+            .try_next()
+            .await
+            .map_err(|e| Error::E(e.to_string()))
+            .unwrap()
+        {
+            let mut d = HashMap::new();
+            //使用已经定义的列进行获取
+            for c in &columns {
+                if doc.contains_key(c.column_code.clone().unwrap()) {
                     d.insert(
-                        AsiGroupDTO::agency_code().to_string(),
-                        doc.get(AsiGroupDTO::agency_code().to_string())
-                            .unwrap()
-                            .clone(),
+                        c.column_code.clone().unwrap(),
+                        doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
                     );
-                    d.insert(
-                        AsiGroupDTO::group_code().to_string(),
-                        doc.get(AsiGroupDTO::group_code().to_string())
-                            .unwrap()
-                            .clone(),
-                    );
-                    d.insert(
-                        "_id".to_string(),
-                        doc.get("_id".to_string()).unwrap().clone(),
-                    );
-                    r.push(d);
+                } else {
+                    d.insert(c.column_code.clone().unwrap(), Bson::String("".to_string()));
                 }
             }
+            d.insert(
+                AsiGroupDTO::agency_code().to_string(),
+                doc.get(AsiGroupDTO::agency_code().to_string())
+                    .unwrap()
+                    .clone(),
+            );
+            d.insert(
+                AsiGroupDTO::group_code().to_string(),
+                doc.get(AsiGroupDTO::group_code().to_string())
+                    .unwrap()
+                    .clone(),
+            );
+            d.insert(
+                "_id".to_string(),
+                doc.get("_id".to_string()).unwrap().clone(),
+            );
+            r.push(d);
         }
         Ok(r)
     }

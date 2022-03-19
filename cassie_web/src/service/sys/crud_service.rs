@@ -62,6 +62,7 @@ where
         column_values: &Vec<String>,
     ) -> Result<Vec<Dto>> {
         //执行查询
+
         let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
         let mut vos = vec![];
         //将Entity实体转换成 Vo对象 返回
