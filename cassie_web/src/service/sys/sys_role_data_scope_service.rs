@@ -1,12 +1,12 @@
-use rbatis::DateTimeNative;
-use crate::{REQUEST_CONTEXT, CONTEXT, RB};
-use super::{crud_service::CrudService};
+use super::crud_service::CrudService;
 use crate::entity::sys_entitys::CommonField;
 use crate::{
     dto::sys_role_dto::SysRoleDataScopeDTO, entity::sys_entitys::SysRoleDataScope,
     request::SysRoleQuery,
 };
+use crate::{RB, REQUEST_CONTEXT};
 use rbatis::plugin::snowflake::new_snowflake_id;
+use rbatis::DateTimeNative;
 
 /**
 *struct:SysRoleDataScopeService
@@ -15,9 +15,9 @@ use rbatis::plugin::snowflake::new_snowflake_id;
 *email:348040933@qq.com
 */
 pub struct SysRoleDataScopeService {}
-impl  Default for SysRoleDataScopeService {
+impl Default for SysRoleDataScopeService {
     fn default() -> Self {
-        SysRoleDataScopeService{}
+        SysRoleDataScopeService {}
     }
 }
 impl SysRoleDataScopeService {

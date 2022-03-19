@@ -1,5 +1,5 @@
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
-use crate::{CONTEXT, RB, REQUEST_CONTEXT};
+use crate::{RB, REQUEST_CONTEXT};
 use cassie_common::utils::password_encoder::PasswordEncoder;
 use rbatis::wrapper::Wrapper;
 
@@ -16,23 +16,26 @@ use casbin::MgmtApi;
  *email:348040933@qq.com
  */
 pub struct SysUserService {
-    pub sys_role_user_service :SysRoleUserService
+    pub sys_role_user_service: SysRoleUserService,
 }
 impl Default for SysUserService {
     fn default() -> Self {
-        SysUserService {sys_role_user_service:SysRoleUserService{}}
+        SysUserService {
+            sys_role_user_service: SysRoleUserService {},
+        }
     }
 }
 impl SysUserService {
-
     pub async fn delete_user(&self, id: String) {
-       let user_info = self.get(id.clone()).await.unwrap();
-       self.del(&id).await;
-       self.sys_role_user_service.del_by_column(SysRoleUser::user_id(),id.clone().as_str()).await;
-       let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
-            let mut lock = cached_enforcer.write().await;
-            lock.remove_grouping_policy(vec![id]).await;
-            drop(lock);
+        let user_info = self.get(id.clone()).await.unwrap();
+        self.del(&id).await;
+        self.sys_role_user_service
+            .del_by_column(SysRoleUser::user_id(), id.clone().as_str())
+            .await;
+        let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
+        let mut lock = cached_enforcer.write().await;
+        lock.remove_grouping_policy(vec![id]).await;
+        drop(lock);
     }
 
     pub async fn save_info(&self, arg: SysUserDTO) {
@@ -57,12 +60,19 @@ impl SysUserService {
             let id = self.save(&mut entity).await;
             id.unwrap()
         };
-       let mut data = SysRoleUser{ id: None, role_id, user_id: Some(uid), creator: None, create_date: None };
+        let mut data = SysRoleUser {
+            id: None,
+            role_id,
+            user_id: Some(uid),
+            creator: None,
+            create_date: None,
+        };
         self.sys_role_user_service.save(&mut data).await;
         if let Some(rid) = role_id {
             let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
             let mut lock = cached_enforcer.write().await;
-            lock.add_grouping_policy(vec![uid.to_string(), rid.to_string(), agency_code.clone()]).await;
+            lock.add_grouping_policy(vec![uid.to_string(), rid.to_string(), agency_code.clone()])
+                .await;
             drop(lock);
         }
     }

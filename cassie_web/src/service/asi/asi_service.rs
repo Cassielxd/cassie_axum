@@ -1,17 +1,16 @@
-use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO, AsiGroupValuesDTO};
-use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
+use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO};
+use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
 use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
-use futures::{TryFutureExt, TryStreamExt};
+use futures::TryStreamExt;
 use std::collections::HashMap;
 
 use super::asi_validation::{validate_value, validate_values};
 use cassie_common::error::Error;
 use cassie_common::utils::string::IsEmpty;
-use mongodb::bson::{bson, doc, Bson, Document, Uuid};
-use mongodb::options::FindOptions;
+use mongodb::bson::{doc, Bson, Document, Uuid};
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
 
@@ -81,7 +80,7 @@ impl AsiGroupService {
                     let columns = self.asi_column.list(&query).await;
                     match columns {
                         Ok(cloums_list) => {
-                            ///验证数据定义
+                            //验证数据定义
                             match validate_value(&cloums_list, &value) {
                                 Ok(_) => {
                                     //验证通过 保存数据
@@ -131,7 +130,7 @@ impl AsiGroupService {
                         .await;
                     match columns {
                         Ok(cloums_list) => {
-                            ///验证数据定义
+                            //验证数据定义
                             match validate_values(&cloums_list, &value) {
                                 Ok(_) => {
                                     //验证通过 保存数据

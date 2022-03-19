@@ -13,7 +13,7 @@
 
     <select id="menu_List" >
         select t1.*
-        from sys_menu t1 where t1.del_flag = 0  
+        from sys_menu t1 where t1.del_flag = 0
         <if test="t != ''">
            and t1.menu_type = #{t}
         </if>
@@ -30,7 +30,6 @@
         <foreach collection="ids" index="key" item="item" open="(" close=")" separator=",">
             ${item}
         </foreach>
-
     </select>
 
 </mapper>

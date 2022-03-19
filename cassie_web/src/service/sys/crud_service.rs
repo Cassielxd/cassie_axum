@@ -1,11 +1,10 @@
 use crate::entity::pagedata::PageData;
 use crate::entity::sys_entitys::CommonField;
-use crate::{CONTEXT, RB, REQUEST_CONTEXT};
+use crate::{RB, REQUEST_CONTEXT};
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use rbatis::crud::{CRUDTable, Skip, CRUD};
 use rbatis::plugin::page::{Page, PageRequest};
-use rbatis::plugin::snowflake::new_snowflake_id;
 use rbatis::wrapper::Wrapper;
 use rbatis::DateTimeNative;
 use serde::de::DeserializeOwned;

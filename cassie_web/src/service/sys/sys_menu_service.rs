@@ -5,7 +5,7 @@ use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
 use crate::request::SysMenuQuery;
 use crate::service::crud_service::CrudService;
-use crate::{CONTEXT, RB, REQUEST_CONTEXT};
+use crate::{RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
 use rbatis::wrapper::Wrapper;
 

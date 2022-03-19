@@ -1,10 +1,10 @@
-use crate::{CONTEXT, RB};
 use crate::entity::sys_entitys::CommonField;
+use crate::RB;
 use crate::{
     dto::sys_role_dto::SysRoleUserDTO, entity::sys_entitys::SysRoleUser, request::SysRoleQuery,
 };
 
-use super::{crud_service::CrudService};
+use super::crud_service::CrudService;
 
 /**
 *struct:SysRoleUserService
@@ -16,17 +16,15 @@ pub struct SysRoleUserService {}
 
 impl Default for SysRoleUserService {
     fn default() -> Self {
-        SysRoleUserService{}
+        SysRoleUserService {}
     }
 }
 impl SysRoleUserService {}
 impl CrudService<SysRoleUser, SysRoleUserDTO, SysRoleQuery> for SysRoleUserService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        RB
-            .new_wrapper()
-            .do_if(arg.user_id.is_some(), |w| {
-                w.like(SysRoleUser::user_id(), &arg.user_id)
-            })
+        RB.new_wrapper().do_if(arg.user_id.is_some(), |w| {
+            w.like(SysRoleUser::user_id(), &arg.user_id)
+        })
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleUser) {
         data.id = common.id;

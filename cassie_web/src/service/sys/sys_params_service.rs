@@ -1,10 +1,10 @@
-use crate::{CONTEXT, RB};
 use crate::entity::sys_entitys::CommonField;
+use crate::RB;
 use crate::{
     dto::sys_params_dto::SysParamsDTO, entity::sys_entitys::SysParams, request::SysParamsQuery,
 };
 
-use super::{crud_service::CrudService};
+use super::crud_service::CrudService;
 
 /**
  *struct:SysParamsService
@@ -14,9 +14,9 @@ use super::{crud_service::CrudService};
  */
 
 pub struct SysParamsService {}
-impl  Default for SysParamsService {
+impl Default for SysParamsService {
     fn default() -> Self {
-        SysParamsService{}
+        SysParamsService {}
     }
 }
 impl CrudService<SysParams, SysParamsDTO, SysParamsQuery> for SysParamsService {

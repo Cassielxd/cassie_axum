@@ -2,8 +2,8 @@ use super::{
     crud_service::CrudService, sys_role_data_scope_service::SysRoleDataScopeService,
     sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService,
 };
-use crate::{CONTEXT, RB};
 use crate::entity::sys_entitys::CommonField;
+use crate::RB;
 use crate::{dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery};
 use cassie_common::error::Result;
 use cassie_common::utils::string::IsEmpty;
@@ -54,7 +54,9 @@ impl SysRoleService {
     }
     pub async fn delete_by_role_id(&self, id: String) {
         self.del(&id).await;
-        self.sys_role_menu_service.delete_by_role_id(id.parse::<i64>().unwrap()).await;
+        self.sys_role_menu_service
+            .delete_by_role_id(id.parse::<i64>().unwrap())
+            .await;
     }
     pub async fn save_role(&self, sys_role: SysRoleDTO) {
         let menu_id_list = sys_role.menuid_list.clone();
@@ -76,8 +78,7 @@ impl SysRoleService {
 
 impl CrudService<SysRole, SysRoleDTO, SysRoleQuery> for SysRoleService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        RB
-            .new_wrapper()
+        RB.new_wrapper()
             .do_if(!arg.name.is_empty(), |w| w.like(SysRole::name(), &arg.name))
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRole) {
