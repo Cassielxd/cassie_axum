@@ -96,9 +96,8 @@ pub fn routers() -> Router {
             get(asi_group_controller::get_by_id).delete(asi_group_controller::delete),
         )
         //-------------------------------------动态表单column服务-------------------------------------------------------
-        .route("/asi/column", get(asi_group_column_controller::page))
         .route(
-            "/asi/column/list/:group_id",
+            "/asi/column/list/:group_code",
             get(asi_group_column_controller::list)
                 .post(asi_group_column_controller::save)
                 .put(asi_group_column_controller::save),
