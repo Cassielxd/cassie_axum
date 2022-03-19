@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "https://github.com/rbatis/rbatis_sql/raw/main/mybatis-3-mapper.dtd">
 <mapper>
-    <select id="user_menu_List" >
+    <select id="user_menu_list" >
         select t3.* from sys_role_user t1
         left join sys_role_menu t2 on t1.role_id = t2.role_id
         left join sys_menu t3 on t2.menu_id = t3.id
@@ -11,7 +11,7 @@
         ${' '}  order by t3.sort asc
     </select>
 
-    <select id="menu_List" >
+    <select id="menu_list" >
         select t1.*
         from sys_menu t1 where t1.del_flag = 0
         <if test="t != ''">
@@ -20,7 +20,7 @@
         ${' '}  order by t1.sort asc
     </select>
 
-    <select id="get_menu_List_by_ids" >
+    <select id="get_menu_list_by_ids" >
         select id,pid,url,name,menu_type,icon,permissions,sort,del_flag,creator,create_date,updater,update_date,method,path from sys_menu
         where pid in
         <foreach collection="ids" index="key" item="item" open="(" close=")" separator=",">

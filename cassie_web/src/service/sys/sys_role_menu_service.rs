@@ -1,6 +1,6 @@
 use super::crud_service::CrudService;
 use crate::cici_casbin::CASBIN_CONTEXT;
-use crate::dao::mapper::get_menu_List_by_ids;
+use crate::dao::mapper::get_menu_list_by_ids;
 use crate::entity::sys_entitys::CommonField;
 use crate::request::SysMenuQuery;
 use crate::{
@@ -58,7 +58,7 @@ impl SysRoleMenuService {
         } else {
             (0, "".to_string())
         };
-       let r_list = get_menu_List_by_ids(&menu_id_list.clone().unwrap()).await.unwrap();
+       let r_list = get_menu_list_by_ids(&menu_id_list.clone().unwrap()).await.unwrap();
         let menus = CONTEXT.sys_menu_service.list(&query).await;
             let mut rules = vec![];
             let mut vec = Vec::new();

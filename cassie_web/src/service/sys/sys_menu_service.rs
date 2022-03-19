@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-
-use crate::dao::mapper::{menu_List, user_menu_List};
+use crate::dao::mapper::{user_menu_list, menu_list};
 use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
 use crate::request::SysMenuQuery;
@@ -31,7 +30,7 @@ impl SysMenuService {
     }
 
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let result = menu_List("").await.unwrap();
+        let result = menu_list("").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
 
@@ -43,9 +42,9 @@ impl SysMenuService {
             (0, 0)
         };
         let result = if super_admin > 0 {
-            menu_List("0").await.unwrap()
+            menu_list("0").await.unwrap()
         } else {
-            user_menu_List(uid.to_string().as_str(), "0").await.unwrap()
+            user_menu_list(uid.to_string().as_str(), "0").await.unwrap()
         };
         Ok(self.build(result.unwrap()))
     }
