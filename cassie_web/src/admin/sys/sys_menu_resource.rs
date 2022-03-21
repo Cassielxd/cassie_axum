@@ -1,14 +1,14 @@
-use axum::{
-    extract::{Path, Query},
-    response::IntoResponse,
-    Json,
-};
-use cassie_common::RespVO;
-
 use crate::{
     dto::sys_menu_dto::SysMenuDTO, entity::PageData, request::SysMenuQuery,
     service::crud_service::CrudService, CONTEXT,
 };
+use axum::routing::get;
+use axum::{
+    extract::{Path, Query},
+    response::IntoResponse,
+    Json, Router,
+};
+use cassie_common::RespVO;
 
 /**
  *method:/menu
@@ -33,18 +33,12 @@ pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
 }
 
 pub async fn list() -> impl IntoResponse {
-    let vo = CONTEXT
-        .sys_menu_service
-        .menu_list()
-        .await;
+    let vo = CONTEXT.sys_menu_service.menu_list().await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn nav() -> impl IntoResponse {
-    let vo = CONTEXT
-        .sys_menu_service
-        .get_user_menu_list()
-        .await;
+    let vo = CONTEXT.sys_menu_service.get_user_menu_list().await;
     RespVO::from_result(&vo).resp_json()
 }
 
@@ -74,4 +68,10 @@ pub async fn save(Json(arg): Json<SysMenuDTO>) -> impl IntoResponse {
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
 
-
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/menu/list", get(list))
+        .route("/menu/nav", get(nav))
+        .route("/menu/:id", get(get_by_id).delete(delete))
+        .route("/menu", get(page).post(save).put(save))
+}

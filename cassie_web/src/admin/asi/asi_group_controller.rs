@@ -1,7 +1,8 @@
 use axum::{
     extract::{Path, Query},
     response::IntoResponse,
-    Json,
+    routing::get,
+    Json, Router,
 };
 use cassie_common::RespVO;
 
@@ -47,4 +48,9 @@ pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
         .update_by_id(id.unwrap().to_string(), &mut arg.into())
         .await;
     RespVO::from(&"更新成功".to_string()).resp_json()
+}
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/asi/group", get(page).post(save).put(edit))
+        .route("/asi/group/:id", get(get_by_id).delete(delete))
 }

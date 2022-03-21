@@ -4,7 +4,8 @@ use crate::request::SysRoleQuery;
 use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
-use axum::Json;
+use axum::routing::get;
+use axum::{Json, Router};
 use casbin::MgmtApi;
 use cassie_common::RespVO;
 
@@ -31,12 +32,7 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
 
 pub async fn list(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
-    let vo = CONTEXT
-        .sys_role_service
-        .list(
-            &arg
-        )
-        .await;
+    let vo = CONTEXT.sys_role_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
 
@@ -52,10 +48,7 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    CONTEXT
-        .sys_role_service
-        .delete_by_role_id(id)
-        .await;
+    CONTEXT.sys_role_service.delete_by_role_id(id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
@@ -132,4 +125,11 @@ pub async fn casbin_test() -> impl IntoResponse {
     enforcer.add_grouping_policies(user_rules).await;
     let res = Ok("保存成功".to_string());
     RespVO::from_result(&res).resp_json()
+}
+
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/role", get(page).post(save).put(save))
+        .route("/role/:id", get(get_by_id).delete(delete))
+        .route("/role/list", get(list))
 }

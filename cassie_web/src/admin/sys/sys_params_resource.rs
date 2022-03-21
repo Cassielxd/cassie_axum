@@ -3,7 +3,8 @@ use crate::request::SysParamsQuery;
 use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
-use axum::Json;
+use axum::routing::get;
+use axum::{Json, Router};
 use cassie_common::RespVO;
 
 pub async fn page(arg: Option<Query<SysParamsQuery>>) -> impl IntoResponse {
@@ -46,6 +47,16 @@ pub async fn save(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
 pub async fn edit(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
     let id = arg.id.clone();
     let mut entity = arg.into();
-    CONTEXT.sys_params_service.update_by_id(id.unwrap().to_string(),&mut entity).await;
+    CONTEXT
+        .sys_params_service
+        .update_by_id(id.unwrap().to_string(), &mut entity)
+        .await;
     RespVO::from(&"更新成功".to_string()).resp_json()
+}
+
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/params", get(page).post(save).put(edit))
+        .route("/params/list", get(list))
+        .route("/params/:id", get(get_by_id).delete(delete))
 }

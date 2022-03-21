@@ -1,5 +1,6 @@
 use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
-use axum::response::IntoResponse;
+use axum::routing::get;
+use axum::{response::IntoResponse, Router};
 use axum::Json;
 use cassie_common::RespVO;
 
@@ -62,4 +63,19 @@ pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
      CONTEXT.sys_dict_value_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
+}
+
+
+pub fn init_router() -> Router {
+    Router::new()
+    .route(
+        "/dict/value",
+        get(page)
+            .post(save)
+            .put(edit),
+    )
+    .route(
+        "/dict/value/:id",
+        get(get_by_id).delete(delete),
+    )
 }

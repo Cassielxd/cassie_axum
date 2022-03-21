@@ -5,7 +5,8 @@ use crate::{
 };
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
-use axum::Json;
+use axum::routing::get;
+use axum::{Json, Router};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
 use validator::Validate;
@@ -81,4 +82,11 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
     CONTEXT.sys_user_service.delete_user(id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
+}
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/user", get(page).post(save))
+        .route("/user/info", get(info))
+        .route("/user/list", get(list))
+        .route("/user/:id", get(get_user_by_id).delete(delete))
 }

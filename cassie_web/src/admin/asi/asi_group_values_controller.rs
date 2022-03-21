@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use axum::{
     extract::{Path, Query},
     response::IntoResponse,
-    Json,
+    Json, Router, routing::{post, get},
 };
 use cassie_common::{error::Error, RespVO};
 
@@ -41,4 +41,17 @@ pub async fn save_table(
     /*执行验证逻辑*/
     let res = CONTEXT.asi_service.save_values_for_table(id, arg).await;
     RespVO::from_result(&res).resp_json()
+}
+
+pub fn init_router()->Router{
+    Router::new().route(
+        "/asi/values/:id/from",
+        post(save_from),
+    ).route(
+        "/asi/values/:id/table",
+        post(save_table),
+    ).route(
+        "/asi/values/:id/",
+        get(list),
+    )
 }

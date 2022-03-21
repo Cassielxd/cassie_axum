@@ -5,7 +5,7 @@ use crate::{
 use axum::{
     extract::{Path, Query},
     response::IntoResponse,
-    Json,
+    Json, Router, routing::get,
 };
 use cassie_common::{error::Error, RespVO};
 use validator::Validate;
@@ -59,4 +59,12 @@ pub async fn save(
     }
 
    
+}
+pub fn init_router()->Router{
+    Router::new().route(
+        "/asi/column/list/:group_code",
+        get(list)
+            .post(save)
+            .put(save),
+    )
 }

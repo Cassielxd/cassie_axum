@@ -15,102 +15,20 @@ pub fn routers() -> Router {
         .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
         .route("/login", post(sys_auth_resource::login))
         //-------------------------------------菜单服务-------------------------------------------------------
-        .route("/menu/list", get(sys_menu_resource::list))
-        .route("/menu/nav", get(sys_menu_resource::nav))
-        .route(
-            "/menu/:id",
-            get(sys_menu_resource::get_by_id).delete(sys_menu_resource::delete),
-        )
-        .route(
-            "/menu",
-            get(sys_menu_resource::page)
-                .post(sys_menu_resource::save)
-                .put(sys_menu_resource::save),
-        )
+        .merge(sys_menu_resource::init_router())
         //-------------------------------------用户服务-------------------------------------------------------
-        .route(
-            "/user",
-            get(sys_user_resource::page).post(sys_user_resource::save),
-        )
-        .route("/user/info", get(sys_user_resource::info))
-        .route("/user/list", get(sys_user_resource::list))
-        .route(
-            "/user/:id",
-            get(sys_user_resource::get_user_by_id).delete(sys_user_resource::delete),
-        )
+        .merge(sys_user_resource::init_router())
         //-------------------------------------角色服务-------------------------------------------------------
-        .route(
-            "/role",
-            get(sys_role_resource::page)
-                .post(sys_role_resource::save)
-                .put(sys_role_resource::save),
-        )
-        .route(
-            "/role/:id",
-            get(sys_role_resource::get_by_id).delete(sys_role_resource::delete),
-        )
-        .route("/role/list", get(sys_role_resource::list))
+        .merge(sys_role_resource::init_router())
         //-------------------------------------参数服务-------------------------------------------------------
-        .route(
-            "/params",
-            get(sys_params_resource::page)
-                .post(sys_params_resource::save)
-                .put(sys_params_resource::edit),
-        )
-        .route("/params/list", get(sys_params_resource::list))
-        .route(
-            "/params/:id",
-            get(sys_params_resource::get_by_id).delete(sys_params_resource::delete),
-        )
+        .merge(sys_params_resource::init_router())
         //-------------------------------------字典服务-------------------------------------------------------
-        .route("/dict/type/all", get(sys_dict_type_resource::all))
-        .route(
-            "/dict/type",
-            get(sys_dict_type_resource::page)
-                .post(sys_dict_type_resource::save)
-                .put(sys_dict_type_resource::edit),
-        )
-        .route(
-            "/dict/type/:id",
-            get(sys_dict_type_resource::get_by_id).delete(sys_dict_type_resource::delete),
-        )
-        .route(
-            "/dict/value",
-            get(sys_dict_value_resource::page)
-                .post(sys_dict_value_resource::save)
-                .put(sys_dict_value_resource::edit),
-        )
-        .route(
-            "/dict/value/:id",
-            get(sys_dict_value_resource::get_by_id).delete(sys_dict_value_resource::delete),
-        )
+        .merge(sys_dict_type_resource::init_router())
+        .merge(sys_dict_value_resource::init_router())
         //-------------------------------------动态表单分组服务-------------------------------------------------------
-        .route(
-            "/asi/group",
-            get(asi_group_controller::page)
-                .post(asi_group_controller::save)
-                .put(asi_group_controller::edit),
-        )
-        .route(
-            "/asi/group/:id",
-            get(asi_group_controller::get_by_id).delete(asi_group_controller::delete),
-        )
+        .merge(asi_group_controller::init_router())
         //-------------------------------------动态表单column服务-------------------------------------------------------
-        .route(
-            "/asi/column/list/:group_code",
-            get(asi_group_column_controller::list)
-                .post(asi_group_column_controller::save)
-                .put(asi_group_column_controller::save),
-        )
+        .merge(asi_group_column_controller::init_router())
         //-------------------------------------动态表单value服务-------------------------------------------------------
-        .route(
-            "/asi/values/:id/from",
-            post(asi_group_values_controller::save_from),
-        ).route(
-            "/asi/values/:id/table",
-            post(asi_group_values_controller::save_table),
-        ).route(
-            "/asi/values/:id/",
-            get(asi_group_values_controller::list),
-        )
+        .merge(asi_group_values_controller::init_router())
 }

@@ -12,7 +12,7 @@ pub fn validate_value(
         if cloumn.is_required.clone().unwrap() == "Y".to_string()
             && !values.contains_key(&cloumn.column_code.clone().unwrap())
         {
-            let msg = format!("{}列定义不能为空!", cloumn.column_code.clone().unwrap());
+            let msg = format!("列{}不能为空!", cloumn.column_code.clone().unwrap());
             return Err(Error::E(msg));
         }
     }
