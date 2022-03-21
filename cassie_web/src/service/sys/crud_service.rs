@@ -42,11 +42,12 @@ where
             PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
         //执行分页查询
         let data_page: Page<Entity> = RB.fetch_page_by_wrapper(wrapper, &page_request).await?;
-        //将Entity实体转换成 Vo对象返回
-        let mut vos = vec![];
-        for x in data_page.records {
-            vos.push(Dto::from(x));
-        }
+        let vos = data_page
+            .records
+            .into_iter()
+            .map(|e| Dto::from(e.clone()))
+            .collect::<Vec<Dto>>();
+
         Ok(Page::<Dto> {
             records: vos,
             total: data_page.total,
@@ -63,7 +64,7 @@ where
     ) -> Result<Vec<Dto>> {
         //执行查询
         let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
-        let result: Vec<Dto> = list.iter().map(|e| Dto::from(e.clone())).collect();
+        let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
         Ok(result)
     }
 
@@ -75,7 +76,7 @@ where
         let wrapper = Self::get_wrapper(arg);
         //执行查询
         let list: Vec<Entity> = RB.fetch_list_by_wrapper(wrapper).await?;
-        let result: Vec<Dto> = list.iter().map(|e| Dto::from(e.clone())).collect();
+        let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
         Ok(result)
     }
 

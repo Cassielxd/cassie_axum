@@ -58,19 +58,19 @@ impl SysMenuService {
         for (k, v) in &result {
             if v.pid.unwrap() == 0 {
                 let mut top = SysMenuDTO::from(v.clone());
-                self.loop_find_childs(&mut top, &result);
+                self.find_childs(&mut top, &result);
                 data.push(top);
             }
         }
         data
     }
 
-    fn loop_find_childs(&self, arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>) {
+    fn find_childs(&self, arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>) {
         let mut childs = vec![];
         for (key, x) in all {
             if x.pid.is_some() && x.pid.eq(&arg.id) {
                 let mut item = SysMenuDTO::from(x.clone());
-                self.loop_find_childs(&mut item, all);
+                self.find_childs(&mut item, all);
                 childs.push(item);
             }
         }
