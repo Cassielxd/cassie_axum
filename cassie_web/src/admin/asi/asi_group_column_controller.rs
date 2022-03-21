@@ -57,8 +57,6 @@ pub async fn save(
             return RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json();
         },
     }
-
-   
 }
 pub fn init_router()->Router{
     Router::new().route(

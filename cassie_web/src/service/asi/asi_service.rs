@@ -5,7 +5,7 @@ use crate::service::crud_service::CrudService;
 use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
 use futures::TryStreamExt;
-use mongodb::options::{FindOptions, UpdateModifications};
+use mongodb::options::UpdateModifications;
 use std::collections::HashMap;
 
 use super::asi_validation::{validate_value, validate_values};
@@ -325,14 +325,15 @@ impl AsiGroupColumnService {
         let tls = REQUEST_CONTEXT.clone();
         let a = tls.get().unwrap();
 
-        let mut entitys = vec![];
-        /*构造信息*/
-        for column in columns {
-            let mut e: AsiGroupColumn = column.into();
-            e.group_code = group_code.clone();
-            e.agency_code = Some(a.agency_code.clone());
-            entitys.push(e);
-        }
+        let mut entitys: Vec<AsiGroupColumn> = columns
+            .iter()
+            .map(|e| {
+                let mut e: AsiGroupColumn = e.clone().into();
+                e.group_code = group_code.clone();
+                e.agency_code = Some(a.agency_code.clone());
+                e
+            })
+            .collect();
         self.save_batch(&mut entitys).await;
     }
 }

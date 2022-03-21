@@ -19,7 +19,7 @@ use std::convert::From;
 #[async_trait]
 pub trait CrudService<Entity, Dto, Params>: Sync + Send
 where
-    Entity: CRUDTable + DeserializeOwned,
+    Entity: CRUDTable + DeserializeOwned + Clone,
     Dto: From<Entity> + Send + Sync + Serialize,
     Params: Send + Sync + Serialize,
 {
@@ -62,14 +62,9 @@ where
         column_values: &Vec<String>,
     ) -> Result<Vec<Dto>> {
         //执行查询
-
         let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
-        let mut vos = vec![];
-        //将Entity实体转换成 Vo对象 返回
-        for x in list {
-            vos.push(Dto::from(x));
-        }
-        Ok(vos)
+        let result: Vec<Dto> = list.iter().map(|e| Dto::from(e.clone())).collect();
+        Ok(result)
     }
 
     /**
@@ -80,12 +75,8 @@ where
         let wrapper = Self::get_wrapper(arg);
         //执行查询
         let list: Vec<Entity> = RB.fetch_list_by_wrapper(wrapper).await?;
-        let mut vos = vec![];
-        //将Entity实体转换成 Vo对象 返回
-        for x in list {
-            vos.push(Dto::from(x));
-        }
-        Ok(vos)
+        let result: Vec<Dto> = list.iter().map(|e| Dto::from(e.clone())).collect();
+        Ok(result)
     }
 
     /**
