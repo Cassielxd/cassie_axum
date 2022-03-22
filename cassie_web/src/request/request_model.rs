@@ -89,6 +89,7 @@ pub struct SysMenuQuery {
 pub struct AsiQuery {
     pub column_code: Option<String>,
     pub group_code: Option<String>,
+    pub parent_group_code: Option<String>,
     pub page: Option<u64>,
     pub limit: Option<u64>,
     pub order: Option<String>,

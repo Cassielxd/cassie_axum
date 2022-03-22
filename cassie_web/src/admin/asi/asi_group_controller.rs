@@ -13,7 +13,12 @@ use crate::{
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
-    let vo = CONTEXT.asi_service.get_group(arg.0).await;
+    let vo = CONTEXT.asi_service.get_group_page(arg.0).await;
+    RespVO::from_result(&vo).resp_json()
+}
+pub async fn list(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
+    let arg = arg.unwrap();
+    let vo = CONTEXT.asi_service.get_group_list(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 
@@ -44,4 +49,5 @@ pub fn init_router() -> Router {
     Router::new()
         .route("/asi/group", get(page).post(save).put(edit))
         .route("/asi/group/:id", get(get_by_id).delete(delete))
+        .route("/asi/group/list", get(list))
 }

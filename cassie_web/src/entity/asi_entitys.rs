@@ -34,7 +34,8 @@ impl_field_name_method!(AsiGroup {
     name,
     info,
     group_code,
-    agency_code
+    agency_code,
+    parent_group_code
 });
 
 /**

@@ -28,22 +28,31 @@ pub struct AsiGroupService {
     pub asi_column: AsiGroupColumnService,
     pub asi_values: AsiGroupValuesService,
 }
-// -> Result<Page<AsiGroupDTO>> 
+// -> Result<Page<AsiGroupDTO>>
 impl TreeService<AsiGroup, AsiGroupDTO> for AsiGroupService {
-    fn set_children(&self,arg: &mut AsiGroupDTO, childs: Option<Vec<AsiGroupDTO>>) {
+    fn set_children(&self, arg: &mut AsiGroupDTO, childs: Option<Vec<AsiGroupDTO>>) {
         arg.children = childs;
     }
 }
 
 impl AsiGroupService {
-    pub async fn get_group(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>>{
+    pub async fn get_group_list(&self, group: AsiQuery) -> Result<Vec<AsiGroupDTO>> {
+        let wrapper = Self::get_wrapper(&group);
+        let list: Vec<AsiGroup> = RB.fetch_list_by_wrapper(wrapper).await?;
+        Ok(self.build(list))
+    }
+
+    pub async fn get_group_page(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>> {
         let wrapper = Self::get_wrapper(&group);
         //构建分页条件
         let page_request = PageRequest::new(group.page.unwrap_or(1), group.limit.unwrap_or(10));
         //执行分页查询
-        let data_page: Page<AsiGroup> = RB.fetch_page_by_wrapper(wrapper, &page_request).await.unwrap();
+        let data_page: Page<AsiGroup> = RB
+            .fetch_page_by_wrapper(wrapper, &page_request)
+            .await
+            .unwrap();
         let records = data_page.records;
-        
+
         Ok(Page::<AsiGroupDTO> {
             records: self.build(records),
             total: data_page.total,
@@ -52,7 +61,6 @@ impl AsiGroupService {
             page_size: data_page.page_size,
             search_count: data_page.search_count,
         })
-        
     }
     /**
      *method:save_group
@@ -315,9 +323,16 @@ impl Default for AsiGroupService {
 
 impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        RB.new_wrapper().do_if(!arg.group_code.is_empty(), |w| {
-            w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
-        })
+        RB.new_wrapper()
+            .do_if(!arg.group_code.is_empty(), |w| {
+                w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
+            })
+            .do_if(!arg.parent_group_code.is_empty(), |w| {
+                w.eq(
+                    AsiGroup::parent_group_code(),
+                    arg.parent_group_code.clone().unwrap(),
+                )
+            })
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroup) {
