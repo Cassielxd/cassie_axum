@@ -2,6 +2,7 @@ use crate::dto::asi_dto::{AsiGroupColumnDTO, AsiGroupDTO};
 use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
+use crate::utils::tree::TreeService;
 use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
 use futures::TryStreamExt;
@@ -9,11 +10,13 @@ use mongodb::options::UpdateModifications;
 use std::collections::HashMap;
 
 use super::asi_validation::{validate_value, validate_values};
+use crate::entity::PageData;
 use cassie_common::error::Error;
 use cassie_common::utils::string::IsEmpty;
 use mongodb::bson::{doc, Bson, Document, Uuid};
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
+use rbatis::{Page, PageRequest};
 
 /**
  *struct:AsiGroupService
@@ -25,8 +28,32 @@ pub struct AsiGroupService {
     pub asi_column: AsiGroupColumnService,
     pub asi_values: AsiGroupValuesService,
 }
+// -> Result<Page<AsiGroupDTO>> 
+impl TreeService<AsiGroup, AsiGroupDTO> for AsiGroupService {
+    fn set_children(&self,arg: &mut AsiGroupDTO, childs: Option<Vec<AsiGroupDTO>>) {
+        arg.children = childs;
+    }
+}
 
 impl AsiGroupService {
+    pub async fn get_group(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>>{
+        let wrapper = Self::get_wrapper(&group);
+        //构建分页条件
+        let page_request = PageRequest::new(group.page.unwrap_or(1), group.limit.unwrap_or(10));
+        //执行分页查询
+        let data_page: Page<AsiGroup> = RB.fetch_page_by_wrapper(wrapper, &page_request).await.unwrap();
+        let records = data_page.records;
+        
+        Ok(Page::<AsiGroupDTO> {
+            records: self.build(records),
+            total: data_page.total,
+            pages: data_page.pages,
+            page_no: data_page.page_no,
+            page_size: data_page.page_size,
+            search_count: data_page.search_count,
+        })
+        
+    }
     /**
      *method:save_group
      *desc:保存业务分组

@@ -13,16 +13,7 @@ use crate::{
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
-    let vo = CONTEXT
-        .asi_service
-        .page(
-            &arg,
-            PageData {
-                page_no: arg.page.clone(),
-                page_size: arg.limit.clone(),
-            },
-        )
-        .await;
+    let vo = CONTEXT.asi_service.get_group(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 

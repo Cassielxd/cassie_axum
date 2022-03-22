@@ -1,5 +1,7 @@
 use rbatis::DateTimeNative;
 
+use crate::utils::tree::TreeModel;
+
 /**
 *struct:SysUser
 *desc:后台用户表
@@ -288,6 +290,16 @@ impl_field_name_method!(SysMenu {
     update_date,
     method
 });
+impl  TreeModel for SysMenu  {
+    fn get_pid(&self) -> Option<String> {
+        Some(self.pid.clone().unwrap().to_string())
+    }
+
+    fn get_id(&self) -> Option<String> {
+        Some(self.id.clone().unwrap().to_string())
+    }
+}
+
 /**
 *struct:CommonField
 *desc:所有表的公共字段 CRUD_SERVICE使用

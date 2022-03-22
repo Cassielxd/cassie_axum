@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use crate::dao::mapper::{user_menu_list, menu_list};
+use crate::dao::mapper::{menu_list, user_menu_list};
 use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
 use crate::request::SysMenuQuery;
 use crate::service::crud_service::CrudService;
+use crate::utils::tree::TreeService;
 use crate::{RB, REQUEST_CONTEXT};
 use cassie_common::error::Result;
 use rbatis::wrapper::Wrapper;
@@ -24,6 +24,7 @@ impl SysMenuService {
             self.update_by_id(id.to_string(), &entity).await;
             id
         } else {
+            entity.del_flag = Option::Some(0);
             let role_id = self.save(&mut entity).await;
             role_id.unwrap()
         };
@@ -46,37 +47,8 @@ impl SysMenuService {
         } else {
             user_menu_list(uid.to_string().as_str(), "0").await.unwrap()
         };
+      
         Ok(self.build(result.unwrap()))
-    }
-
-    fn build(&self, menus: Vec<SysMenu>) -> Vec<SysMenuDTO> {
-        let mut result = HashMap::with_capacity(menus.capacity());
-        let mut data = vec![];
-        for x in menus {
-            result.insert(x.id.clone().unwrap_or_default(), x);
-        }
-        for (k, v) in &result {
-            if v.pid.unwrap() == 0 {
-                let mut top = SysMenuDTO::from(v.clone());
-                self.find_childs(&mut top, &result);
-                data.push(top);
-            }
-        }
-        data
-    }
-
-    fn find_childs(&self, arg: &mut SysMenuDTO, all: &HashMap<i64, SysMenu>) {
-        let mut childs = vec![];
-        for (key, x) in all {
-            if x.pid.is_some() && x.pid.eq(&arg.id) {
-                let mut item = SysMenuDTO::from(x.clone());
-                self.find_childs(&mut item, all);
-                childs.push(item);
-            }
-        }
-        if !childs.is_empty() {
-            arg.children = Some(childs);
-        }
     }
 }
 impl Default for SysMenuService {
@@ -99,5 +71,10 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
         data.id = common.id;
         data.creator = common.creator;
         data.create_date = common.create_date;
+    }
+}
+impl TreeService<SysMenu, SysMenuDTO>   for SysMenuService{
+    fn set_children(&self,arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
+        arg.children = childs;
     }
 }

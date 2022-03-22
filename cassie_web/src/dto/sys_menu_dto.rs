@@ -1,7 +1,7 @@
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
 
-use crate::entity::sys_entitys::SysMenu;
+use crate::{entity::sys_entitys::SysMenu, utils::tree::TreeModel};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SysMenuDTO {
@@ -36,6 +36,17 @@ impl_field_name_method!(SysMenuDTO {
     updater,
     update_date
 });
+impl TreeModel for SysMenuDTO {
+    fn get_pid(&self) -> Option<String> {
+        Some(self.pid.clone().unwrap().to_string())
+    }
+
+    fn get_id(&self) -> Option<String> {
+        Some(self.id.clone().unwrap().to_string())
+    }
+
+}
+
 impl Into<SysMenu> for SysMenuDTO {
     fn into(self) -> SysMenu {
         SysMenu {

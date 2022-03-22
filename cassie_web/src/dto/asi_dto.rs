@@ -1,4 +1,4 @@
-use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
+use crate::{entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues}, utils::tree::TreeModel};
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 
@@ -15,6 +15,17 @@ pub struct AsiGroupDTO {
     pub agency_code: Option<String>,
     pub group_type: Option<String>,
     pub parent_group_code: Option<String>,
+    pub children:Option<Vec<AsiGroupDTO>>
+}
+
+impl TreeModel for  AsiGroupDTO{
+    fn get_pid(&self) -> Option<String> {
+        Some(self.parent_group_code.clone().unwrap())
+    }
+
+    fn get_id(&self) -> Option<String> {
+        Some(self.group_code.clone().unwrap())
+    }
 }
 
 impl_field_name_method!(AsiGroupDTO {
@@ -52,6 +63,7 @@ impl From<AsiGroup> for AsiGroupDTO {
             agency_code: arg.agency_code,
             group_type: arg.group_type,
             parent_group_code: arg.parent_group_code,
+            children: Some(Vec::<AsiGroupDTO>::new()),
         }
     }
 }

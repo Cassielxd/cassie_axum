@@ -1,3 +1,5 @@
+use crate::utils::tree::TreeModel;
+
 /**
 *struct:CiciSystemGroup
 *desc:动态表单定义
@@ -15,6 +17,15 @@ pub struct AsiGroup {
     pub agency_code: Option<String>,
     pub group_type: Option<String>,
     pub parent_group_code: Option<String>,
+}
+impl TreeModel for  AsiGroup{
+    fn get_pid(&self) -> Option<String> {
+        Some(self.parent_group_code.clone().unwrap())
+    }
+
+    fn get_id(&self) -> Option<String> {
+        Some(self.group_code.clone().unwrap())
+    }
 }
 
 impl_field_name_method!(AsiGroup {
