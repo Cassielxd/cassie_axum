@@ -1,12 +1,9 @@
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use std::collections::HashMap;
 
-
-pub trait TreeService<Entity, Dto>: Sync + Send
+pub trait TreeService<Entity, Dto>
 where
-    Entity: DeserializeOwned + Clone + TreeModel,
-    Dto: From<Entity> + Send + Sync + Serialize + TreeModel,
+    Entity: Clone + TreeModel,
+    Dto: From<Entity> + TreeModel,
 {
     fn build(&self, list: Vec<Entity>) -> Vec<Dto> {
         let mut result = HashMap::with_capacity(list.capacity());
@@ -34,11 +31,11 @@ where
             }
         }
         if !childs.is_empty() {
-            self.set_children(arg,Some(childs));
+            self.set_children(arg, Some(childs));
         }
     }
-    fn set_children(&self,arg: &mut Dto, childs: Option<Vec<Dto>>);
-
+    
+    fn set_children(&self, arg: &mut Dto, childs: Option<Vec<Dto>>);
 }
 
 pub trait TreeModel {
