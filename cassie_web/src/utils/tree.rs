@@ -1,5 +1,10 @@
 use std::collections::HashMap;
-
+/**
+ * @description:  TreeService 树节点生成
+ * @author String
+ * @date 2022/3/22 18:01
+ * @email 348040933@qq.com
+ */
 pub trait TreeService<Entity, Dto>
 where
     Entity: Clone + TreeModel,
@@ -34,10 +39,15 @@ where
             self.set_children(arg, Some(childs));
         }
     }
-    
+
     fn set_children(&self, arg: &mut Dto, childs: Option<Vec<Dto>>);
 }
-
+/**
+ * @description:  TreeModel 需要生成 Tree 必须实现 TreeModel
+ * @author String
+ * @date 2022/3/22 18:03
+ * @email 348040933@qq.com
+ */
 pub trait TreeModel {
     fn get_pid(&self) -> Option<String>;
     fn get_id(&self) -> Option<String>;

@@ -36,12 +36,25 @@ impl TreeService<AsiGroup, AsiGroupDTO> for AsiGroupService {
 }
 
 impl AsiGroupService {
+    /**
+     * @description:  get_group_lis 根据条件获取所有group 并生成树
+     * @param: null
+     * @return:
+     * @author String
+     * @date: 2022/3/22 18:03
+     */
     pub async fn get_group_list(&self, group: AsiQuery) -> Result<Vec<AsiGroupDTO>> {
         let wrapper = Self::get_wrapper(&group);
         let list: Vec<AsiGroup> = RB.fetch_list_by_wrapper(wrapper).await?;
         Ok(self.build(list))
     }
-
+    /**
+     * @description:  get_group_page根据条件获取group page 并生成tree
+     * @param: null
+     * @return:
+     * @author String
+     * @date: 2022/3/22 18:04
+     */
     pub async fn get_group_page(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>> {
         let wrapper = Self::get_wrapper(&group);
         //构建分页条件
