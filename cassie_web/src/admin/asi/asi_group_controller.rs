@@ -6,6 +6,7 @@ use axum::{
 };
 use cassie_common::RespVO;
 
+use crate::entity::asi_entitys::AsiGroup;
 use crate::{
     dto::asi_dto::AsiGroupDTO, entity::PageData, request::AsiQuery,
     service::crud_service::CrudService, CONTEXT,
@@ -33,8 +34,8 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn save(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
-    CONTEXT.asi_service.save(&mut arg.into()).await;
-    RespVO::from(&"保存成功".to_string()).resp_json()
+    let res = CONTEXT.asi_service.save_group(arg).await;
+    RespVO::from_result(&res).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {

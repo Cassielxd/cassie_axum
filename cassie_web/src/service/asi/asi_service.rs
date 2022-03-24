@@ -86,7 +86,7 @@ impl AsiGroupService {
                 RB.new_wrapper().eq(AsiGroup::group_code(), g.unwrap()),
             )
             .await;
-        if let Ok(c) = count {
+        if count.unwrap() > 0 {
             return Err(cassie_common::error::Error::from(
                 "group_code已经存在".to_string(),
             ));
@@ -95,6 +95,9 @@ impl AsiGroupService {
         let a = tls.get().unwrap();
         let mut entity: AsiGroup = group.into();
         entity.agency_code = Some(a.agency_code.clone());
+        if entity.parent_group_code.is_empty() {
+            entity.parent_group_code = Some("0".to_string())
+        }
         self.save(&mut entity).await
     }
     /**
@@ -266,8 +269,61 @@ impl AsiGroupService {
             }
         }
     }
-    ///查询values
     pub async fn value_list(
+        &self,
+        id: &String,
+        group: &AsiGroupDTO,
+    ) -> Result<Vec<HashMap<String, Bson>>> {
+        let columns = self
+            .asi_column
+            .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
+            .await
+            .unwrap();
+
+        let collection = MDB.collection::<Document>(build_table(group).as_str());
+        let filter = doc! { "entity_id": id.clone() };
+        let mut result = collection.find(filter, None).await.unwrap();
+        let mut r = Vec::new();
+        while let Some(doc) = result
+            .try_next()
+            .await
+            .map_err(|e| Error::E(e.to_string()))
+            .unwrap()
+        {
+            let mut d = HashMap::new();
+            //使用已经定义的列进行获取
+            for c in &columns {
+                if doc.contains_key(c.column_code.clone().unwrap()) {
+                    d.insert(
+                        c.column_code.clone().unwrap(),
+                        doc.get(c.column_code.clone().unwrap()).unwrap().clone(),
+                    );
+                } else {
+                    d.insert(c.column_code.clone().unwrap(), Bson::String("".to_string()));
+                }
+            }
+            d.insert(
+                AsiGroupDTO::agency_code().to_string(),
+                doc.get(AsiGroupDTO::agency_code().to_string())
+                    .unwrap()
+                    .clone(),
+            );
+            d.insert(
+                AsiGroupDTO::group_code().to_string(),
+                doc.get(AsiGroupDTO::group_code().to_string())
+                    .unwrap()
+                    .clone(),
+            );
+            d.insert(
+                "_id".to_string(),
+                doc.get("_id".to_string()).unwrap().clone(),
+            );
+            r.push(d);
+        }
+        Ok(r)
+    }
+    ///查询values
+    pub async fn value_page(
         &self,
         id: &String,
         group: &AsiGroupDTO,
