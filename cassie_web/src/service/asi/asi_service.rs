@@ -60,10 +60,7 @@ impl AsiGroupService {
         //构建分页条件
         let page_request = PageRequest::new(group.page.unwrap_or(1), group.limit.unwrap_or(10));
         //执行分页查询
-        let data_page: Page<AsiGroup> = RB
-            .fetch_page_by_wrapper(wrapper, &page_request)
-            .await
-            .unwrap();
+        let data_page: Page<AsiGroup> = RB.fetch_page_by_wrapper(wrapper, &page_request).await?;
         let records = data_page.records;
 
         Ok(Page::<AsiGroupDTO> {
@@ -362,6 +359,19 @@ impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
 pub struct AsiGroupColumnService {}
 
 impl AsiGroupColumnService {
+    pub async fn save_column(&self, group: AsiGroupDTO, column: AsiGroupColumnDTO) {
+        let tls = REQUEST_CONTEXT.clone();
+        let a = tls.get().unwrap();
+        let id = column.id.clone();
+        let mut entity: AsiGroupColumn = column.into();
+        entity.group_code = group.group_code;
+        entity.agency_code = Some(a.agency_code.clone());
+        if let Some(i) = id {
+            self.update_by_id(i.to_string(), &mut entity).await;
+        } else {
+            self.save(&mut entity).await;
+        }
+    }
     /**
      *method:save_batch_colums
      *desc: 保存列定义

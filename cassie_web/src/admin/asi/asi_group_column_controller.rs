@@ -5,10 +5,21 @@ use crate::{
 use axum::{
     extract::{Path, Query},
     response::IntoResponse,
-    Json, Router, routing::get,
+    routing::get,
+    Json, Router,
 };
 use cassie_common::{error::Error, RespVO};
 use validator::Validate;
+
+pub async fn get_column_one(Path(id): Path<String>) -> impl IntoResponse {
+    let res = CONTEXT.asi_service.asi_column.get(id).await;
+    RespVO::from_result(&res).resp_json()
+}
+
+pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    CONTEXT.asi_service.asi_column.del(&id).await;
+    RespVO::from(&"删除成功".to_string()).resp_json()
+}
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let arg = arg.unwrap();
@@ -25,44 +36,55 @@ pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
         .await;
     RespVO::from_result(&vo).resp_json()
 }
-pub async fn list(Path(group_code): Path<String>,arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let res= CONTEXT.asi_service.asi_column.fetch_list_by_column("group_code", &vec![group_code]).await;
+pub async fn list(
+    Path(group_code): Path<String>,
+    arg: Option<Query<AsiQuery>>,
+) -> impl IntoResponse {
+    let res = CONTEXT
+        .asi_service
+        .asi_column
+        .fetch_list_by_column("group_code", &vec![group_code])
+        .await;
     RespVO::from_result(&res).resp_json()
 }
 
 pub async fn save(
     Path(group_code): Path<String>,
-    Json(arg): Json<Vec<AsiGroupColumnDTO>>,
+    Json(dto): Json<AsiGroupColumnDTO>,
 ) -> impl IntoResponse {
     /*验证是否存在业务分类*/
-    let group = CONTEXT.asi_service.fetch_list_by_column("group_code", &vec![group_code]).await;
-    match group{
+    let group = CONTEXT
+        .asi_service
+        .fetch_list_by_column("group_code", &vec![group_code])
+        .await;
+    match group {
         Ok(list) => {
             let group_info = list.get(0);
             /*执行验证逻辑*/
-            for dto in &arg {
-                if let Err(e) = dto.validate() {
-                    return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
-                }
+            if let Err(e) = dto.validate() {
+                return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
             }
             /*执行保存逻辑*/
             CONTEXT
                 .asi_service
                 .asi_column
-                .save_batch_colums(group_info.unwrap().clone(), arg)
+                .save_column(group_info.unwrap().clone(), dto)
                 .await;
             RespVO::from_result(&Ok("保存成功".to_string())).resp_json()
-        },
+        }
         Err(_) => {
             return RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json();
-        },
+        }
     }
 }
-pub fn init_router()->Router{
-    Router::new().route(
-        "/asi/column/list/:group_code",
-        get(list)
-            .post(save)
-            .put(save),
-    )
+pub fn init_router() -> Router {
+    Router::new()
+        .route(
+            "/asi/column/list/:group_code",
+            get(list).post(save).put(save),
+        )
+        .route(
+            "/asi/column/get_column_one/:id",
+            get(get_column_one).delete(delete),
+        )
 }
