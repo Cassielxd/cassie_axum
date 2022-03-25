@@ -18,15 +18,17 @@ async fn upload(mut multipart: Multipart) -> impl IntoResponse {
         let file_name = field.file_name().unwrap().to_string();
         let content_type = field.content_type().unwrap().to_string();
         let data = field.bytes().await.unwrap();
-      let  result = CONTEXT.upload_service.upload(data, file_name, content_type).await;
-        
+        let result = CONTEXT
+            .upload_service
+            .upload(data, file_name, content_type)
+            .await;
         match result {
             Ok(s) => {
                 return RespVO::from(&s).resp_json();
             }
             Err(e) => {
                 return RespVO::<()>::from_error(&Error::from(e.to_string())).resp_json();
-            },
+            }
         }
     }
     return RespVO::<()>::from_error(&Error::from("params error".to_string())).resp_json();
