@@ -30,7 +30,7 @@ impl UploadService {
             }
             e => {
                 panic!(
-                    "unknown of cache_type: \"{}\",current support 'mem' or 'redis'",
+                    "unknown of upload_type: \"{}\",current support 'oss' ",
                     e
                 );
             }
