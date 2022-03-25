@@ -3,7 +3,7 @@ pub mod sys;
 pub mod upload;
 
 pub use sys::*;
-
+pub use upload::*;
 use self::{
     asi::asi_service::AsiGroupService,
     cache_service::CacheService,
@@ -12,7 +12,7 @@ use self::{
     sys_menu_service::SysMenuService,
     sys_params_service::SysParamsService,
     sys_role_service::SysRoleService,
-    sys_user_service::SysUserService,
+    sys_user_service::SysUserService, upload::upload_service::UploadService,
 };
 
 pub struct ServiceContext {
@@ -31,6 +31,7 @@ pub struct ServiceContext {
     pub sys_dict_value_service: SysDictDataService,
 
     pub asi_service: AsiGroupService,
+    pub upload_service:UploadService
 }
 
 impl ServiceContext {
@@ -45,6 +46,7 @@ impl ServiceContext {
             sys_dict_type_service: Default::default(),
             sys_dict_value_service: Default::default(),
             asi_service: Default::default(),
+            upload_service: UploadService::new().unwrap(),
         }
     }
 }

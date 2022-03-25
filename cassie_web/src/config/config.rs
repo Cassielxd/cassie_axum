@@ -1,22 +1,31 @@
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-pub struct NacosConfig{
-    pub nacos_flag:bool,
-    pub nacos_server:String,
-    pub application_name:String
+pub struct NacosConfig {
+    pub nacos_flag: bool,
+    pub nacos_server: String,
+    pub application_name: String,
 }
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-pub struct ServerConfig{
-        ///当前服务地址
+pub struct ServerConfig {
+    ///当前服务地址
     pub host: String,
     pub port: String,
 }
 
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
-pub struct TenantConfig{
+pub struct TenantConfig {
     pub enable: bool,
     pub column: String,
-    pub ignore_table:Vec<String>,
+    pub ignore_table: Vec<String>,
 }
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct OSSConfig {
+    pub key_id: String,
+    pub key_secret: String,
+    pub endpoint: String,
+    pub bucket: String,
+    pub access_endpoint: String,
+}
+
 ///服务启动配置
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct ApplicationConfig {
@@ -48,20 +57,21 @@ pub struct ApplicationConfig {
     ///白名单接口
     pub admin_white_list_api: Vec<String>,
     pub api_white_list_api: Vec<String>,
-    pub super_admin_ids:Vec<String>,
+    pub super_admin_ids: Vec<String>,
     ///权限缓存类型
     pub cache_type: String,
+    pub upload_type: String,
     ///重试
     pub login_fail_retry: u64,
     ///重试等待时间
     pub login_fail_retry_wait_sec: u64,
     //server 配置
-    pub server:ServerConfig,
+    pub server: ServerConfig,
     //nacos 配置
-    pub nacos:NacosConfig,
+    pub nacos: NacosConfig,
     //租户 配置
-    pub tenant:TenantConfig
- 
+    pub tenant: TenantConfig,
+    pub oss: OSSConfig,
 }
 
 ///默认配置
@@ -69,8 +79,7 @@ impl Default for ApplicationConfig {
     fn default() -> Self {
         let yml_data = include_str!("../../application.yml");
         //读取配置
-        let result: ApplicationConfig =
-            serde_yaml::from_str(yml_data).expect("配置文件加载失败");
+        let result: ApplicationConfig = serde_yaml::from_str(yml_data).expect("配置文件加载失败");
 
         result
     }

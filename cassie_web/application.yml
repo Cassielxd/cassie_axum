@@ -55,7 +55,13 @@ api_white_list_api:
 #api超级管理员id直接跳过api权限
 super_admin_ids:
   - "1"
-
+upload_type: "oss"
+oss:
+  key_id: "LTAI5tARCXTX2k7zHw3o7JqW"
+  key_secret: "ap2FgB9cKPq3e2Ot59IlIULRYrScYY"
+  endpoint: "oss-cn-beijing.aliyuncs.com"
+  bucket: "rivet"
+  access_endpoint: "http://rivet.oss-cn-beijing.aliyuncs.com"
 
 tenant:
   enable: false
