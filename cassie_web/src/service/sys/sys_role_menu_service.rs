@@ -1,5 +1,5 @@
 use super::crud_service::CrudService;
-use crate::cici_casbin::CASBIN_CONTEXT;
+use crate::cici_casbin::casbin_service::CasbinService;
 use crate::dao::mapper::get_menu_list_by_ids;
 use crate::entity::sys_entitys::CommonField;
 use crate::request::{RequestModel, SysMenuQuery};
@@ -56,9 +56,9 @@ impl SysRoleMenuService {
             order_field: None,
         };
         let request_model = CONTAINER.get_local::<RequestModel>();
-        let  RB = CONTAINER.get::<Rbatis>();
+        let RB = CONTAINER.get::<Rbatis>();
         let CONTEXT = CONTAINER.get::<ServiceContext>();
-        let r_list = get_menu_list_by_ids(&mut RB.as_executor(),&menu_id_list.clone().unwrap())
+        let r_list = get_menu_list_by_ids(&mut RB.as_executor(), &menu_id_list.clone().unwrap())
             .await
             .unwrap();
         let menus = CONTEXT.sys_menu_service.list(&query).await;
@@ -88,7 +88,7 @@ impl SysRoleMenuService {
         //保存角色菜单关系
         self.save_batch(&vec).await;
         //同步到权限框架casbin
-        let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
+        let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
         let mut lock = cached_enforcer.write().await;
         lock.add_policies(rules).await;
         drop(lock);
@@ -98,7 +98,7 @@ impl SysRoleMenuService {
         let request_model = CONTAINER.get_local::<RequestModel>();
         self.del_by_column(SysRoleMenu::role_id(), &role_id.to_string())
             .await;
-        let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
+        let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
         let mut lock = cached_enforcer.write().await;
         lock.remove_named_policy(
             "p",

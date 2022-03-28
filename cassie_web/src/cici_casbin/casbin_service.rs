@@ -74,7 +74,7 @@ impl CasbinService {
      *author:String
      *email:348040933@qq.com
      */
-    pub async fn call(&mut self, path: String, action: String, vals: CasbinVals) -> bool {
+    pub async fn call(&self, path: String, action: String, vals: CasbinVals) -> bool {
         /*获取验证器*/
         let cloned_enforcer = self.enforcer.clone();
         let uid = vals.uid.clone();

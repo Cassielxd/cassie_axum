@@ -6,7 +6,7 @@ use rbatis::wrapper::Wrapper;
 
 use super::crud_service::CrudService;
 use super::sys_role_user_service::SysRoleUserService;
-use crate::cici_casbin::CASBIN_CONTEXT;
+use crate::cici_casbin::casbin_service::CasbinService;
 use crate::entity::sys_entitys::{CommonField, SysRoleUser};
 use crate::request::RequestModel;
 use casbin::MgmtApi;
@@ -34,7 +34,7 @@ impl SysUserService {
         self.sys_role_user_service
             .del_by_column(SysRoleUser::user_id(), id.clone().as_str())
             .await;
-        let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
+        let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
         let mut lock = cached_enforcer.write().await;
         lock.remove_grouping_policy(vec![id]).await;
         drop(lock);
@@ -67,7 +67,7 @@ impl SysUserService {
         };
         self.sys_role_user_service.save(&mut data).await;
         if let Some(rid) = role_id {
-            let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
+            let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
             let mut lock = cached_enforcer.write().await;
             lock.add_grouping_policy(vec![
                 uid.to_string(),

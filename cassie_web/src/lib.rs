@@ -26,6 +26,7 @@ use mongodb::Database;
 use rbatis::rbatis::Rbatis;
 use request::*;
 
+use crate::cici_casbin::casbin_service::CasbinService;
 use crate::{config::config::ApplicationConfig, service::ServiceContext};
 use state::Container;
 
@@ -43,4 +44,6 @@ pub fn init_context() {
     }));
     //第三步初始化所有的 服务类
     CONTAINER.set::<ServiceContext>(ServiceContext::default());
+    //第三步初始化casbinCOntext
+    CONTAINER.set::<CasbinService>(CasbinService::default());
 }

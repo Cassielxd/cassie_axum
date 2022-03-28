@@ -4,12 +4,8 @@ use axum::{
 };
 use cassie_common::error::Error;
 
-use crate::cici_casbin::casbin_service::CasbinVals;
-use crate::{
-    cici_casbin::{is_white_list_api, CASBIN_CONTEXT},
-    config::config::ApplicationConfig,
-    CONTAINER,
-};
+use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
+use crate::{cici_casbin::is_white_list_api, config::config::ApplicationConfig, CONTAINER};
 
 use crate::vo::jwt::JWTToken;
 use crate::RequestModel;
@@ -70,7 +66,9 @@ where
                     };
 
                     /*获取验证的  casbin_service*/
-                    let mut service = CASBIN_CONTEXT.clone();
+
+                    let mut service = CONTAINER.get::<CasbinService>();
+
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {
                         return Ok(Self {});
