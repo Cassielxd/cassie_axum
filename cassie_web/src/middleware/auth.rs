@@ -64,11 +64,8 @@ where
                         uid: data.id.to_string(),
                         agency_code: Option::from(data.agency_code),
                     };
-
                     /*获取验证的  casbin_service*/
-
                     let service = CONTAINER.get::<CasbinService>();
-
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {
                         return Ok(Self {});

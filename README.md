@@ -4,6 +4,7 @@
 基于rust axum 完成web端手脚架 基础权限,用户,缓存,验证,代码生成
 
 rust axum web 是rust开发的web手脚架项目
+前端项目 https://gitee.com/stringlxd/cassie_admin
 
 #### 软件架构
 
