@@ -8,13 +8,14 @@ use axum::{
 use cassie_common::{error::Error, RespVO};
 
 use crate::{ request::AsiQuery,
-    service::crud_service::CrudService, CONTEXT,
+    service::{crud_service::CrudService, ServiceContext}, CONTAINER,
 };
 
 pub async fn list(
     Path(id): Path<String>,
     arg: Option<Query<AsiQuery>>,
 ) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let  arg = arg.unwrap();
     let vo = CONTEXT.asi_service.list(&arg).await;
     if let Ok(r)= vo {
@@ -29,6 +30,7 @@ pub async fn save_from(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String,HashMap<String,String>>>,
 ) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     /*执行验证逻辑*/
     let res = CONTEXT.asi_service.save_values_for_from(id, arg).await;
     RespVO::from_result(&res).resp_json()
@@ -38,6 +40,7 @@ pub async fn save_table(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String,Vec<HashMap<String,String>>>>,
 ) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     /*执行验证逻辑*/
     let res = CONTEXT.asi_service.save_values_for_table(id, arg).await;
     RespVO::from_result(&res).resp_json()

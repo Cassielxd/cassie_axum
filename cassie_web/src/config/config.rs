@@ -25,6 +25,17 @@ pub struct OSSConfig {
     pub bucket: String,
     pub access_endpoint: String,
 }
+impl OSSConfig {
+    pub fn validate(&self) {
+        if self.key_id.is_empty()
+            || self.key_secret.is_empty()
+            || self.endpoint.is_empty()
+            || self.bucket.is_empty()
+        {
+            panic!("请配置oss ！！！！！！！！！！！！！！！！！！！")
+        }
+    }
+}
 
 ///服务启动配置
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -71,6 +82,7 @@ pub struct ApplicationConfig {
     pub nacos: NacosConfig,
     //租户 配置
     pub tenant: TenantConfig,
+    //oss 配置
     pub oss: OSSConfig,
 }
 

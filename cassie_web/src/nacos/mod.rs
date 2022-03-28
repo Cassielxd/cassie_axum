@@ -1,12 +1,14 @@
 use log::info;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 use tokio::time;
-use crate::CASSIE_CONFIG;
+
+use crate::{CONTAINER, config::config::ApplicationConfig};
 
 const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'{').add(b'}').add(b':').add(b',');
 
 //nacos服务注册
 pub async fn register_service() {
+    let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
     if CASSIE_CONFIG.nacos.nacos_flag {
         info!("register service: {:?}", CASSIE_CONFIG.nacos.nacos_server);
         let client = reqwest::Client::new();
@@ -29,6 +31,7 @@ pub async fn register_service() {
 
 //nacos心跳检测
 pub async fn ping() {
+    let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
     //
     // nacos 文档中没有说明 metadata 必选, 测试发现，如果没有 metadata 信息， java 端会有错误
     //

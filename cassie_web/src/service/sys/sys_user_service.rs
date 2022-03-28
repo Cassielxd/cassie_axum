@@ -1,12 +1,14 @@
+use crate::CONTAINER;
 use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
-use crate::{RB, REQUEST_CONTEXT};
 use cassie_common::utils::password_encoder::PasswordEncoder;
+use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 
 use super::crud_service::CrudService;
 use super::sys_role_user_service::SysRoleUserService;
 use crate::cici_casbin::CASBIN_CONTEXT;
 use crate::entity::sys_entitys::{CommonField, SysRoleUser};
+use crate::request::RequestModel;
 use casbin::MgmtApi;
 
 /**
@@ -42,14 +44,10 @@ impl SysUserService {
         let password = PasswordEncoder::encode(&arg.password.clone().unwrap().as_str());
         let role_id = arg.role_id.clone();
         let mut entity: SysUser = arg.into();
-        let tls = REQUEST_CONTEXT.clone();
-        let (creator, agency_code) = if let Some(a) = tls.get() {
-            (a.uid as i64, a.agency_code.clone())
-        } else {
-            (0, "".to_string())
-        };
+        let request_model = CONTAINER.get_local::<RequestModel>();
+
         entity.password = Some(password);
-        entity.agency_code = Some(agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code.clone());
         entity.super_admin = Some(0);
         entity.del_flag = Some(0);
         /*保存到数据库*/
@@ -71,8 +69,12 @@ impl SysUserService {
         if let Some(rid) = role_id {
             let cached_enforcer = CASBIN_CONTEXT.enforcer.clone();
             let mut lock = cached_enforcer.write().await;
-            lock.add_grouping_policy(vec![uid.to_string(), rid.to_string(), agency_code.clone()])
-                .await;
+            lock.add_grouping_policy(vec![
+                uid.to_string(),
+                rid.to_string(),
+                request_model.agency_code.clone(),
+            ])
+            .await;
             drop(lock);
         }
     }
@@ -80,6 +82,7 @@ impl SysUserService {
 
 impl CrudService<SysUser, SysUserDTO, SysUserQuery> for SysUserService {
     fn get_wrapper(arg: &SysUserQuery) -> Wrapper {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.new_wrapper().eq(SysUser::del_flag(), 0)
     }
 

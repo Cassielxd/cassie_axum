@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use redis::aio::Connection;
 
-use cassie_common::error::{Error, Result};
 use async_trait::async_trait;
+use cassie_common::error::{Error, Result};
 use redis::RedisResult;
 
 use super::cache_service::ICacheService;
@@ -14,9 +14,9 @@ pub struct RedisService {
 
 impl RedisService {
     pub fn new(url: &str) -> Self {
-        println!("[abs_admin] conncect redis ({})...", url);
+        println!("conncect redis ({})...", url);
         let client = redis::Client::open(url).unwrap();
-        println!("[abs_admin] conncect redis success!");
+        println!("conncect redis success!");
         Self { client }
     }
 

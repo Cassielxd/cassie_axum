@@ -8,11 +8,15 @@ use axum::response::IntoResponse;
 use cassie_common::error::Error;
 use std::collections::HashMap;
 
-use crate::CONTEXT;
+use crate::CONTAINER;
+use crate::service::ServiceContext;
+
+
 
 pub const CONTENT_TYPE: &str = "content-type";
 
 async fn upload(mut multipart: Multipart) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     if let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
         let file_name = field.file_name().unwrap().to_string();

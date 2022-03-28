@@ -1,4 +1,6 @@
-use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
+use crate::CONTAINER;
+use crate::service::ServiceContext;
+use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::routing::get;
 use axum::Json;
 use axum::{response::IntoResponse, Router};
@@ -16,6 +18,7 @@ use axum::extract::{Path, Query};
  */
 
 pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_dict_type_service
@@ -37,6 +40,7 @@ pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let dto = CONTEXT.sys_dict_type_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
@@ -48,12 +52,14 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let mut entity = arg.into();
     let vo = CONTEXT.sys_dict_type_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let id = arg.id.clone();
     let mut entity = arg.into();
     CONTEXT
@@ -63,11 +69,13 @@ pub async fn edit(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     CONTEXT.sys_dict_type_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
 pub async fn all() -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let vo = CONTEXT.sys_dict_type_service.get_all_list().await;
     RespVO::from_result(&vo).resp_json()
 }

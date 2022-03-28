@@ -1,15 +1,18 @@
 use crate::entity::pagedata::PageData;
 use crate::entity::sys_entitys::CommonField;
-use crate::{RB, REQUEST_CONTEXT};
+use crate::request::RequestModel;
+use crate::CONTAINER;
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use rbatis::crud::{CRUDTable, Skip, CRUD};
 use rbatis::plugin::page::{Page, PageRequest};
+use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 use rbatis::DateTimeNative;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::convert::From;
+
 /**
  *struct:CrudService
  *desc:orm基础CRUD实现
@@ -35,6 +38,7 @@ where
      * 公共分页查询方法
      */
     async fn page(&self, arg: &Params, page: PageData) -> Result<Page<Dto>> {
+        let RB = CONTAINER.get::<Rbatis>();
         //构建查询条件
         let wrapper = Self::get_wrapper(arg);
         //构建分页条件
@@ -62,9 +66,13 @@ where
         column: &str,
         column_values: &Vec<String>,
     ) -> Result<Vec<Dto>> {
+        let RB = CONTAINER.get::<Rbatis>();
         //执行查询
         let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
-        let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
+        let result = list
+            .into_iter()
+            .map(|e| Dto::from(e.clone()))
+            .collect::<Vec<Dto>>();
         Ok(result)
     }
 
@@ -72,11 +80,15 @@ where
      * 公共列表查询方法
      */
     async fn list(&self, arg: &Params) -> Result<Vec<Dto>> {
+        let RB = CONTAINER.get::<Rbatis>();
         //构建查询条件
         let wrapper = Self::get_wrapper(arg);
         //执行查询
         let list: Vec<Entity> = RB.fetch_list_by_wrapper(wrapper).await?;
-        let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
+        let result = list
+            .into_iter()
+            .map(|e| Dto::from(e.clone()))
+            .collect::<Vec<Dto>>();
         Ok(result)
     }
 
@@ -84,6 +96,7 @@ where
      * 根据id更新实体
      */
     async fn update_by_id(&self, id: String, mut data: &Entity) {
+        let RB = CONTAINER.get::<Rbatis>();
         let wrapper = RB.new_wrapper().eq("id", id);
         RB.update_by_wrapper(
             &mut data,
@@ -96,6 +109,7 @@ where
      * 根据id查询条件查询单个值
      */
     async fn get(&self, id: String) -> Result<Dto> {
+        let RB = CONTAINER.get::<Rbatis>();
         let wrapper = RB.new_wrapper().eq("id", id);
         let detail: Entity = RB.fetch_by_wrapper(wrapper).await?;
         let vo = Dto::from(detail);
@@ -106,14 +120,13 @@ where
      */
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
-
-        let tls = REQUEST_CONTEXT.clone();
-        let creator = if let Some(a) = tls.get() { a.uid } else { 0 };
+        let RB = CONTAINER.get::<Rbatis>();
+        let request_model = CONTAINER.get_local::<RequestModel>();
         /*设置公共字段*/
         self.set_save_common_fields(
             CommonField {
                 id: Some(0),
-                creator: Some(creator),
+                creator: Some(request_model.uid),
                 create_date: Some(DateTimeNative::now()),
                 updater: None,
                 update_date: None,
@@ -127,24 +140,28 @@ where
      * 批量保存实体
      */
     async fn save_batch(&self, mut list: &Vec<Entity>) {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.save_batch(&mut list, &[Skip::Column("id")]).await;
     }
     /**
      * 删除实体 逻辑删除
      */
     async fn del(&self, id: &String) {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.remove_by_column::<Entity, _>("id", id).await;
     }
     /**
      * 根据字段实体
      */
     async fn del_by_column(&self, column: &str, column_value: &str) {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.remove_by_column::<Entity, _>(column, column_value).await;
     }
     /**
      * 批量删除实体 逻辑删除
      */
     async fn del_batch(&self, ids: &Vec<u64>) {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.remove_batch_by_column::<Entity, _>("id", ids).await;
     }
 }

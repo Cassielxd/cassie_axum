@@ -1,4 +1,4 @@
-use crate::CASSIE_CONFIG;
+use crate::{CONTAINER, config::config::ApplicationConfig};
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
@@ -26,14 +26,15 @@ impl OssService {
      * @date: 2022/3/28 9:42
      */
     pub async fn get_client(&self) -> &OSS<'static> {
+       let config = CONTAINER.get::<ApplicationConfig>();
         static mut POINT: Option<Arc<OSS<'static>>> = None;
         unsafe {
             POINT.get_or_insert_with(|| {
                 Arc::new(OSS::new(
-                    CASSIE_CONFIG.oss.key_id.as_str(),
-                    CASSIE_CONFIG.oss.key_secret.as_str(),
-                    CASSIE_CONFIG.oss.endpoint.as_str(),
-                    CASSIE_CONFIG.oss.bucket.as_str(),
+                    config.oss.key_id.as_str(),
+                    config.oss.key_secret.as_str(),
+                    config.oss.endpoint.as_str(),
+                    config.oss.bucket.as_str(),
                 ))
             });
             POINT.as_ref().unwrap()

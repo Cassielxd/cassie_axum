@@ -1,4 +1,6 @@
-use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
+use crate::CONTAINER;
+use crate::service::ServiceContext;
+use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::routing::get;
 use axum::{response::IntoResponse, Router};
 use axum::Json;
@@ -16,6 +18,7 @@ use axum::extract::{Path, Query};
  */
 
 pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_dict_value_service
@@ -37,6 +40,7 @@ pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let dto = CONTEXT.sys_dict_value_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
@@ -48,12 +52,14 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let mut entity = arg.into();
     let vo = CONTEXT.sys_dict_value_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let id = arg.id.clone();
     let mut entity = arg.into();
     CONTEXT.sys_dict_value_service.update_by_id(id.unwrap().to_string(),&mut entity).await;
@@ -61,6 +67,7 @@ pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
      CONTEXT.sys_dict_value_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }

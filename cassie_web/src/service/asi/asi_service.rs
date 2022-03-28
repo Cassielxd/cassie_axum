@@ -3,14 +3,17 @@ use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn};
 use crate::entity::sys_entitys::CommonField;
 use crate::service::crud_service::CrudService;
 use crate::utils::tree::TreeService;
-use crate::{AsiQuery, MDB, RB, REQUEST_CONTEXT};
+use crate::{AsiQuery, CONTAINER};
 use cassie_common::error::Result;
 use futures::TryStreamExt;
 use mongodb::options::UpdateModifications;
+use mongodb::Database;
+use rbatis::rbatis::Rbatis;
 use std::collections::HashMap;
 
 use super::asi_validation::{validate_value, validate_values};
 use crate::entity::PageData;
+use crate::request::RequestModel;
 use cassie_common::error::Error;
 use cassie_common::utils::string::IsEmpty;
 use mongodb::bson::{doc, Bson, Document, Uuid};
@@ -44,6 +47,7 @@ impl AsiGroupService {
      * @date: 2022/3/22 18:03
      */
     pub async fn get_group_list(&self, group: AsiQuery) -> Result<Vec<AsiGroupDTO>> {
+        let RB = CONTAINER.get::<Rbatis>();
         let wrapper = Self::get_wrapper(&group);
         let list: Vec<AsiGroup> = RB.fetch_list_by_wrapper(wrapper).await?;
         Ok(self.build(list))
@@ -56,6 +60,7 @@ impl AsiGroupService {
      * @date: 2022/3/22 18:04
      */
     pub async fn get_group_page(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>> {
+        let RB = CONTAINER.get::<Rbatis>();
         let wrapper = Self::get_wrapper(&group);
         //构建分页条件
         let page_request = PageRequest::new(group.page.unwrap_or(1), group.limit.unwrap_or(10));
@@ -79,9 +84,10 @@ impl AsiGroupService {
      *email:348040933@qq.com
      */
     pub async fn save_group(&self, group: AsiGroupDTO) -> Result<i64> {
+        let RB = CONTAINER.get::<Rbatis>();
         /*查询有没有重复的*/
         let g = group.group_code.clone();
-        let count = crate::RB
+        let count = RB
             .fetch_count_by_wrapper::<AsiGroup>(
                 RB.new_wrapper().eq(AsiGroup::group_code(), g.unwrap()),
             )
@@ -91,10 +97,9 @@ impl AsiGroupService {
                 "group_code已经存在".to_string(),
             ));
         }
-        let tls = REQUEST_CONTEXT.clone();
-        let a = tls.get().unwrap();
+        let request_model = CONTAINER.get_local::<RequestModel>();
         let mut entity: AsiGroup = group.into();
-        entity.agency_code = Some(a.agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code.clone());
         if entity.parent_group_code.is_empty() {
             entity.parent_group_code = Some("0".to_string())
         }
@@ -222,6 +227,7 @@ impl AsiGroupService {
         group: &AsiGroupDTO,
         values: HashMap<String, String>,
     ) {
+        let MDB = CONTAINER.get::<Database>();
         let (insert, doc) = self.build_data(id, group, &values);
         let collection = MDB.collection::<Document>(build_table(group).as_str());
         if insert {
@@ -243,6 +249,7 @@ impl AsiGroupService {
         group: &AsiGroupDTO,
         values_map: Vec<HashMap<String, String>>,
     ) {
+        let MDB = CONTAINER.get::<Database>();
         let collection = MDB.collection::<Document>(build_table(group).as_str());
         let mut insert_docs = vec![];
         let mut update_docs = vec![];
@@ -274,6 +281,7 @@ impl AsiGroupService {
         id: &String,
         group: &AsiGroupDTO,
     ) -> Result<Vec<HashMap<String, Bson>>> {
+        let MDB = CONTAINER.get::<Database>();
         let columns = self
             .asi_column
             .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
@@ -328,6 +336,7 @@ impl AsiGroupService {
         id: &String,
         group: &AsiGroupDTO,
     ) -> Result<Vec<HashMap<String, Bson>>> {
+        let MDB = CONTAINER.get::<Database>();
         let columns = self
             .asi_column
             .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
@@ -389,6 +398,7 @@ impl Default for AsiGroupService {
 
 impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.new_wrapper()
             .do_if(!arg.group_code.is_empty(), |w| {
                 w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
@@ -416,12 +426,11 @@ pub struct AsiGroupColumnService {}
 
 impl AsiGroupColumnService {
     pub async fn save_column(&self, group: AsiGroupDTO, column: AsiGroupColumnDTO) {
-        let tls = REQUEST_CONTEXT.clone();
-        let a = tls.get().unwrap();
+        let request_model = CONTAINER.get_local::<RequestModel>();
         let id = column.id.clone();
         let mut entity: AsiGroupColumn = column.into();
         entity.group_code = group.group_code;
-        entity.agency_code = Some(a.agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code.clone());
         if let Some(i) = id {
             self.update_by_id(i.to_string(), &mut entity).await;
         } else {
@@ -443,15 +452,13 @@ impl AsiGroupColumnService {
         )
         .await;
         /*获取当前登录信息*/
-        let tls = REQUEST_CONTEXT.clone();
-        let a = tls.get().unwrap();
-
+        let request_model = CONTAINER.get_local::<RequestModel>();
         let mut entitys: Vec<AsiGroupColumn> = columns
             .iter()
             .map(|e| {
                 let mut e: AsiGroupColumn = e.clone().into();
                 e.group_code = group_code.clone();
-                e.agency_code = Some(a.agency_code.clone());
+                e.agency_code = Some(request_model.agency_code.clone());
                 e
             })
             .collect();
@@ -467,6 +474,7 @@ impl Default for AsiGroupColumnService {
 
 impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery> for AsiGroupColumnService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.new_wrapper().do_if(!arg.group_code.is_empty(), |w| {
             w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
         })

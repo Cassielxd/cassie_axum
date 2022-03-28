@@ -4,11 +4,15 @@ use axum::{
 };
 use cassie_common::error::Error;
 
-use crate::cici_casbin::{is_white_list_api, CASBIN_CONTEXT};
-use crate::{cici_casbin::casbin_service::CasbinVals, CASSIE_CONFIG};
+use crate::cici_casbin::casbin_service::CasbinVals;
+use crate::{
+    cici_casbin::{is_white_list_api, CASBIN_CONTEXT},
+    config::config::ApplicationConfig,
+    CONTAINER,
+};
 
 use crate::vo::jwt::JWTToken;
-use crate::{RequestModel, REQUEST_CONTEXT};
+use crate::RequestModel;
 use axum::http::HeaderValue;
 use cassie_common::RespVO;
 /**
@@ -27,6 +31,7 @@ where
     type Rejection = Error;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
+        let CASSIE_CONFIG = CONTAINER.get::<ApplicationConfig>();
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();
@@ -50,13 +55,13 @@ where
             /*验证token有效性*/
             match checked_token(token_value).await {
                 Ok(data) => {
-                    let tls = REQUEST_CONTEXT.clone();
-                    tls.get_or(|| RequestModel {
-                        uid: data.id.clone(),
-                        username: data.username.clone(),
-                        agency_code: data.agency_code.clone(),
+                    let data1 = data.clone();
+                    CONTAINER.set_local::<RequestModel, _>(move || RequestModel {
+                        uid: data1.id.clone(),
+                        username: data1.username.clone(),
+                        agency_code: data1.agency_code.clone(),
                         product_code: "".to_string(),
-                        super_admin:data.super_admin,
+                        super_admin: data1.super_admin,
                     });
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
@@ -92,6 +97,7 @@ where
  */
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
+    let CASSIE_CONFIG = CONTAINER.get::<ApplicationConfig>();
     let token = JWTToken::verify(&CASSIE_CONFIG.jwt_secret, token);
     token
 }

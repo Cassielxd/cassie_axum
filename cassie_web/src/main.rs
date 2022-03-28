@@ -7,11 +7,11 @@ use axum::{
     Router, Server,
 };
 use cassie_web::{
-    config::log::init_log,
+    config::{log::init_log, config::ApplicationConfig},
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
-    CASSIE_CONFIG,
+    init_context,CONTAINER
 };
 use log::info;
 use tower_http::cors::{Any, CorsLayer};
@@ -41,6 +41,8 @@ pub async fn index() -> impl IntoResponse {
  */
 #[tokio::main]
 async fn main() {
+    init_context();
+    let  CASSIE_CONFIG =CONTAINER.get::<ApplicationConfig>();
     init_log();
     info!(
         " - Local:   http://{}:{}",
@@ -53,6 +55,7 @@ async fn main() {
         "{}:{}",
         CASSIE_CONFIG.server.host, CASSIE_CONFIG.server.port
     );
+    
     let cors = CorsLayer::new()
         .allow_methods(Any)
         .allow_origin(Any)

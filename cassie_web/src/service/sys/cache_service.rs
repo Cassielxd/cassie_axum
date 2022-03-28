@@ -1,5 +1,6 @@
 
-use crate::CASSIE_CONFIG;
+use crate::CONTAINER;
+use crate::config::config::ApplicationConfig;
 use crate::service::mem_service::MemService;
 use crate::service::redis_service::RedisService;
 use async_trait::async_trait;
@@ -24,6 +25,7 @@ pub struct CacheService {
 
 impl CacheService {
     pub fn new() -> cassie_common::error::Result<Self> {
+        let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
         match CASSIE_CONFIG.cache_type.as_str() {
             "mem" => {
                 println!(" cache_type: mem");

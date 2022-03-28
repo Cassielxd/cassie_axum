@@ -20,26 +20,28 @@ pub mod nacos;
 pub mod request;
 pub mod routers;
 pub mod service;
-pub mod vo;
 pub mod utils;
+pub mod vo;
 use mongodb::Database;
 use rbatis::rbatis::Rbatis;
 use request::*;
-use std::sync::Arc;
-use thread_local::ThreadLocal;
 
 use crate::{config::config::ApplicationConfig, service::ServiceContext};
+use state::Container;
 //初始化静态上下文延迟加载
 lazy_static! {
-    
-    pub static ref MDB:Database=async_std::task::block_on(async { crate::dao::init_mongdb().await });
+    pub static ref RB: Rbatis =
+        async_std::task::block_on(async { crate::dao::init_rbatis().await });
+}
+pub static CONTAINER: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
-    pub static ref RB:Rbatis=async_std::task::block_on(async { crate::dao::init_rbatis().await });
-    //环境配置
-    pub static ref CASSIE_CONFIG: ApplicationConfig = ApplicationConfig::default();
-    //service服务类
-    pub static ref CONTEXT: ServiceContext = ServiceContext::default();
-    //登录信息透传
-    pub static ref REQUEST_CONTEXT: Arc<ThreadLocal<RequestModel>> =
-        Arc::new(ThreadLocal::default());
+pub fn init_context() {
+    CONTAINER.set::<ApplicationConfig>(ApplicationConfig::default());
+    CONTAINER.set::<Database>(async_std::task::block_on(async {
+        crate::dao::init_mongdb().await
+    }));
+    CONTAINER.set::<Rbatis>(async_std::task::block_on(async {
+        crate::dao::init_rbatis().await
+    }));
+    CONTAINER.set::<ServiceContext>(ServiceContext::default());
 }

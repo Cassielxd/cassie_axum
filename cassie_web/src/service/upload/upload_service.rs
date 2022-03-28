@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
 
-use crate::{CASSIE_CONFIG, service::upload::oss_service::OssService};
+use crate::{service::upload::oss_service::OssService,config::config::ApplicationConfig, CONTAINER};
 /**
  * @description:  IUploadService  upload base trait
  * @author String
@@ -11,7 +11,7 @@ use crate::{CASSIE_CONFIG, service::upload::oss_service::OssService};
  */
 #[async_trait]
 pub trait IUploadService: Sync + Send {
-    async fn upload(&self,data:Bytes,file_name:String,content_type:String)->Result<String>;
+    async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String>;
 }
 
 pub struct UploadService {
@@ -20,22 +20,26 @@ pub struct UploadService {
 
 impl UploadService {
     pub fn new() -> cassie_common::error::Result<Self> {
-        match CASSIE_CONFIG.upload_type.as_str() {
+        let config = CONTAINER.get::<ApplicationConfig>();
+        match config.upload_type.as_str() {
             "oss" => {
                 println!(" upload_type: oss");
+                config.oss.validate();
                 Ok(Self {
-                    inner: Box::new(OssService::new(CASSIE_CONFIG.oss.access_endpoint.clone())),
+                    inner: Box::new(OssService::new(config.oss.access_endpoint.clone())),
                 })
             }
             e => {
-                panic!(
-                    "unknown of upload_type: \"{}\",current support 'oss' ",
-                    e
-                );
+                panic!("unknown of upload_type: \"{}\",current support 'oss' ", e);
             }
         }
     }
-    pub async fn upload(&self,data:Bytes,file_name:String,content_type:String)->Result<String>{
+    pub async fn upload(
+        &self,
+        data: Bytes,
+        file_name: String,
+        content_type: String,
+    ) -> Result<String> {
         self.inner.upload(data, file_name, content_type).await
     }
 }

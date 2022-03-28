@@ -1,7 +1,9 @@
+use crate::CONTAINER;
 use crate::cici_casbin::CASBIN_CONTEXT;
 use crate::dto::sys_role_dto::SysRoleDTO;
 use crate::request::SysRoleQuery;
-use crate::{entity::PageData, service::crud_service::CrudService, CONTEXT};
+use crate::service::ServiceContext;
+use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -16,6 +18,7 @@ use cassie_common::RespVO;
  *email:348040933@qq.com
  */
 pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = CONTEXT
         .sys_role_service
@@ -31,12 +34,14 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
 }
 
 pub async fn list(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = CONTEXT.sys_role_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let mut vo = CONTEXT.sys_role_service.get(id).await.unwrap();
     let menu_list = CONTEXT
         .sys_role_service
@@ -48,6 +53,7 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     CONTEXT.sys_role_service.delete_by_role_id(id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
@@ -59,6 +65,7 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysRoleDTO>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     CONTEXT.sys_role_service.save_role(arg).await;
     RespVO::from(&"保存成功".to_string()).resp_json()
 }

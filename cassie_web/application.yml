@@ -55,6 +55,7 @@ api_white_list_api:
 #api超级管理员id直接跳过api权限
 super_admin_ids:
   - "1"
+#上传默认实现
 upload_type: "oss"
 oss:
   key_id: "LTAI5tARCXTX2k7zHw3o7JqW"

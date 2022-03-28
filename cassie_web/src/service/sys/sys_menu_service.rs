@@ -1,11 +1,12 @@
 use crate::dao::mapper::{menu_list, user_menu_list};
 use crate::dto::sys_menu_dto::SysMenuDTO;
 use crate::entity::sys_entitys::{CommonField, SysMenu};
-use crate::request::SysMenuQuery;
+use crate::request::{RequestModel, SysMenuQuery};
 use crate::service::crud_service::CrudService;
 use crate::utils::tree::TreeService;
-use crate::{RB, REQUEST_CONTEXT};
+use crate::CONTAINER;
 use cassie_common::error::Result;
+use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 
 /**
@@ -36,18 +37,15 @@ impl SysMenuService {
     }
 
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let tls = REQUEST_CONTEXT.clone();
-        let (uid, super_admin) = if let Some(a) = tls.get() {
-            (a.uid, a.super_admin)
-        } else {
-            (0, 0)
-        };
-        let result = if super_admin > 0 {
+        let request_model = CONTAINER.get_local::<RequestModel>();
+        let result = if request_model.super_admin > 0 {
             menu_list("0").await.unwrap()
         } else {
-            user_menu_list(uid.to_string().as_str(), "0").await.unwrap()
+            user_menu_list(request_model.uid.to_string().as_str(), "0")
+                .await
+                .unwrap()
         };
-      
+
         Ok(self.build(result.unwrap()))
     }
 }
@@ -58,6 +56,7 @@ impl Default for SysMenuService {
 }
 impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
     fn get_wrapper(arg: &SysMenuQuery) -> Wrapper {
+        let RB = CONTAINER.get::<Rbatis>();
         let mut wrapper = RB.new_wrapper();
         if let Some(id_list) = &arg.ids {
             wrapper = wrapper.r#in(SysMenu::id(), id_list);
@@ -73,8 +72,8 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
         data.create_date = common.create_date;
     }
 }
-impl TreeService<SysMenu, SysMenuDTO>   for SysMenuService{
-    fn set_children(&self,arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
+impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
+    fn set_children(&self, arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
         arg.children = childs;
     }
 }

@@ -2,7 +2,6 @@
 
 use crate::entity::sys_entitys::SysMenu;
 use crate::RB;
-
 //查询用户所有菜单
 #[html_sql(RB, "cassie_web/mapper/menu_mapper.html")]
 pub async fn user_menu_list(user_id: &str, t: &str) -> Option<Vec<SysMenu>> {

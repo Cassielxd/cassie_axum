@@ -1,6 +1,6 @@
 use crate::{
     dto::asi_dto::AsiGroupColumnDTO, entity::PageData, request::AsiQuery,
-    service::crud_service::CrudService, CONTEXT,
+    service::{crud_service::CrudService, ServiceContext}, CONTAINER,
 };
 use axum::{
     extract::{Path, Query},
@@ -12,16 +12,19 @@ use cassie_common::{error::Error, RespVO};
 use validator::Validate;
 
 pub async fn get_column_one(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let res = CONTEXT.asi_service.asi_column.get(id).await;
     RespVO::from_result(&res).resp_json()
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     CONTEXT.asi_service.asi_column.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = CONTEXT
         .asi_service
@@ -40,6 +43,7 @@ pub async fn list(
     Path(group_code): Path<String>,
     arg: Option<Query<AsiQuery>>,
 ) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     let res = CONTEXT
         .asi_service
         .asi_column
@@ -52,6 +56,7 @@ pub async fn save(
     Path(group_code): Path<String>,
     Json(dto): Json<AsiGroupColumnDTO>,
 ) -> impl IntoResponse {
+    let  CONTEXT =CONTAINER.get::<ServiceContext>();
     /*验证是否存在业务分类*/
     let group = CONTEXT
         .asi_service

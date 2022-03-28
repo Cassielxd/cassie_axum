@@ -1,11 +1,13 @@
 use super::crud_service::CrudService;
 use crate::entity::sys_entitys::CommonField;
+use crate::request::RequestModel;
+use crate::CONTAINER;
 use crate::{
     dto::sys_role_dto::SysRoleDataScopeDTO, entity::sys_entitys::SysRoleDataScope,
     request::SysRoleQuery,
 };
-use crate::{RB, REQUEST_CONTEXT};
 use rbatis::plugin::snowflake::new_snowflake_id;
+use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;
 
 /**
@@ -24,12 +26,7 @@ impl SysRoleDataScopeService {
     pub async fn save_or_update(&self, role_id: i64, dept_id_list: Option<Vec<i64>>) {
         //先删除角色数据权限关系
         self.delete_by_role_id(role_id).await;
-        let tls = REQUEST_CONTEXT.clone();
-        let creator = if let Some(a) = tls.get() {
-            a.uid as i64
-        } else {
-            0
-        };
+        let request_model = CONTAINER.get_local::<RequestModel>();
         //保存角色数据权限关系
         if let Some(list) = dept_id_list {
             let mut vec = Vec::new();
@@ -38,7 +35,7 @@ impl SysRoleDataScopeService {
                     id: Some(new_snowflake_id()),
                     role_id: Some(role_id),
                     dept_id: Some(x),
-                    creator: Option::from(creator),
+                    creator: Option::from(request_model.uid),
                     create_date: Some(DateTimeNative::now()),
                 });
             }
@@ -52,6 +49,7 @@ impl SysRoleDataScopeService {
 }
 impl CrudService<SysRoleDataScope, SysRoleDataScopeDTO, SysRoleQuery> for SysRoleDataScopeService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
+        let RB = CONTAINER.get::<Rbatis>();
         RB.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleDataScope) {
