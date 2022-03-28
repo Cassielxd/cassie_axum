@@ -36,11 +36,13 @@ pub async fn init_mongdb() -> Database {
     let client_options = ClientOptions::parse(CASSIE_CONFIG.mongodb_url.clone().as_str())
         .await
         .expect(" mongdb link database fail!");
-
+    println!(
+        "mongdb link database ({})...",
+        CASSIE_CONFIG.mongodb_url.clone()
+    );
     let client = Client::with_options(client_options).unwrap();
     println!("mongdb link database success!");
     let db = client.database("cassie");
 
     db
 }
-
