@@ -38,14 +38,14 @@ where
      * 公共分页查询方法
      */
     async fn page(&self, arg: &Params, page: PageData) -> Result<Page<Dto>> {
-        let RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         //构建查询条件
         let wrapper = Self::get_wrapper(arg);
         //构建分页条件
         let page_request =
             PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
         //执行分页查询
-        let data_page: Page<Entity> = RB.fetch_page_by_wrapper(wrapper, &page_request).await?;
+        let data_page: Page<Entity> = rb.fetch_page_by_wrapper(wrapper, &page_request).await?;
         let vos = data_page
             .records
             .into_iter()
@@ -66,9 +66,9 @@ where
         column: &str,
         column_values: &Vec<String>,
     ) -> Result<Vec<Dto>> {
-        let RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         //执行查询
-        let list: Vec<Entity> = RB.fetch_list_by_column(column, column_values).await?;
+        let list: Vec<Entity> = rb.fetch_list_by_column(column, column_values).await?;
         let result = list
             .into_iter()
             .map(|e| Dto::from(e.clone()))
@@ -80,11 +80,11 @@ where
      * 公共列表查询方法
      */
     async fn list(&self, arg: &Params) -> Result<Vec<Dto>> {
-        let RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         //构建查询条件
         let wrapper = Self::get_wrapper(arg);
         //执行查询
-        let list: Vec<Entity> = RB.fetch_list_by_wrapper(wrapper).await?;
+        let list: Vec<Entity> = rb.fetch_list_by_wrapper(wrapper).await?;
         let result = list
             .into_iter()
             .map(|e| Dto::from(e.clone()))
@@ -96,9 +96,9 @@ where
      * 根据id更新实体
      */
     async fn update_by_id(&self, id: String, mut data: &Entity) {
-        let RB = CONTAINER.get::<Rbatis>();
-        let wrapper = RB.new_wrapper().eq("id", id);
-        RB.update_by_wrapper(
+        let rb = CONTAINER.get::<Rbatis>();
+        let wrapper = rb.new_wrapper().eq("id", id);
+        rb.update_by_wrapper(
             &mut data,
             wrapper,
             &[Skip::Column("id"), Skip::Column("create_date")],
@@ -109,9 +109,9 @@ where
      * 根据id查询条件查询单个值
      */
     async fn get(&self, id: String) -> Result<Dto> {
-        let RB = CONTAINER.get::<Rbatis>();
-        let wrapper = RB.new_wrapper().eq("id", id);
-        let detail: Entity = RB.fetch_by_wrapper(wrapper).await?;
+        let rb = CONTAINER.get::<Rbatis>();
+        let wrapper = rb.new_wrapper().eq("id", id);
+        let detail: Entity = rb.fetch_by_wrapper(wrapper).await?;
         let vo = Dto::from(detail);
         return Ok(vo);
     }
@@ -120,7 +120,7 @@ where
      */
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
-        let RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         let request_model = CONTAINER.get_local::<RequestModel>();
         /*设置公共字段*/
         self.set_save_common_fields(
@@ -133,35 +133,35 @@ where
             },
             data,
         );
-        let result = RB.save(data, &[Skip::Column("id")]).await?;
+        let result = rb.save(data, &[Skip::Column("id")]).await?;
         return Ok(result.last_insert_id.unwrap());
     }
     /**
      * 批量保存实体
      */
     async fn save_batch(&self, mut list: &Vec<Entity>) {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.save_batch(&mut list, &[Skip::Column("id")]).await;
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.save_batch(&mut list, &[Skip::Column("id")]).await;
     }
     /**
      * 删除实体 逻辑删除
      */
     async fn del(&self, id: &String) {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.remove_by_column::<Entity, _>("id", id).await;
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.remove_by_column::<Entity, _>("id", id).await;
     }
     /**
      * 根据字段实体
      */
     async fn del_by_column(&self, column: &str, column_value: &str) {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.remove_by_column::<Entity, _>(column, column_value).await;
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.remove_by_column::<Entity, _>(column, column_value).await;
     }
     /**
      * 批量删除实体 逻辑删除
      */
     async fn del_batch(&self, ids: &Vec<u64>) {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.remove_batch_by_column::<Entity, _>("id", ids).await;
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.remove_batch_by_column::<Entity, _>("id", ids).await;
     }
 }

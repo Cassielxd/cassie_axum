@@ -82,8 +82,8 @@ impl SysUserService {
 
 impl CrudService<SysUser, SysUserDTO, SysUserQuery> for SysUserService {
     fn get_wrapper(arg: &SysUserQuery) -> Wrapper {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.new_wrapper().eq(SysUser::del_flag(), 0)
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper().eq(SysUser::del_flag(), 0)
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysUser) {

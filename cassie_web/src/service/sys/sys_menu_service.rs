@@ -32,20 +32,24 @@ impl SysMenuService {
     }
 
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let  RB = CONTAINER.get::<Rbatis>();
-        let result = menu_list(&mut RB.as_executor(),"").await.unwrap();
+        let rb = CONTAINER.get::<Rbatis>();
+        let result = menu_list(&mut rb.as_executor(), "").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
 
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let  RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         let request_model = CONTAINER.get_local::<RequestModel>();
         let result = if request_model.super_admin > 0 {
-            menu_list(&mut RB.as_executor(), "0").await.unwrap()
+            menu_list(&mut rb.as_executor(), "0").await.unwrap()
         } else {
-            user_menu_list(&mut RB.as_executor(), request_model.uid.to_string().as_str(), "0")
-                .await
-                .unwrap()
+            user_menu_list(
+                &mut rb.as_executor(),
+                request_model.uid.to_string().as_str(),
+                "0",
+            )
+            .await
+            .unwrap()
         };
 
         Ok(self.build(result.unwrap()))
@@ -58,8 +62,8 @@ impl Default for SysMenuService {
 }
 impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
     fn get_wrapper(arg: &SysMenuQuery) -> Wrapper {
-        let RB = CONTAINER.get::<Rbatis>();
-        let mut wrapper = RB.new_wrapper();
+        let rb = CONTAINER.get::<Rbatis>();
+        let mut wrapper = rb.new_wrapper();
         if let Some(id_list) = &arg.ids {
             wrapper = wrapper.r#in(SysMenu::id(), id_list);
         }

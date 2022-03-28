@@ -1,7 +1,7 @@
 use rbatis::rbatis::Rbatis;
 
-use crate::CONTAINER;
 use crate::entity::sys_entitys::CommonField;
+use crate::CONTAINER;
 use crate::{
     dto::sys_params_dto::SysParamsDTO, entity::sys_entitys::SysParams, request::SysParamsQuery,
 };
@@ -23,8 +23,8 @@ impl Default for SysParamsService {
 }
 impl CrudService<SysParams, SysParamsDTO, SysParamsQuery> for SysParamsService {
     fn get_wrapper(arg: &SysParamsQuery) -> rbatis::wrapper::Wrapper {
-        let RB= CONTAINER.get::<Rbatis>();
-        RB.new_wrapper()
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysParams) {
         data.id = common.id;

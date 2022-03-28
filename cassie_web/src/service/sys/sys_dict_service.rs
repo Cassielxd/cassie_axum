@@ -1,6 +1,6 @@
-use crate::CONTAINER;
 use crate::entity::sys_entitys::CommonField;
 use crate::service::ServiceContext;
+use crate::CONTAINER;
 use crate::{
     dto::sys_dict_dto::{SysDictDataDTO, SysDictTypeDTO},
     entity::sys_entitys::{SysDictData, SysDictType},
@@ -30,9 +30,9 @@ impl SysDictTypeService {
             order: None,
             order_field: None,
         };
-        let CONTEXT= CONTAINER.get::<ServiceContext>();
+        let context = CONTAINER.get::<ServiceContext>();
         let mut dict = self.list(&q).await?;
-        let dict_value = CONTEXT.sys_dict_value_service.list(&q).await?;
+        let dict_value = context.sys_dict_value_service.list(&q).await?;
         for mut d in &mut dict {
             let mut data = vec![];
             for dv in &dict_value {
@@ -54,8 +54,8 @@ impl Default for SysDictTypeService {
 }
 impl CrudService<SysDictType, SysDictTypeDTO, SysDictQuery> for SysDictTypeService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        let RB= CONTAINER.get::<Rbatis>();
-        RB.new_wrapper()
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper()
     }
 
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysDictType) {
@@ -79,8 +79,8 @@ impl Default for SysDictDataService {
 }
 impl CrudService<SysDictData, SysDictDataDTO, SysDictQuery> for SysDictDataService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        let RB= CONTAINER.get::<Rbatis>();
-        RB.new_wrapper().do_if(arg.dict_type_id.is_some(), |w| {
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper().do_if(arg.dict_type_id.is_some(), |w| {
             w.eq(SysDictData::dict_type_id(), arg.dict_type_id)
         })
     }

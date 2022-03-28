@@ -3,8 +3,6 @@
 #![allow(unused_must_use)]
 
 #[macro_use]
-extern crate lazy_static;
-#[macro_use]
 extern crate rbatis;
 
 pub mod config;
@@ -26,7 +24,6 @@ use mongodb::Database;
 use rbatis::rbatis::Rbatis;
 use request::*;
 
-use crate::admin::sys::sys_user_resource::info;
 use crate::cici_casbin::casbin_service::CasbinService;
 use crate::{config::config::ApplicationConfig, service::ServiceContext};
 use state::Container;

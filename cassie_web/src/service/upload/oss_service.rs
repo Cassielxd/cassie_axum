@@ -6,7 +6,7 @@ use oss_rust_sdk::prelude::*;
 
 use super::upload_service::IUploadService;
 use cassie_common::error::Error;
-use std::{collections::HashMap, sync::Arc};
+use std::collections::HashMap;
 /**
  * @description:  IUploadService  upload base trait
  * @author String

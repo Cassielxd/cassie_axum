@@ -23,8 +23,6 @@ rbatis = { version = "3.0", default-features = false, features = ["mysql", "runt
 
 async-std = "1.10"
 
-#static
-lazy_static = "1.4.0"
 
 #redis
 redis = { version = "0.21.5", features = ["async-std-comp"] }

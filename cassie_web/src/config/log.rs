@@ -1,30 +1,27 @@
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::{Packer, RollingType};
-use fast_log::plugin::packer::{LZ4Packer, ZipPacker, LogPacker, GZipPacker};
+use fast_log::plugin::packer::{GZipPacker, LZ4Packer, LogPacker, ZipPacker};
 use std::time::Duration;
 
 use crate::CONTAINER;
 
 use super::config::ApplicationConfig;
 
-
-
-
 pub fn init_log() {
-    let  CASSIE_CONFIG =CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = CONTAINER.get::<ApplicationConfig>();
     //create log dir
-    std::fs::create_dir_all(&CASSIE_CONFIG.log_dir);
+    std::fs::create_dir_all(&cassie_config.log_dir);
     //init fast log
     fast_log::init_split_log(
-        &CASSIE_CONFIG.log_dir,
-        str_to_temp_size(&CASSIE_CONFIG.log_temp_size),
-        str_to_rolling(&CASSIE_CONFIG.log_rolling_type),
-        str_to_log_level(&CASSIE_CONFIG.log_level),
+        &cassie_config.log_dir,
+        str_to_temp_size(&cassie_config.log_temp_size),
+        str_to_rolling(&cassie_config.log_rolling_type),
+        str_to_log_level(&cassie_config.log_level),
         None,
-        choose_packer(&CASSIE_CONFIG.log_pack_compress),
-        CASSIE_CONFIG.debug,
+        choose_packer(&cassie_config.log_pack_compress),
+        cassie_config.debug,
     );
-    if CASSIE_CONFIG.debug == false {
+    if cassie_config.debug == false {
         println!("[cassie] release_mode is up! [file_log] open,[console_log] disabled!");
     }
 }

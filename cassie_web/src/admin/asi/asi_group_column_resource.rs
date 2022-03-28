@@ -1,6 +1,9 @@
 use crate::{
-    dto::asi_dto::AsiGroupColumnDTO, entity::PageData, request::AsiQuery,
-    service::{crud_service::CrudService, ServiceContext}, CONTAINER,
+    dto::asi_dto::AsiGroupColumnDTO,
+    entity::PageData,
+    request::AsiQuery,
+    service::{crud_service::CrudService, ServiceContext},
+    CONTAINER,
 };
 use axum::{
     extract::{Path, Query},
@@ -12,21 +15,21 @@ use cassie_common::{error::Error, RespVO};
 use validator::Validate;
 
 pub async fn get_column_one(Path(id): Path<String>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    let res = CONTEXT.asi_service.asi_column.get(id).await;
+    let context = CONTAINER.get::<ServiceContext>();
+    let res = context.asi_service.asi_column.get(id).await;
     RespVO::from_result(&res).resp_json()
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    CONTEXT.asi_service.asi_column.del(&id).await;
+    let context = CONTAINER.get::<ServiceContext>();
+    context.asi_service.asi_column.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
-    let vo = CONTEXT
+    let vo = context
         .asi_service
         .asi_column
         .page(
@@ -43,8 +46,8 @@ pub async fn list(
     Path(group_code): Path<String>,
     arg: Option<Query<AsiQuery>>,
 ) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    let res = CONTEXT
+    let context = CONTAINER.get::<ServiceContext>();
+    let res = context
         .asi_service
         .asi_column
         .fetch_list_by_column("group_code", &vec![group_code])
@@ -56,9 +59,9 @@ pub async fn save(
     Path(group_code): Path<String>,
     Json(dto): Json<AsiGroupColumnDTO>,
 ) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     /*验证是否存在业务分类*/
-    let group = CONTEXT
+    let group = context
         .asi_service
         .fetch_list_by_column("group_code", &vec![group_code])
         .await;
@@ -70,7 +73,7 @@ pub async fn save(
                 return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
             }
             /*执行保存逻辑*/
-            CONTEXT
+            context
                 .asi_service
                 .asi_column
                 .save_column(group_info.unwrap().clone(), dto)

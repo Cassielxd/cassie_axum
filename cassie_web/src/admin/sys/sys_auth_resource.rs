@@ -1,6 +1,6 @@
-use crate::CONTAINER;
 use crate::dto::sign_in::SignInDTO;
 use crate::service::ServiceContext;
+use crate::CONTAINER;
 use axum::body::Body;
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
@@ -13,11 +13,11 @@ use std::time::Duration;
 use validator::Validate;
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     if let Err(e) = sign.validate() {
-        return RespVO::<()>::from_error( &Error::E(e.to_string())).resp_json();
+        return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
-    if let Ok(code) = CONTEXT
+    if let Ok(code) = context
         .cache_service
         .get_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap()))
         .await
@@ -26,12 +26,12 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
             return RespVO::<()>::from_error(&Error::E("验证码错误".to_string())).resp_json();
         }
     }
-    let vo = CONTEXT.sys_auth_service.sign_in(&sign).await;
+    let vo = context.sys_auth_service.sign_in(&sign).await;
     return RespVO::from_result(&vo).resp_json();
 }
 
 pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     if uuid.is_empty() {
         return RespVO::<()>::from_error(&Error::from("uuid不能为空!")).resp_json();
     }
@@ -46,7 +46,7 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
     let png = captcha.as_png().unwrap();
     let captcha_str = captcha.chars_as_string().to_lowercase();
     async_std::task::block_on(async {
-        CONTEXT
+        context
             .cache_service
             .set_string_ex(
                 &format!("captch:uuid_{}", uuid.clone()),

@@ -1,8 +1,7 @@
-
-use crate::CONTAINER;
 use crate::config::config::ApplicationConfig;
 use crate::service::mem_service::MemService;
 use crate::service::redis_service::RedisService;
+use crate::CONTAINER;
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use serde::de::DeserializeOwned;
@@ -25,8 +24,8 @@ pub struct CacheService {
 
 impl CacheService {
     pub fn new() -> cassie_common::error::Result<Self> {
-        let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
-        match CASSIE_CONFIG.cache_type.as_str() {
+        let cassie_config = CONTAINER.get::<ApplicationConfig>();
+        match cassie_config.cache_type.as_str() {
             "mem" => {
                 println!(" cache_type: mem");
                 Ok(Self {
@@ -36,7 +35,7 @@ impl CacheService {
             "redis" => {
                 println!("cache_type: redis");
                 Ok(Self {
-                    inner: Box::new(RedisService::new(&CASSIE_CONFIG.redis_url)),
+                    inner: Box::new(RedisService::new(&cassie_config.redis_url)),
                 })
             }
             e => {

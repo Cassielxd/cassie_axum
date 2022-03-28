@@ -2,8 +2,8 @@ use super::{
     crud_service::CrudService, sys_role_data_scope_service::SysRoleDataScopeService,
     sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService,
 };
-use crate::CONTAINER;
 use crate::entity::sys_entitys::CommonField;
+use crate::CONTAINER;
 use crate::{dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery};
 use cassie_common::error::Result;
 use cassie_common::utils::string::IsEmpty;
@@ -79,8 +79,8 @@ impl SysRoleService {
 
 impl CrudService<SysRole, SysRoleDTO, SysRoleQuery> for SysRoleService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        let RB= CONTAINER.get::<Rbatis>();
-        RB.new_wrapper()
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper()
             .do_if(!arg.name.is_empty(), |w| w.like(SysRole::name(), &arg.name))
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRole) {

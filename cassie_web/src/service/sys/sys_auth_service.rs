@@ -1,17 +1,15 @@
-
-
-use crate::CONTAINER;
 use crate::config::config::ApplicationConfig;
 use crate::dto::sign_in::SignInDTO;
 use crate::entity::sys_entitys::SysUser;
 use crate::service::ServiceContext;
+use crate::vo::jwt::JWTToken;
+use crate::vo::sign_in::SignInVO;
+use crate::CONTAINER;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 use cassie_common::utils::password_encoder::PasswordEncoder;
-use rbatis::rbatis::Rbatis;
-use crate::vo::jwt::JWTToken;
-use crate::vo::sign_in::SignInVO;
 use rbatis::crud::CRUD;
+use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;
 use std::time::Duration;
 
@@ -24,9 +22,9 @@ const REDIS_KEY_RETRY: &'static str = "login:login_retry";
 */
 pub struct SysAuthService {}
 
-impl Default for SysAuthService{
+impl Default for SysAuthService {
     fn default() -> Self {
-        SysAuthService{}
+        SysAuthService {}
     }
 }
 
@@ -40,15 +38,16 @@ impl SysAuthService {
     pub async fn sign_in(&self, arg: &SignInDTO) -> Result<SignInVO> {
         self.is_need_wait_login_ex().await?;
         /*验证码 验证*/
-        let RB= CONTAINER.get::<Rbatis>();
-        let user: Option<SysUser> = RB
-            .fetch_by_wrapper(
-                RB
-                    .new_wrapper()
-                    .eq(SysUser::username(), &arg.username),
-            )
+        let rb = CONTAINER.get::<Rbatis>();
+        let user: Option<SysUser> = rb
+            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::username(), &arg.username))
             .await?;
-        let user = user.ok_or_else(|| Error::from(format!("账号:{} 不存在!", arg.username.clone().unwrap_or_default())))?;
+        let user = user.ok_or_else(|| {
+            Error::from(format!(
+                "账号:{} 不存在!",
+                arg.username.clone().unwrap_or_default()
+            ))
+        })?;
         if user.status.eq(&Some(0)) {
             return Err(Error::from("账户被禁用!"));
         }
@@ -57,7 +56,9 @@ impl SysAuthService {
             user.password
                 .as_ref()
                 .ok_or_else(|| Error::from("错误的用户数据，密码为空!"))?,
-            arg.password.as_ref().ok_or_else(|| Error::from("密码不能为空"))?,
+            arg.password
+                .as_ref()
+                .ok_or_else(|| Error::from("密码不能为空"))?,
         ) {
             error = Some(Error::from("密码不正确!"));
         }
@@ -75,12 +76,12 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn is_need_wait_login_ex(&self) -> Result<()> {
-        let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
-        let CONTEXT= CONTAINER.get::<ServiceContext>();
-        if CASSIE_CONFIG.login_fail_retry > 0 {
-            let num: Option<u64> = CONTEXT.cache_service.get_json(REDIS_KEY_RETRY).await?;
-            if num.unwrap_or(0) >= CASSIE_CONFIG.login_fail_retry {
-                let wait_sec: i64 = CONTEXT.cache_service.ttl(REDIS_KEY_RETRY).await?;
+        let cassie_config = CONTAINER.get::<ApplicationConfig>();
+        let context = CONTAINER.get::<ServiceContext>();
+        if cassie_config.login_fail_retry > 0 {
+            let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
+            if num.unwrap_or(0) >= cassie_config.login_fail_retry {
+                let wait_sec: i64 = context.cache_service.ttl(REDIS_KEY_RETRY).await?;
                 if wait_sec > 0 {
                     return Err(Error::from(format!(
                         "操作过于频繁，请等待{}秒后重试!",
@@ -99,22 +100,22 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn add_retry_login_limit_num(&self) -> Result<()> {
-        let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
-        let CONTEXT= CONTAINER.get::<ServiceContext>();
-        if CASSIE_CONFIG.login_fail_retry > 0 {
-            let num: Option<u64> = CONTEXT.cache_service.get_json(REDIS_KEY_RETRY).await?;
+        let cassie_config = CONTAINER.get::<ApplicationConfig>();
+        let context = CONTAINER.get::<ServiceContext>();
+        if cassie_config.login_fail_retry > 0 {
+            let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
             let mut num = num.unwrap_or(0);
-            if num > CASSIE_CONFIG.login_fail_retry {
-                num = CASSIE_CONFIG.login_fail_retry;
+            if num > cassie_config.login_fail_retry {
+                num = cassie_config.login_fail_retry;
             }
             num += 1;
-            CONTEXT
+            context
                 .cache_service
                 .set_string_ex(
                     REDIS_KEY_RETRY,
                     &num.to_string(),
                     Some(Duration::from_secs(
-                        CASSIE_CONFIG.login_fail_retry_wait_sec as u64,
+                        cassie_config.login_fail_retry_wait_sec as u64,
                     )),
                 )
                 .await?;
@@ -128,9 +129,9 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn get_user_info_by_token(&self, token: &JWTToken) -> Result<SignInVO> {
-        let RB= CONTAINER.get::<Rbatis>();
-        let user: Option<SysUser> = RB
-            .fetch_by_wrapper(RB.new_wrapper().eq(SysUser::id(), &token.id))
+        let rb = CONTAINER.get::<Rbatis>();
+        let user: Option<SysUser> = rb
+            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::id(), &token.id))
             .await?;
         let user = user.ok_or_else(|| Error::from(format!("账号:{} 不存在!", token.username)))?;
         return self.get_user_info(&user).await;
@@ -142,7 +143,7 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn get_user_info(&self, user: &SysUser) -> Result<SignInVO> {
-        let CASSIE_CONFIG= CONTAINER.get::<ApplicationConfig>();
+        let cassie_config = CONTAINER.get::<ApplicationConfig>();
         //去除密码，增加安全性
         let mut user = user.clone();
         user.password = None;
@@ -158,12 +159,12 @@ impl SysAuthService {
         //提前查找所有权限，避免在各个函数方法中重复查找
         let jwt_token = JWTToken {
             id: user_id,
-            super_admin:user.super_admin.clone().unwrap_or_default(),
+            super_admin: user.super_admin.clone().unwrap_or_default(),
             username: user.username.clone().unwrap_or(String::new()),
             agency_code: agency_code.unwrap_or_default(),
             exp: DateTimeNative::now().timestamp_millis() as usize,
         };
-        sign_vo.access_token = jwt_token.create_token(&CASSIE_CONFIG.jwt_secret)?;
+        sign_vo.access_token = jwt_token.create_token(&cassie_config.jwt_secret)?;
         return Ok(sign_vo);
     }
 }

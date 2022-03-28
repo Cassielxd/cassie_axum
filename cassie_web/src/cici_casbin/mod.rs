@@ -2,9 +2,7 @@ pub mod casbin_service;
 
 use casbin::rhai::ImmutableString;
 
-use crate::{
-    cici_casbin::casbin_service::CasbinService, config::config::ApplicationConfig, CONTAINER,
-};
+use crate::{config::config::ApplicationConfig, CONTAINER};
 use casbin::function_map::key_match2;
 
 ///是否处在白名单接口中
@@ -37,13 +35,13 @@ pub fn is_super_admin(id: &str, super_admin_ids: &Vec<String>) -> bool {
  *email:348040933
  */
 pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
-    let CASSIE_CONFIG = CONTAINER.get::<ApplicationConfig>();
-    if is_white_list_api(&path, &CASSIE_CONFIG.admin_white_list_api) {
+    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    if is_white_list_api(&path, &cassie_config.admin_white_list_api) {
         println!("白名单:{}", path.clone());
         return true;
     }
 
-    if !user.is_empty() && is_super_admin(&user, &CASSIE_CONFIG.super_admin_ids) {
+    if !user.is_empty() && is_super_admin(&user, &cassie_config.super_admin_ids) {
         println!("管理员");
         return true;
     }

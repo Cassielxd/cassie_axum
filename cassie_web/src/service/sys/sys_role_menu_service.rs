@@ -26,11 +26,11 @@ impl Default for SysRoleMenuService {
 }
 impl SysRoleMenuService {
     pub async fn get_menu_id_list(&self, role_id: i64) -> Vec<i64> {
-        let RB = CONTAINER.get::<Rbatis>();
+        let rb = CONTAINER.get::<Rbatis>();
         //构建查询条件
-        let wrapper = RB.new_wrapper().eq(SysRoleMenu::role_id(), role_id);
+        let wrapper = rb.new_wrapper().eq(SysRoleMenu::role_id(), role_id);
         //执行查询
-        let list = RB.fetch_list_by_wrapper::<SysRoleMenu>(wrapper).await;
+        let list = rb.fetch_list_by_wrapper::<SysRoleMenu>(wrapper).await;
 
         //将Entity实体转换成 Vo对象 返回
         if let Ok(ls) = list {
@@ -56,12 +56,12 @@ impl SysRoleMenuService {
             order_field: None,
         };
         let request_model = CONTAINER.get_local::<RequestModel>();
-        let RB = CONTAINER.get::<Rbatis>();
-        let CONTEXT = CONTAINER.get::<ServiceContext>();
-        let r_list = get_menu_list_by_ids(&mut RB.as_executor(), &menu_id_list.clone().unwrap())
+        let rb = CONTAINER.get::<Rbatis>();
+        let context = CONTAINER.get::<ServiceContext>();
+        let r_list = get_menu_list_by_ids(&mut rb.as_executor(), &menu_id_list.clone().unwrap())
             .await
             .unwrap();
-        let menus = CONTEXT.sys_menu_service.list(&query).await;
+        let menus = context.sys_menu_service.list(&query).await;
         let mut rules = vec![];
         let mut vec = Vec::new();
         for menu in r_list.unwrap() {
@@ -116,8 +116,8 @@ impl SysRoleMenuService {
 
 impl CrudService<SysRoleMenu, SysRoleMenuDTO, SysRoleQuery> for SysRoleMenuService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.new_wrapper()
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleMenu) {
         data.id = common.id;

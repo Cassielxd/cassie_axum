@@ -27,7 +27,7 @@ where
     type Rejection = Error;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let CASSIE_CONFIG = CONTAINER.get::<ApplicationConfig>();
+        let cassie_config = CONTAINER.get::<ApplicationConfig>();
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();
@@ -41,7 +41,7 @@ where
             data: None,
         };
         /*判断是否在白名单里 如果不在进行验证*/
-        if !is_white_list_api(&path, &CASSIE_CONFIG.admin_white_list_api) {
+        if !is_white_list_api(&path, &cassie_config.admin_white_list_api) {
             let token_value = token.to_str().unwrap_or("");
             /*token为空提示登录*/
             if token_value.is_empty() {
@@ -67,7 +67,7 @@ where
 
                     /*获取验证的  casbin_service*/
 
-                    let mut service = CONTAINER.get::<CasbinService>();
+                    let service = CONTAINER.get::<CasbinService>();
 
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {
@@ -95,7 +95,7 @@ where
  */
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
-    let CASSIE_CONFIG = CONTAINER.get::<ApplicationConfig>();
-    let token = JWTToken::verify(&CASSIE_CONFIG.jwt_secret, token);
+    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let token = JWTToken::verify(&cassie_config.jwt_secret, token);
     token
 }

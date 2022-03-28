@@ -6,47 +6,44 @@ use axum::{
 };
 use cassie_common::RespVO;
 
-use crate::{entity::asi_entitys::AsiGroup, CONTAINER, service::ServiceContext};
-use crate::{
-    dto::asi_dto::AsiGroupDTO, entity::PageData, request::AsiQuery,
-    service::crud_service::CrudService,
-};
+use crate::{dto::asi_dto::AsiGroupDTO, request::AsiQuery, service::crud_service::CrudService};
+use crate::{service::ServiceContext, CONTAINER};
 
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
-    let vo = CONTEXT.asi_service.get_group_page(arg.0).await;
+    let vo = context.asi_service.get_group_page(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 pub async fn list(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();
-    let vo = CONTEXT.asi_service.get_group_list(arg.0).await;
+    let vo = context.asi_service.get_group_list(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    let dto = CONTEXT.asi_service.get(id).await;
+    let context = CONTAINER.get::<ServiceContext>();
+    let dto = context.asi_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    CONTEXT.asi_service.del(&id).await;
+    let context = CONTAINER.get::<ServiceContext>();
+    context.asi_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
 pub async fn save(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
-    let res = CONTEXT.asi_service.save_group(arg).await;
+    let context = CONTAINER.get::<ServiceContext>();
+    let res = context.asi_service.save_group(arg).await;
     RespVO::from_result(&res).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     let id = arg.id.clone();
-    CONTEXT
+    context
         .asi_service
         .update_by_id(id.unwrap().to_string(), &mut arg.into())
         .await;

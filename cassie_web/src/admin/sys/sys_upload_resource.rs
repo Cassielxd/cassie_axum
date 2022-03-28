@@ -2,27 +2,23 @@ use axum::extract::Multipart;
 use axum::routing::post;
 use axum::Router;
 use cassie_common::RespVO;
-use oss_rust_sdk::prelude::*;
 
 use axum::response::IntoResponse;
 use cassie_common::error::Error;
-use std::collections::HashMap;
 
-use crate::CONTAINER;
 use crate::service::ServiceContext;
-
-
+use crate::CONTAINER;
 
 pub const CONTENT_TYPE: &str = "content-type";
 
 async fn upload(mut multipart: Multipart) -> impl IntoResponse {
-    let  CONTEXT =CONTAINER.get::<ServiceContext>();
+    let context = CONTAINER.get::<ServiceContext>();
     if let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
         let file_name = field.file_name().unwrap().to_string();
         let content_type = field.content_type().unwrap().to_string();
         let data = field.bytes().await.unwrap();
-        let result = CONTEXT
+        let result = context
             .upload_service
             .upload(data, file_name, content_type)
             .await;

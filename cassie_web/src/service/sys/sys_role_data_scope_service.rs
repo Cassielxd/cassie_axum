@@ -49,8 +49,8 @@ impl SysRoleDataScopeService {
 }
 impl CrudService<SysRoleDataScope, SysRoleDataScopeDTO, SysRoleQuery> for SysRoleDataScopeService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        let RB = CONTAINER.get::<Rbatis>();
-        RB.new_wrapper()
+        let rb = CONTAINER.get::<Rbatis>();
+        rb.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleDataScope) {
         data.id = common.id;
