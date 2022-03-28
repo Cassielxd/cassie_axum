@@ -28,20 +28,19 @@ use request::*;
 
 use crate::{config::config::ApplicationConfig, service::ServiceContext};
 use state::Container;
-//初始化静态上下文延迟加载
-lazy_static! {
-    pub static ref RB: Rbatis =
-        async_std::task::block_on(async { crate::dao::init_rbatis().await });
-}
-pub static CONTAINER: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
+pub static CONTAINER: Container![Send + Sync] = <Container![Send + Sync]>::new();
+/*初始化环境上下文*/
 pub fn init_context() {
+    //第一步加载配置
     CONTAINER.set::<ApplicationConfig>(ApplicationConfig::default());
+    //第二步初始化数据源
     CONTAINER.set::<Database>(async_std::task::block_on(async {
         crate::dao::init_mongdb().await
     }));
     CONTAINER.set::<Rbatis>(async_std::task::block_on(async {
         crate::dao::init_rbatis().await
     }));
+    //第三步初始化所有的 服务类
     CONTAINER.set::<ServiceContext>(ServiceContext::default());
 }

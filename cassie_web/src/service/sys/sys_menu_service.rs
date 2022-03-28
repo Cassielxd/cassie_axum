@@ -32,16 +32,18 @@ impl SysMenuService {
     }
 
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let result = menu_list("").await.unwrap();
+        let  RB = CONTAINER.get::<Rbatis>();
+        let result = menu_list(&mut RB.as_executor(),"").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
 
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
+        let  RB = CONTAINER.get::<Rbatis>();
         let request_model = CONTAINER.get_local::<RequestModel>();
         let result = if request_model.super_admin > 0 {
-            menu_list("0").await.unwrap()
+            menu_list(&mut RB.as_executor(), "0").await.unwrap()
         } else {
-            user_menu_list(request_model.uid.to_string().as_str(), "0")
+            user_menu_list(&mut RB.as_executor(), request_model.uid.to_string().as_str(), "0")
                 .await
                 .unwrap()
         };

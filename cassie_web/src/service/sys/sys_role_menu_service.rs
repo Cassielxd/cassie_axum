@@ -56,8 +56,9 @@ impl SysRoleMenuService {
             order_field: None,
         };
         let request_model = CONTAINER.get_local::<RequestModel>();
+        let  RB = CONTAINER.get::<Rbatis>();
         let CONTEXT = CONTAINER.get::<ServiceContext>();
-        let r_list = get_menu_list_by_ids(&menu_id_list.clone().unwrap())
+        let r_list = get_menu_list_by_ids(&mut RB.as_executor(),&menu_id_list.clone().unwrap())
             .await
             .unwrap();
         let menus = CONTEXT.sys_menu_service.list(&query).await;
