@@ -1,4 +1,4 @@
-use crate::{CONTAINER, config::config::ApplicationConfig};
+use crate::{config::config::ApplicationConfig, CONTAINER};
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
@@ -18,29 +18,14 @@ pub struct OssService {
     access_endpoint: String,
 }
 impl OssService {
-    /**
-     * @description:  get_client 单例模式获取 ossclient
-     * @param: null
-     * @return:
-     * @author String
-     * @date: 2022/3/28 9:42
-     */
-    pub async fn get_client(&self) -> &OSS<'static> {
-       let config = CONTAINER.get::<ApplicationConfig>();
-        static mut POINT: Option<Arc<OSS<'static>>> = None;
-        unsafe {
-            POINT.get_or_insert_with(|| {
-                Arc::new(OSS::new(
-                    config.oss.key_id.as_str(),
-                    config.oss.key_secret.as_str(),
-                    config.oss.endpoint.as_str(),
-                    config.oss.bucket.as_str(),
-                ))
-            });
-            POINT.as_ref().unwrap()
-        }
-    }
     pub fn new(access_endpoint: String) -> OssService {
+        let config = CONTAINER.get::<ApplicationConfig>();
+        CONTAINER.set::<OSS>(OSS::new(
+            config.oss.key_id.as_str(),
+            config.oss.key_secret.as_str(),
+            config.oss.endpoint.as_str(),
+            config.oss.bucket.as_str(),
+        ));
         OssService {
             access_endpoint: access_endpoint,
         }
@@ -50,7 +35,7 @@ impl OssService {
 #[async_trait]
 impl IUploadService for OssService {
     async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String> {
-        let service = self.get_client().await;
+        let service = CONTAINER.get::<OSS>();
         let mut headers = HashMap::new();
         headers.insert(CONTENT_TYPE, content_type.as_str());
         let result = service
