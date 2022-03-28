@@ -1,7 +1,6 @@
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
-use rbatis::bytes;
 
 use crate::{CASSIE_CONFIG, service::upload::oss_service::OssService};
 /**
