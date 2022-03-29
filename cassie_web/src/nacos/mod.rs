@@ -15,6 +15,7 @@ const FRAGMENT: &AsciiSet = &CONTROLS
 //nacos服务注册
 pub async fn register_service() {
     let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    //如果开启了nacos注册，则注册服务
     if cassie_config.nacos.nacos_flag {
         info!("register service: {:?}", cassie_config.nacos.nacos_server);
         let client = reqwest::Client::new();
@@ -67,7 +68,7 @@ pub async fn ping() {
         .send()
         .await;
 }
-
+//nacos心跳检测定时任务
 pub async fn ping_schedule() {
     info!("nacos心跳检测开始");
     let mut interval = time::interval(time::Duration::from_secs(10));
