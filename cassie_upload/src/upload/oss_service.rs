@@ -6,6 +6,8 @@ use cassie_common::error::Error;
 use cassie_common::error::Result;
 use oss_rust_sdk::prelude::*;
 use std::collections::HashMap;
+use std::sync::Arc;
+
 /**
  * @description:  IUploadService  upload base trait
  * @author String
@@ -17,13 +19,14 @@ pub struct OssService {
     access_endpoint: String,
 }
 impl OssService {
-    pub fn new(key_id: String,key_secret:String,endpoint:String,bucket:String,access_endpoint:String) -> OssService {
-        let client = OSS::new(
-            key_id,
-            key_secret,
-            endpoint,
-            bucket,
-        );
+    pub fn new(
+        key_id: String,
+        key_secret: String,
+        endpoint: String,
+        bucket: String,
+        access_endpoint: String,
+    ) -> OssService {
+        let client = Arc::new(OSS::new(key_id, key_secret, endpoint, bucket));
         OSS_CLIENT.set(client);
         OssService {
             access_endpoint: access_endpoint.clone(),

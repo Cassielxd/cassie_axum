@@ -1,6 +1,8 @@
 pub mod asi;
 pub mod sys;
 
+use crate::CONTAINER;
+
 use self::{
     asi::asi_service::AsiGroupService,
     cache_service::CacheService,
@@ -35,7 +37,8 @@ pub struct ServiceContext {
 }
 
 impl ServiceContext {
-    pub fn new(config: &ApplicationConfig) -> Self {
+    pub fn new() -> Self {
+        let config = CONTAINER.get::<ApplicationConfig>();
         Self {
             cache_service: CacheService::new().unwrap(),
             sys_auth_service: Default::default(),

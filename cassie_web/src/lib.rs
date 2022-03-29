@@ -42,7 +42,7 @@ pub fn init_context() {
     }));
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类
-    CONTAINER.set::<ServiceContext>(ServiceContext::new(config));
+    CONTAINER.set::<ServiceContext>(ServiceContext::new());
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
     //第三步初始化casbinCOntext
     CONTAINER.set::<CasbinService>(CasbinService::default());
