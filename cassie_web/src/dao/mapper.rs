@@ -1,4 +1,4 @@
-use crate::entity::sys_entitys::SysMenu;
+use cassie_domain::entity::sys_entitys::SysMenu;
 use rbatis::executor::RbatisExecutor;
 
 //查询用户所有菜单

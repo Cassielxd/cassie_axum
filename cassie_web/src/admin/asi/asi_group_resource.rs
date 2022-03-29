@@ -6,9 +6,9 @@ use axum::{
 };
 use cassie_common::RespVO;
 
-use crate::{dto::asi_dto::AsiGroupDTO, request::AsiQuery, service::crud_service::CrudService};
+use crate::service::crud_service::CrudService;
 use crate::{service::ServiceContext, CONTAINER};
-
+use cassie_domain::{dto::asi_dto::AsiGroupDTO, request::AsiQuery};
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let context = CONTAINER.get::<ServiceContext>();
     let arg = arg.unwrap();

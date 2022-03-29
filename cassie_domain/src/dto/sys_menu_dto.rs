@@ -1,7 +1,8 @@
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
 
-use crate::{entity::sys_entitys::SysMenu, utils::tree::TreeModel};
+use crate::entity::sys_entitys::SysMenu;
+use crate::request::tree::TreeModel;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SysMenuDTO {

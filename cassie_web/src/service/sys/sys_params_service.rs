@@ -1,8 +1,8 @@
 use rbatis::rbatis::Rbatis;
 
-use crate::entity::sys_entitys::CommonField;
 use crate::CONTAINER;
-use crate::{
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::{
     dto::sys_params_dto::SysParamsDTO, entity::sys_entitys::SysParams, request::SysParamsQuery,
 };
 

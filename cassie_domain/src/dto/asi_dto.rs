@@ -1,7 +1,5 @@
-use crate::{
-    entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues},
-    utils::tree::TreeModel,
-};
+use crate::entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues};
+use crate::request::tree::TreeModel;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 

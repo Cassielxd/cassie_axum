@@ -1,14 +1,15 @@
+use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::routing::get;
 use axum::Json;
 use axum::{response::IntoResponse, Router};
 use cassie_common::RespVO;
 
-use crate::dto::sys_dict_dto::SysDictTypeDTO;
-use crate::request::SysDictQuery;
 use axum::extract::{Path, Query};
+use cassie_domain::dto::sys_dict_dto::SysDictTypeDTO;
+use cassie_domain::entity::PageData;
+use cassie_domain::request::SysDictQuery;
 
 /**
  *method:/dict/type/page

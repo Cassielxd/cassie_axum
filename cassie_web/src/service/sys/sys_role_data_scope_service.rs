@@ -1,8 +1,8 @@
 use super::crud_service::CrudService;
-use crate::entity::sys_entitys::CommonField;
-use crate::request::RequestModel;
 use crate::CONTAINER;
-use crate::{
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::request::RequestModel;
+use cassie_domain::{
     dto::sys_role_dto::SysRoleDataScopeDTO, entity::sys_entitys::SysRoleDataScope,
     request::SysRoleQuery,
 };

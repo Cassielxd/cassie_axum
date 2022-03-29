@@ -1,4 +1,4 @@
-use crate::utils::tree::TreeModel;
+use crate::request::tree::TreeModel;
 
 /**
 *struct:CiciSystemGroup

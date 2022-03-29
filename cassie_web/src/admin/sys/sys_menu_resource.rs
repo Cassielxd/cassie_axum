@@ -1,9 +1,6 @@
+use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{
-    dto::sys_menu_dto::SysMenuDTO, entity::PageData, request::SysMenuQuery,
-    service::crud_service::CrudService,
-};
 use axum::routing::get;
 use axum::{
     extract::{Path, Query},
@@ -11,6 +8,9 @@ use axum::{
     Json, Router,
 };
 use cassie_common::RespVO;
+use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
+use cassie_domain::entity::PageData;
+use cassie_domain::request::SysMenuQuery;
 
 /**
  *method:/menu

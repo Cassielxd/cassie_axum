@@ -1,15 +1,17 @@
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::dto::sys_role_dto::SysRoleDTO;
-use crate::request::SysRoleQuery;
+
+use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 use casbin::MgmtApi;
 use cassie_common::RespVO;
+use cassie_domain::dto::sys_role_dto::SysRoleDTO;
+use cassie_domain::entity::PageData;
+use cassie_domain::request::SysRoleQuery;
 
 /**
  *method:/role/page

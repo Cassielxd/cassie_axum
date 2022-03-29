@@ -1,14 +1,15 @@
-use crate::request::RequestModel;
 use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{dto::sys_user_dto::SysUserDTO, entity::PageData, request::SysUserQuery};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
+use cassie_domain::dto::sys_user_dto::SysUserDTO;
+use cassie_domain::entity::PageData;
+use cassie_domain::request::{RequestModel, SysUserQuery};
 use validator::Validate;
 
 /**

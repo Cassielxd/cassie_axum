@@ -1,6 +1,10 @@
-pub mod request_model;
-pub use request_model::*;
 use serde::{Deserialize, Serialize};
+
+pub use request_model::*;
+
+pub mod request_model;
+pub mod tree;
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct RequestModel {
     pub uid: i64,

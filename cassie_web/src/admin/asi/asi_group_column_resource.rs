@@ -1,7 +1,4 @@
 use crate::{
-    dto::asi_dto::AsiGroupColumnDTO,
-    entity::PageData,
-    request::AsiQuery,
     service::{crud_service::CrudService, ServiceContext},
     CONTAINER,
 };
@@ -12,6 +9,7 @@ use axum::{
     Json, Router,
 };
 use cassie_common::{error::Error, RespVO};
+use cassie_domain::{dto::asi_dto::AsiGroupColumnDTO, entity::PageData, request::AsiQuery};
 use validator::Validate;
 
 pub async fn get_column_one(Path(id): Path<String>) -> impl IntoResponse {

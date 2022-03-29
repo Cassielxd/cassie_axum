@@ -1,11 +1,11 @@
 use crate::dao::mapper::{menu_list, user_menu_list};
-use crate::dto::sys_menu_dto::SysMenuDTO;
-use crate::entity::sys_entitys::{CommonField, SysMenu};
-use crate::request::{RequestModel, SysMenuQuery};
 use crate::service::crud_service::CrudService;
-use crate::utils::tree::TreeService;
 use crate::CONTAINER;
 use cassie_common::error::Result;
+use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
+use cassie_domain::entity::sys_entitys::{CommonField, SysMenu};
+use cassie_domain::request::tree::TreeService;
+use cassie_domain::request::{RequestModel, SysMenuQuery};
 use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 

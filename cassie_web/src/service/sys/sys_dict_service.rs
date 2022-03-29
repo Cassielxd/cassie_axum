@@ -1,7 +1,7 @@
-use crate::entity::sys_entitys::CommonField;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::{
     dto::sys_dict_dto::{SysDictDataDTO, SysDictTypeDTO},
     entity::sys_entitys::{SysDictData, SysDictType},
     request::SysDictQuery,

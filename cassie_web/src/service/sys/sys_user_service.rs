@@ -1,15 +1,17 @@
 use crate::CONTAINER;
-use crate::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
 use cassie_common::utils::password_encoder::PasswordEncoder;
+use cassie_domain::{
+    dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery,
+};
 use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 
 use super::crud_service::CrudService;
 use super::sys_role_user_service::SysRoleUserService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::entity::sys_entitys::{CommonField, SysRoleUser};
-use crate::request::RequestModel;
 use casbin::MgmtApi;
+use cassie_domain::entity::sys_entitys::{CommonField, SysRoleUser};
+use cassie_domain::request::RequestModel;
 
 /**
  *struct:SysUserService

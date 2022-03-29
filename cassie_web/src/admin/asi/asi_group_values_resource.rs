@@ -9,10 +9,10 @@ use axum::{
 use cassie_common::{error::Error, RespVO};
 
 use crate::{
-    request::AsiQuery,
     service::{crud_service::CrudService, ServiceContext},
     CONTAINER,
 };
+use cassie_domain::request::AsiQuery;
 
 pub async fn list(Path(id): Path<String>, arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
     let context = CONTAINER.get::<ServiceContext>();

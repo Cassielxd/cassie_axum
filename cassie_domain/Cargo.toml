@@ -6,3 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+validator = "0.14.0"
+validator_derive = "0.14.0"
+#jwt
+jsonwebtoken = "7"
+rbson = "2.0"
+rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+cassie_common = { path = "../cassie_common" }

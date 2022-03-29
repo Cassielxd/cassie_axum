@@ -1,13 +1,14 @@
-use crate::dto::sys_params_dto::SysParamsDTO;
-use crate::request::SysParamsQuery;
+use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
-use crate::{entity::PageData, service::crud_service::CrudService};
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 use cassie_common::RespVO;
+use cassie_domain::dto::sys_params_dto::SysParamsDTO;
+use cassie_domain::entity::PageData;
+use cassie_domain::request::SysParamsQuery;
 
 pub async fn page(arg: Option<Query<SysParamsQuery>>) -> impl IntoResponse {
     let context = CONTAINER.get::<ServiceContext>();

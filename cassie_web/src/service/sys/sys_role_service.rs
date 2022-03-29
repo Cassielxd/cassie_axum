@@ -2,11 +2,13 @@ use super::{
     crud_service::CrudService, sys_role_data_scope_service::SysRoleDataScopeService,
     sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService,
 };
-use crate::entity::sys_entitys::CommonField;
 use crate::CONTAINER;
-use crate::{dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery};
 use cassie_common::error::Result;
 use cassie_common::utils::string::IsEmpty;
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::{
+    dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery,
+};
 use rbatis::rbatis::Rbatis;
 
 /**

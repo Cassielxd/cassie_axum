@@ -548,6 +548,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_domain"
+version = "0.1.0"
+dependencies = [
+ "cassie_common",
+ "jsonwebtoken",
+ "rbatis",
+ "rbson",
+ "serde",
+ "serde_json",
+ "validator",
+ "validator_derive",
+]
+
+[[package]]
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
@@ -566,6 +580,7 @@ dependencies = [
  "cassie_casbin_adapter",
  "cassie_common",
  "cassie_config",
+ "cassie_domain",
  "chrono",
  "fast_log",
  "futures",

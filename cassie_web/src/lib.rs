@@ -10,19 +10,16 @@ pub mod dao;
 
 pub mod admin;
 pub mod cici_casbin;
-pub mod dto;
-pub mod entity;
+
 pub mod middleware;
 //nacos注册中心默认实现
 pub mod nacos;
-pub mod request;
+
 pub mod routers;
 pub mod service;
-pub mod utils;
-pub mod vo;
+
 use mongodb::Database;
 use rbatis::rbatis::Rbatis;
-use request::*;
 
 use crate::cici_casbin::casbin_service::CasbinService;
 use crate::service::ServiceContext;

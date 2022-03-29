@@ -1,8 +1,8 @@
 use rbatis::rbatis::Rbatis;
 
-use crate::entity::sys_entitys::CommonField;
 use crate::CONTAINER;
-use crate::{
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::{
     dto::sys_role_dto::SysRoleUserDTO, entity::sys_entitys::SysRoleUser, request::SysRoleQuery,
 };
 

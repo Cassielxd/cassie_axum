@@ -1,6 +1,5 @@
+use crate::request::tree::TreeModel;
 use rbatis::DateTimeNative;
-
-use crate::utils::tree::TreeModel;
 
 /**
 *struct:SysUser

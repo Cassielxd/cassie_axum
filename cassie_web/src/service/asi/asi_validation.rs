@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use crate::dto::asi_dto::AsiGroupColumnDTO;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
+use cassie_domain::dto::asi_dto::AsiGroupColumnDTO;
 
 pub fn validate_value(
     columns: &Vec<AsiGroupColumnDTO>,
