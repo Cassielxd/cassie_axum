@@ -1,14 +1,11 @@
 pub mod error;
 pub mod utils;
 
-
-
-
-use error::{Error};
 use axum::{body::Body, response::Response};
+use error::Error;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-pub const CODE_SUCCESS:i8  = 0;
-pub const CODE_FAIL:i8  = -1;
+pub const CODE_SUCCESS: i8 = 0;
+pub const CODE_FAIL: i8 = -1;
 
 /// http接口返回模型结构，提供基础的 code，msg，data 等json数据结构
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -37,7 +34,7 @@ where
             }
         }
     }
-    
+
     pub fn from(arg: &T) -> Self {
         Self {
             code: Some(CODE_SUCCESS),
@@ -47,7 +44,6 @@ where
     }
 
     pub fn from_error(arg: &Error) -> Self {
-        
         Self {
             code: Some(CODE_FAIL),
             msg: Some(arg.to_string()),

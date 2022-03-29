@@ -19,4 +19,3 @@ impl PasswordEncoder {
         password.eq(&hashed)
     }
 }
-

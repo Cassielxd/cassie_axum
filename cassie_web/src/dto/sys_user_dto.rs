@@ -1,12 +1,12 @@
 use crate::entity::sys_entitys::SysUser;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
-#[derive(Clone, Debug, Serialize, Validate,Deserialize)]
+#[derive(Clone, Debug, Serialize, Validate, Deserialize)]
 pub struct SysUserDTO {
     pub id: Option<i64>,
     #[validate(required)]
     pub username: Option<String>,
-    #[validate(length(min = 6, message="密码最少6个字符"))]
+    #[validate(length(min = 6, message = "密码最少6个字符"))]
     pub password: Option<String>,
     pub real_name: Option<String>,
     pub head_url: Option<String>,

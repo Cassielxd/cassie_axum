@@ -1,5 +1,5 @@
-use cassie_common::error::Result;
 use async_trait::async_trait;
+use cassie_common::error::Result;
 use indexmap::IndexMap;
 use std::collections::hash_map::RandomState;
 use std::ops::Sub;
@@ -39,7 +39,6 @@ impl Default for MemService {
         }
     }
 }
-
 
 #[async_trait]
 impl ICacheService for MemService {

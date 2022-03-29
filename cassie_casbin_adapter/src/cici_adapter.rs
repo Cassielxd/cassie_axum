@@ -1,10 +1,13 @@
 #![allow(unused_variables)]
 #![allow(unused_must_use)]
-use casbin::{Adapter, Filter, Model, Result};
 use async_trait::async_trait;
+use casbin::{Adapter, Filter, Model, Result};
 use rbatis::rbatis::Rbatis;
 
-use crate::{models::{NewCasbinRule, CasbinRule}, action::CICICasinService};
+use crate::{
+    action::CICICasinService,
+    models::{CasbinRule, NewCasbinRule},
+};
 
 /**
  *struct:CICIAdapter
@@ -20,7 +23,10 @@ pub struct CICIAdapter {
 
 impl CICIAdapter {
     pub fn new(r: Rbatis) -> CICIAdapter {
-        CICIAdapter { is_filtered: false, service: CICICasinService { rbatis: r } }
+        CICIAdapter {
+            is_filtered: false,
+            service: CICICasinService { rbatis: r },
+        }
     }
     pub(crate) fn save_policy_line<'a>(
         &self,
@@ -212,7 +218,9 @@ impl Adapter for CICIAdapter {
         if field_index <= 5 && !field_values.is_empty() && field_values.len() >= 6 - field_index {
             Ok(false)
         } else {
-            self.service.remove_filtered_policy(ptype, field_index, field_values).await
+            self.service
+                .remove_filtered_policy(ptype, field_index, field_values)
+                .await
         }
     }
 }

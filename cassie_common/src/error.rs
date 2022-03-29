@@ -1,8 +1,4 @@
 //! Errorand Result types.
-use std::error::Error as StdError;
-use std::fmt::{self, Debug, Display};
-use std::io;
-use std::sync::PoisonError;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -10,6 +6,10 @@ use axum::{
 use serde::de::Visitor;
 use serde::ser::{Serialize, Serializer};
 use serde::{Deserialize, Deserializer};
+use std::error::Error as StdError;
+use std::fmt::{self, Debug, Display};
+use std::io;
+use std::sync::PoisonError;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -75,7 +75,6 @@ impl From<Error> for std::io::Error {
         arg.into()
     }
 }
-
 
 impl From<axum::Error> for Error {
     fn from(arg: axum::Error) -> Self {

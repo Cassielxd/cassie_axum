@@ -18,7 +18,7 @@ pub struct AsiGroup {
     pub group_type: Option<String>,
     pub parent_group_code: Option<String>,
 }
-impl TreeModel for  AsiGroup{
+impl TreeModel for AsiGroup {
     fn get_pid(&self) -> Option<String> {
         Some(self.parent_group_code.clone().unwrap())
     }
@@ -46,7 +46,7 @@ impl_field_name_method!(AsiGroup {
 */
 #[crud_table(table_name:asi_group_column)]
 #[derive(Clone, Debug)]
-pub struct AsiGroupColumn{
+pub struct AsiGroupColumn {
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,
@@ -80,15 +80,15 @@ impl_field_name_method!(AsiGroupColumn {
 });
 
 /**
- *struct:CiciSystemGroupValues
- *desc:动态表单值存储表 外键映射CiciSystemGroupColumn
-       定义表 和 业务表ref_id 是对应的业务主键
- *author:String
- *email:348040933@qq.com
- */
+*struct:CiciSystemGroupValues
+*desc:动态表单值存储表 外键映射CiciSystemGroupColumn
+      定义表 和 业务表ref_id 是对应的业务主键
+*author:String
+*email:348040933@qq.com
+*/
 #[crud_table(table_name:asi_group_values)]
 #[derive(Clone, Debug)]
-pub struct AsiGroupValues{
+pub struct AsiGroupValues {
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,

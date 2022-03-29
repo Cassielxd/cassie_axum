@@ -262,7 +262,7 @@ pub struct SysMenu {
     pub id: Option<i64>,
     pub pid: Option<i64>,
     pub url: Option<String>,
-    pub name:Option<String>,
+    pub name: Option<String>,
     pub menu_type: Option<u8>,
     pub icon: Option<String>,
     pub permissions: Option<String>,
@@ -272,7 +272,7 @@ pub struct SysMenu {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
-    pub method:Option<String>,
+    pub method: Option<String>,
     pub path: Option<String>,
 }
 impl_field_name_method!(SysMenu {
@@ -290,7 +290,7 @@ impl_field_name_method!(SysMenu {
     update_date,
     method
 });
-impl  TreeModel for SysMenu  {
+impl TreeModel for SysMenu {
     fn get_pid(&self) -> Option<String> {
         Some(self.pid.clone().unwrap().to_string())
     }

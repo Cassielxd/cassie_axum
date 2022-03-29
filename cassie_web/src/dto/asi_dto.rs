@@ -1,24 +1,27 @@
-use crate::{entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues}, utils::tree::TreeModel};
+use crate::{
+    entity::asi_entitys::{AsiGroup, AsiGroupColumn, AsiGroupValues},
+    utils::tree::TreeModel,
+};
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 
-#[derive(Clone, Debug, Serialize,Validate, Deserialize)]
+#[derive(Clone, Debug, Serialize, Validate, Deserialize)]
 pub struct AsiGroupDTO {
     pub id: Option<i64>,
     #[validate(required)]
     pub cate_id: Option<i64>,
-    #[validate(length(min = 4, message="名称最少4个字"))]
+    #[validate(length(min = 4, message = "名称最少4个字"))]
     pub name: Option<String>,
     pub info: Option<String>,
-    #[validate(length(min = 6, message="分组编码最少6个字"))]
+    #[validate(length(min = 6, message = "分组编码最少6个字"))]
     pub group_code: Option<String>,
     pub agency_code: Option<String>,
     pub group_type: Option<String>,
     pub parent_group_code: Option<String>,
-    pub children:Option<Vec<AsiGroupDTO>>
+    pub children: Option<Vec<AsiGroupDTO>>,
 }
 
-impl TreeModel for  AsiGroupDTO{
+impl TreeModel for AsiGroupDTO {
     fn get_pid(&self) -> Option<String> {
         Some(self.parent_group_code.clone().unwrap())
     }
@@ -37,8 +40,8 @@ impl_field_name_method!(AsiGroupDTO {
     agency_code
 });
 
-impl Into< AsiGroup> for AsiGroupDTO {
-    fn into(self) ->  AsiGroup {
+impl Into<AsiGroup> for AsiGroupDTO {
+    fn into(self) -> AsiGroup {
         AsiGroup {
             id: self.id,
             cate_id: self.cate_id,
@@ -68,17 +71,17 @@ impl From<AsiGroup> for AsiGroupDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize,Validate)]
-pub struct AsiGroupColumnDTO{
+#[derive(Clone, Debug, Serialize, Deserialize, Validate)]
+pub struct AsiGroupColumnDTO {
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,
     pub group_code: Option<String>,
     #[validate(required)]
-    #[validate(length(min = 2, message="最少2个字符"))]
+    #[validate(length(min = 2, message = "最少2个字符"))]
     pub column_code: Option<String>,
     #[validate(required)]
-    #[validate(length(min = 2, message="最少2个字符"))]
+    #[validate(length(min = 2, message = "最少2个字符"))]
     pub column_name: Option<String>,
     #[validate(required)]
     pub data_type: Option<String>,
@@ -109,8 +112,8 @@ impl_field_name_method!(AsiGroupColumnDTO {
     display_length,
     is_display
 });
-impl Into< AsiGroupColumn> for AsiGroupColumnDTO {
-    fn into(self) ->  AsiGroupColumn {
+impl Into<AsiGroupColumn> for AsiGroupColumnDTO {
+    fn into(self) -> AsiGroupColumn {
         AsiGroupColumn {
             id: self.id,
             agency_code: self.agency_code,
@@ -125,7 +128,7 @@ impl Into< AsiGroupColumn> for AsiGroupColumnDTO {
             display_order: self.display_order,
             default_value: self.default_value,
             display_length: self.display_length,
-            is_display: self.is_display
+            is_display: self.is_display,
         }
     }
 }
@@ -146,14 +149,13 @@ impl From<AsiGroupColumn> for AsiGroupColumnDTO {
             display_order: arg.display_order,
             default_value: arg.default_value,
             display_length: arg.display_length,
-            is_display: arg.is_display
+            is_display: arg.is_display,
         }
     }
 }
 
-
-#[derive(Clone, Debug, Serialize, Deserialize,Validate)]
-pub struct AsiGroupValuesDTO{
+#[derive(Clone, Debug, Serialize, Deserialize, Validate)]
+pub struct AsiGroupValuesDTO {
     pub id: Option<i64>,
     pub agency_code: Option<String>,
     pub product_code: Option<String>,
@@ -174,8 +176,8 @@ impl_field_name_method!(AsiGroupValuesDTO {
     column_value,
     ref_id
 });
-impl Into< AsiGroupValues> for AsiGroupValuesDTO {
-    fn into(self) ->  AsiGroupValues {
+impl Into<AsiGroupValues> for AsiGroupValuesDTO {
+    fn into(self) -> AsiGroupValues {
         AsiGroupValues {
             id: self.id,
             agency_code: self.agency_code,
@@ -183,7 +185,7 @@ impl Into< AsiGroupValues> for AsiGroupValuesDTO {
             group_code: self.group_code,
             column_code: self.column_code,
             column_value: self.column_value,
-            ref_id: self.ref_id
+            ref_id: self.ref_id,
         }
     }
 }
@@ -197,7 +199,7 @@ impl From<AsiGroupValues> for AsiGroupValuesDTO {
             group_code: arg.group_code,
             column_code: arg.column_code,
             column_value: arg.column_value,
-            ref_id: arg.ref_id
+            ref_id: arg.ref_id,
         }
     }
 }

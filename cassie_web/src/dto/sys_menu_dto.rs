@@ -8,7 +8,7 @@ pub struct SysMenuDTO {
     pub id: Option<i64>,
     pub pid: Option<i64>,
     pub url: Option<String>,
-    pub name:Option<String>,
+    pub name: Option<String>,
     pub menu_type: Option<u8>,
     pub icon: Option<String>,
     pub permissions: Option<String>,
@@ -18,9 +18,9 @@ pub struct SysMenuDTO {
     pub create_date: Option<DateTimeNative>,
     pub updater: Option<i64>,
     pub update_date: Option<DateTimeNative>,
-    pub method:Option<String>,
+    pub method: Option<String>,
     pub path: Option<String>,
-    pub children:Option<Vec<SysMenuDTO>>
+    pub children: Option<Vec<SysMenuDTO>>,
 }
 impl_field_name_method!(SysMenuDTO {
     id,
@@ -44,7 +44,6 @@ impl TreeModel for SysMenuDTO {
     fn get_id(&self) -> Option<String> {
         Some(self.id.clone().unwrap().to_string())
     }
-
 }
 
 impl Into<SysMenu> for SysMenuDTO {
@@ -63,8 +62,8 @@ impl Into<SysMenu> for SysMenuDTO {
             create_date: self.create_date,
             updater: self.updater,
             update_date: self.update_date,
-            method:self.method,
-            path:self.path,
+            method: self.method,
+            path: self.path,
         }
     }
 }
@@ -85,8 +84,8 @@ impl From<SysMenu> for SysMenuDTO {
             create_date: arg.create_date,
             updater: arg.updater,
             update_date: arg.update_date,
-            method:arg.method,
-            path:arg.path,
+            method: arg.method,
+            path: arg.path,
             children: Some(Vec::<SysMenuDTO>::new()),
         }
     }
