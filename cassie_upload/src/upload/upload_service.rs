@@ -1,8 +1,9 @@
-use crate::{service::upload::oss_service::OssService, CONTAINER};
+use crate::upload::oss_service::OssService;
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
 use cassie_config::config::ApplicationConfig;
+
 /**
  * @description:  IUploadService  upload base trait
  * @author String
@@ -19,14 +20,13 @@ pub struct UploadService {
 }
 
 impl UploadService {
-    pub fn new() -> cassie_common::error::Result<Self> {
-        let config = CONTAINER.get::<ApplicationConfig>();
+    pub fn new(config: &ApplicationConfig) -> cassie_common::error::Result<Self> {
         match config.upload_type.as_str() {
             "oss" => {
                 println!("---------------------------------存储类型oss-----------------------------------------------------");
                 config.oss.validate();
                 Ok(Self {
-                    inner: Box::new(OssService::new(config.oss.access_endpoint.clone())),
+                    inner: Box::new(OssService::new(config.oss.key_id.clone(), config.oss.key_secret.clone(), config.oss.endpoint.clone(), config.oss.bucket.clone(), config.oss.access_endpoint.clone())),
                 })
             }
             e => {

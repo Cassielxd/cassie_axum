@@ -581,6 +581,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_upload"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "cassie_common",
+ "cassie_config",
+ "oss-rust-sdk",
+ "state",
+]
+
+[[package]]
 name = "cassie_web"
 version = "0.1.0"
 dependencies = [
@@ -594,6 +606,7 @@ dependencies = [
  "cassie_config",
  "cassie_domain",
  "cassie_orm",
+ "cassie_upload",
  "chrono",
  "fast_log",
  "futures",
@@ -601,7 +614,6 @@ dependencies = [
  "jsonwebtoken",
  "log",
  "mongodb",
- "oss-rust-sdk",
  "percent-encoding",
  "rbatis",
  "rbson",

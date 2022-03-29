@@ -52,7 +52,7 @@ log = "0.4"
 fast_log = { version="1.4", features = ["lz4","zip", "gzip"]}
 percent-encoding = "2.1.0"
 mongodb = { version = "2.1.0", default-features = false, features = ["async-std-runtime"] }
-oss-rust-sdk = "0.3.1"
+
 state = { version = "0.5", features = ["tls"] }
 
 #cassie
@@ -60,6 +60,7 @@ cassie_domain = { path = "../cassie_domain" }
 cassie_common = { path = "../cassie_common" }
 cassie_config = { path = "../cassie_config" }
 cassie_orm = { path = "../cassie_orm" }
+cassie_upload = { path = "../cassie_upload" }
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
 

@@ -2,9 +2,6 @@
 #![allow(dead_code)] //允许未使用的代码
 #![allow(unused_must_use)]
 
-#[macro_use]
-extern crate rbatis;
-
 pub mod config;
 
 pub mod admin;
@@ -45,7 +42,7 @@ pub fn init_context() {
     }));
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类
-    CONTAINER.set::<ServiceContext>(ServiceContext::default());
+    CONTAINER.set::<ServiceContext>(ServiceContext::new(config));
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
     //第三步初始化casbinCOntext
     CONTAINER.set::<CasbinService>(CasbinService::default());

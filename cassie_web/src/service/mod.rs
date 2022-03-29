@@ -1,6 +1,5 @@
 pub mod asi;
 pub mod sys;
-pub mod upload;
 
 use self::{
     asi::asi_service::AsiGroupService,
@@ -11,10 +10,10 @@ use self::{
     sys_params_service::SysParamsService,
     sys_role_service::SysRoleService,
     sys_user_service::SysUserService,
-    upload::upload_service::UploadService,
 };
+use cassie_config::config::ApplicationConfig;
+use cassie_upload::upload::upload_service::UploadService;
 pub use sys::*;
-pub use upload::*;
 
 pub struct ServiceContext {
     pub cache_service: CacheService,
@@ -36,7 +35,7 @@ pub struct ServiceContext {
 }
 
 impl ServiceContext {
-    pub fn default() -> Self {
+    pub fn new(config: &ApplicationConfig) -> Self {
         Self {
             cache_service: CacheService::new().unwrap(),
             sys_auth_service: Default::default(),
@@ -47,7 +46,7 @@ impl ServiceContext {
             sys_dict_type_service: Default::default(),
             sys_dict_value_service: Default::default(),
             asi_service: Default::default(),
-            upload_service: UploadService::new().unwrap(),
+            upload_service: UploadService::new(config).unwrap(),
         }
     }
 }

@@ -1,10 +1,9 @@
 use super::upload_service::IUploadService;
-use crate::CONTAINER;
+use super::OSS_CLIENT;
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
-use cassie_config::config::ApplicationConfig;
 use oss_rust_sdk::prelude::*;
 use std::collections::HashMap;
 /**
@@ -18,16 +17,16 @@ pub struct OssService {
     access_endpoint: String,
 }
 impl OssService {
-    pub fn new(access_endpoint: String) -> OssService {
-        let config = CONTAINER.get::<ApplicationConfig>();
-        CONTAINER.set::<OSS>(OSS::new(
-            config.oss.key_id.as_str(),
-            config.oss.key_secret.as_str(),
-            config.oss.endpoint.as_str(),
-            config.oss.bucket.as_str(),
-        ));
+    pub fn new(key_id: String,key_secret:String,endpoint:String,bucket:String,access_endpoint:String) -> OssService {
+        let client = OSS::new(
+            key_id,
+            key_secret,
+            endpoint,
+            bucket,
+        );
+        OSS_CLIENT.set(client);
         OssService {
-            access_endpoint: access_endpoint,
+            access_endpoint: access_endpoint.clone(),
         }
     }
 }
@@ -35,10 +34,10 @@ impl OssService {
 #[async_trait]
 impl IUploadService for OssService {
     async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String> {
-        let service = CONTAINER.get::<OSS>();
         let mut headers = HashMap::new();
         headers.insert(CONTENT_TYPE, content_type.as_str());
-        let result = service
+        let client: &OSS = OSS_CLIENT.get();
+        let result = client
             .async_put_object_from_buffer(&data, file_name.clone(), headers, None)
             .await;
         match result {
