@@ -6,7 +6,6 @@
 extern crate rbatis;
 
 pub mod config;
-pub mod dao;
 
 pub mod admin;
 pub mod cici_casbin;
@@ -34,14 +33,15 @@ pub fn init_context() {
     println!("-------------------------------------正在启动--------------------------------------------------------");
     let yml_data = include_str!("../application.yml");
     CONTAINER.set::<ApplicationConfig>(ApplicationConfig::new(yml_data));
+    let config = CONTAINER.get::<ApplicationConfig>();
     println!("-------------------------------------yml配置完成-----------------------------------------------------");
     //第二步初始化数据源
     CONTAINER.set::<Database>(async_std::task::block_on(async {
-        crate::dao::init_mongdb().await
+        cassie_orm::dao::init_mongdb(config).await
     }));
     println!("---------------------------------------mongodb配置完成--------------------------------------------------");
     CONTAINER.set::<Rbatis>(async_std::task::block_on(async {
-        crate::dao::init_rbatis().await
+        cassie_orm::dao::init_rbatis(config).await
     }));
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类

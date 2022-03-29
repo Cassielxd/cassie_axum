@@ -1,0 +1,14 @@
+[package]
+name = "cassie_orm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rbson = "2.0"
+rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
+mongodb = { version = "2.1.0", default-features = false, features = ["async-std-runtime"] }
+cassie_domain = { path = "../cassie_domain" }
+cassie_common = { path = "../cassie_common" }
+cassie_config = { path = "../cassie_config" }

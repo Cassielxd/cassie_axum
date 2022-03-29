@@ -3,7 +3,6 @@ use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
 
-use crate::CONTAINER;
 use cassie_config::config::ApplicationConfig;
 
 #[derive(Debug)]
@@ -17,12 +16,6 @@ impl SqlIntercept for AgencyInterceptor {
         args: &mut Vec<Bson>,
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
-        let cassie_config = CONTAINER.get::<ApplicationConfig>();
-        println!("sql:{}", sql.clone());
-        println!("args:{:?}", args.clone());
-        if cassie_config.tenant.enable {
-            for table in &cassie_config.tenant.ignore_table {}
-        }
         return Ok(());
     }
 

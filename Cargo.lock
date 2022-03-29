@@ -562,6 +562,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_orm"
+version = "0.1.0"
+dependencies = [
+ "cassie_common",
+ "cassie_config",
+ "cassie_domain",
+ "mongodb",
+ "rbatis",
+ "rbson",
+]
+
+[[package]]
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
@@ -581,6 +593,7 @@ dependencies = [
  "cassie_common",
  "cassie_config",
  "cassie_domain",
+ "cassie_orm",
  "chrono",
  "fast_log",
  "futures",

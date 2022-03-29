@@ -5,9 +5,8 @@ pub mod mapper;
 use interceptor::*;
 
 ///实例化 rbatis orm 连接池
-pub async fn init_rbatis() -> Rbatis {
+pub async fn init_rbatis(cassie_config: &ApplicationConfig) -> Rbatis {
     let mut rbatis = Rbatis::new();
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
     if cassie_config.debug.eq(&false) && rbatis.is_debug_mode() {
         panic!(
             r#"已使用release模式，但是rbatis仍使用debug模式！请删除 Cargo.toml 中 rbatis的配置 features = ["debug_mode"]"#
@@ -30,9 +29,7 @@ pub async fn init_rbatis() -> Rbatis {
 
 use mongodb::{options::ClientOptions, Client, Database};
 
-use crate::CONTAINER;
-pub async fn init_mongdb() -> Database {
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+pub async fn init_mongdb(cassie_config: &ApplicationConfig) -> Database {
     let client_options = ClientOptions::parse(cassie_config.mongodb_url.clone().as_str())
         .await
         .expect(" mongdb link database fail!");
@@ -43,6 +40,5 @@ pub async fn init_mongdb() -> Database {
     let client = Client::with_options(client_options).unwrap();
     println!("mongdb link database success!");
     let db = client.database("cassie");
-
     db
 }

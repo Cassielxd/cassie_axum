@@ -1,4 +1,4 @@
-use crate::dao::mapper::{menu_list, user_menu_list};
+use cassie_orm::dao::mapper::{menu_list, user_menu_list};
 use crate::service::crud_service::CrudService;
 use crate::CONTAINER;
 use cassie_common::error::Result;

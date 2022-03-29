@@ -1,6 +1,6 @@
 use super::crud_service::CrudService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::dao::mapper::get_menu_list_by_ids;
+use cassie_orm::dao::mapper::get_menu_list_by_ids;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
 use casbin::MgmtApi;
