@@ -539,6 +539,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_config"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "serde_yaml",
+]
+
+[[package]]
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
@@ -556,6 +565,7 @@ dependencies = [
  "casbin",
  "cassie_casbin_adapter",
  "cassie_common",
+ "cassie_config",
  "chrono",
  "fast_log",
  "futures",

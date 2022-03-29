@@ -1,9 +1,9 @@
-use crate::config::config::ApplicationConfig;
 use crate::service::mem_service::MemService;
 use crate::service::redis_service::RedisService;
 use crate::CONTAINER;
 use async_trait::async_trait;
 use cassie_common::error::Result;
+use cassie_config::config::ApplicationConfig;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::time::Duration;

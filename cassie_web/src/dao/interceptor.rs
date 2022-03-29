@@ -3,8 +3,8 @@ use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
 
-use crate::config::config::ApplicationConfig;
 use crate::CONTAINER;
+use cassie_config::config::ApplicationConfig;
 
 #[derive(Debug)]
 pub struct AgencyInterceptor {}

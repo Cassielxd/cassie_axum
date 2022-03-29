@@ -1,11 +1,11 @@
-use crate::{config::config::ApplicationConfig, CONTAINER};
+use super::upload_service::IUploadService;
+use crate::CONTAINER;
 use async_trait::async_trait;
 use axum::body::Bytes;
-use cassie_common::error::Result;
-use oss_rust_sdk::prelude::*;
-
-use super::upload_service::IUploadService;
 use cassie_common::error::Error;
+use cassie_common::error::Result;
+use cassie_config::config::ApplicationConfig;
+use oss_rust_sdk::prelude::*;
 use std::collections::HashMap;
 /**
  * @description:  IUploadService  upload base trait

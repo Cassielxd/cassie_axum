@@ -86,14 +86,12 @@ pub struct ApplicationConfig {
     pub oss: OSSConfig,
 }
 
-///默认配置
-impl Default for ApplicationConfig {
-    fn default() -> Self {
-        println!("读取 application.yml");
-        let yml_data = include_str!("../../application.yml");
-        //读取配置
-        let result: ApplicationConfig = serde_yaml::from_str(yml_data).expect("配置文件加载失败");
-        println!("配置 ApplicationConfig");
-        result
+impl ApplicationConfig {
+    pub fn new(yml_data: &str) -> Self {
+        let config = match serde_yaml::from_str(yml_data) {
+            Ok(config) => config,
+            Err(e) => panic!("{}", e),
+        };
+        config
     }
 }

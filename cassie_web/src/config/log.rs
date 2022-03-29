@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use crate::CONTAINER;
 
-use super::config::ApplicationConfig;
+use cassie_config::config::ApplicationConfig;
 
 pub fn init_log() {
     let cassie_config = CONTAINER.get::<ApplicationConfig>();

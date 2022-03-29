@@ -1,4 +1,3 @@
-use crate::config::config::ApplicationConfig;
 use crate::dto::sign_in::SignInDTO;
 use crate::entity::sys_entitys::SysUser;
 use crate::service::ServiceContext;
@@ -8,6 +7,7 @@ use crate::CONTAINER;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 use cassie_common::utils::password_encoder::PasswordEncoder;
+use cassie_config::config::ApplicationConfig;
 use rbatis::crud::CRUD;
 use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;

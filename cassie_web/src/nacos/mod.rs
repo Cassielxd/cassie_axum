@@ -1,8 +1,8 @@
+use crate::CONTAINER;
+use cassie_config::config::ApplicationConfig;
 use log::info;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 use tokio::time;
-
-use crate::{config::config::ApplicationConfig, CONTAINER};
 
 const FRAGMENT: &AsciiSet = &CONTROLS
     .add(b' ')

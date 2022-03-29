@@ -6,8 +6,9 @@ use axum::{
     routing::get,
     Router, Server,
 };
+use cassie_config::config::ApplicationConfig;
 use cassie_web::{
-    config::{config::ApplicationConfig, log::init_log},
+    config::log::init_log,
     init_context,
     middleware::auth::Auth,
     nacos::register_service,

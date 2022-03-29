@@ -41,6 +41,7 @@ indexmap = "1.7.0"
 #futures
 futures = "0.3"
 cassie_common = { path = "../cassie_common" }
+cassie_config = { path = "../cassie_config" }
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 casbin = { version = "2.0.9", default-features = false, features = ["runtime-async-std", "cached", "logging"] }
 

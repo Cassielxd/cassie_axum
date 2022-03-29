@@ -1,9 +1,9 @@
 pub mod casbin_service;
 
-use casbin::rhai::ImmutableString;
-
-use crate::{config::config::ApplicationConfig, CONTAINER};
+use crate::CONTAINER;
 use casbin::function_map::key_match2;
+use casbin::rhai::ImmutableString;
+use cassie_config::config::ApplicationConfig;
 
 ///是否处在白名单接口中
 pub fn is_white_list_api(path: &str, white_list_api: &Vec<String>) -> bool {

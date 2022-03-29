@@ -1,10 +1,8 @@
+use crate::{service::upload::oss_service::OssService, CONTAINER};
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
-
-use crate::{
-    config::config::ApplicationConfig, service::upload::oss_service::OssService, CONTAINER,
-};
+use cassie_config::config::ApplicationConfig;
 /**
  * @description:  IUploadService  upload base trait
  * @author String

@@ -1,5 +1,5 @@
+use cassie_config::config::ApplicationConfig;
 use rbatis::rbatis::Rbatis;
-
 pub mod interceptor;
 pub mod mapper;
 use interceptor::*;
@@ -30,7 +30,7 @@ pub async fn init_rbatis() -> Rbatis {
 
 use mongodb::{options::ClientOptions, Client, Database};
 
-use crate::{config::config::ApplicationConfig, CONTAINER};
+use crate::CONTAINER;
 pub async fn init_mongdb() -> Database {
     let cassie_config = CONTAINER.get::<ApplicationConfig>();
     let client_options = ClientOptions::parse(cassie_config.mongodb_url.clone().as_str())
