@@ -86,6 +86,7 @@ async fn main() {
 #### 参与贡献
 
 String <348040933@qq.com>
+交流群:435604279
 
 感谢Ribatis作者
 

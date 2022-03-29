@@ -596,7 +596,6 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "serde_yaml",
  "state",
  "tokio",
  "tower-http",

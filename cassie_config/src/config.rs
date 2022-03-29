@@ -4,6 +4,19 @@ pub struct NacosConfig {
     pub nacos_server: String,
     pub application_name: String,
 }
+//add value to config
+impl NacosConfig {
+    pub fn validate(&self) {
+        if self.nacos_flag {
+            if self.nacos_server.is_empty() {
+                panic!("请配置nacos_server ！！！！！！！！！！！！！！！！！！！")
+            }
+            if self.application_name.is_empty() {
+                panic!("请配置application_name ！！！！！！！！！！！！！！！！！！！")
+            }
+        }
+    }
+}
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct ServerConfig {
     ///当前服务地址
