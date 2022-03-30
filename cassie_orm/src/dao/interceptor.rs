@@ -28,9 +28,7 @@ impl SqlIntercept for AgencyInterceptor {
         args: &mut Vec<Bson>,
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
-        if self.enable && self.intercept(sql){
-               
-        }
+        if self.enable && self.intercept(sql) {}
         println!("拦截器sql:{}", sql.clone());
         return Ok(());
     }
