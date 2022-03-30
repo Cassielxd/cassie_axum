@@ -107,4 +107,15 @@ impl ApplicationConfig {
         };
         config
     }
+    pub fn validate(&self) {
+        if self.redis_url.is_empty() {
+            panic!("请配置redis_url ！！！！！！！！！！！！！！！！！！！")
+        }
+        if self.mongodb_url.is_empty() {
+            panic!("请配置mongodb_url ！！！！！！！！！！！！！！！！！！")
+        }
+        if self.database_url.is_empty() {
+            panic!("请配置database_url ！！！！！！！！！！！！！！！！！！！")
+        }
+    }
 }

@@ -29,7 +29,9 @@ pub fn init_context() {
     //第一步加载配置
     println!("-------------------------------------正在启动--------------------------------------------------------");
     let yml_data = include_str!("../application.yml");
-    CONTAINER.set::<ApplicationConfig>(ApplicationConfig::new(yml_data));
+    let config = ApplicationConfig::new(yml_data);
+    config.validate();
+    CONTAINER.set::<ApplicationConfig>(config);
     let config = CONTAINER.get::<ApplicationConfig>();
     println!("-------------------------------------yml配置完成-----------------------------------------------------");
     //第二步初始化数据源
