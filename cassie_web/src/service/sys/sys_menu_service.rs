@@ -18,6 +18,7 @@ use rbatis::wrapper::Wrapper;
 pub struct SysMenuService {}
 
 impl SysMenuService {
+    //保存或者更新
     pub async fn save_or_update(&self, dto: SysMenuDTO) {
         let mut entity: SysMenu = dto.into();
         //保存或更新菜单
@@ -30,13 +31,13 @@ impl SysMenuService {
             role_id.unwrap()
         };
     }
-
+   //获取所有的菜单
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
         let rb = CONTAINER.get::<Rbatis>();
         let result = menu_list(&mut rb.as_executor(), "").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
-
+    //获取用户的菜单
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
         let rb = CONTAINER.get::<Rbatis>();
         let request_model = CONTAINER.get_local::<RequestModel>();

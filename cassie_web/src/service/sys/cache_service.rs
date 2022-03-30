@@ -7,7 +7,7 @@ use cassie_config::config::ApplicationConfig;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::time::Duration;
-
+//缓存服务接口
 #[async_trait]
 pub trait ICacheService: Sync + Send {
     async fn set_string(&self, k: &str, v: &str) -> Result<String>;

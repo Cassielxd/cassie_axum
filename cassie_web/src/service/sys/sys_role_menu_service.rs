@@ -1,6 +1,5 @@
 use super::crud_service::CrudService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use cassie_orm::dao::mapper::get_menu_list_by_ids;
 use crate::service::ServiceContext;
 use crate::CONTAINER;
 use casbin::MgmtApi;
@@ -9,6 +8,7 @@ use cassie_domain::request::{RequestModel, SysMenuQuery};
 use cassie_domain::{
     dto::sys_role_dto::SysRoleMenuDTO, entity::sys_entitys::SysRoleMenu, request::SysRoleQuery,
 };
+use cassie_orm::dao::mapper::get_menu_list_by_ids;
 use rbatis::rbatis::Rbatis;
 use rbatis::{crud::CRUD, DateTimeNative};
 
@@ -25,6 +25,7 @@ impl Default for SysRoleMenuService {
     }
 }
 impl SysRoleMenuService {
+    //根据角色id获取菜单
     pub async fn get_menu_id_list(&self, role_id: i64) -> Vec<i64> {
         let rb = CONTAINER.get::<Rbatis>();
         //构建查询条件
@@ -42,6 +43,7 @@ impl SysRoleMenuService {
             return Vec::<i64>::new();
         }
     }
+    //保存或者更新角色与菜单的关系
     pub async fn save_or_update(&self, role_id: i64, menu_id_list: Option<Vec<i64>>) {
         //先删除角色菜单关系
         self.delete_by_role_id(role_id).await;
@@ -93,7 +95,7 @@ impl SysRoleMenuService {
         lock.add_policies(rules).await;
         drop(lock);
     }
-
+    //删除角色与菜单的关系
     pub async fn delete_by_role_id(&self, role_id: i64) {
         let request_model = CONTAINER.get_local::<RequestModel>();
         self.del_by_column(SysRoleMenu::role_id(), &role_id.to_string())
@@ -107,7 +109,7 @@ impl SysRoleMenuService {
         .await;
         drop(lock);
     }
-
+    //批量删除
     pub async fn delete_by_menu_id(&self, menu_id: i64) {
         self.del_by_column(SysRoleMenu::menu_id(), &menu_id.to_string())
             .await;

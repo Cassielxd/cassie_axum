@@ -31,8 +31,9 @@ pub struct ServiceContext {
     /*数据字典服务 */
     pub sys_dict_type_service: SysDictTypeService,
     pub sys_dict_value_service: SysDictDataService,
-
+    /*动态表单服务 */
     pub asi_service: AsiGroupService,
+    /*上传服务*/
     pub upload_service: UploadService,
 }
 

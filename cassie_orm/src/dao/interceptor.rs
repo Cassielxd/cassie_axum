@@ -3,10 +3,14 @@ use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
 
+
 #[derive(Debug)]
 pub struct AgencyInterceptor {
+    //是否开始租户
     pub enable: bool,
+    //租户的字段
     pub column: String,
+    //需要忽略的表
     pub ignore_table: Vec<String>,
 }
 impl AgencyInterceptor {

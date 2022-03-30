@@ -19,6 +19,7 @@ use rbatis::rbatis::Rbatis;
 pub struct SysDictTypeService {}
 
 impl SysDictTypeService {
+    //获取所有的type
     pub async fn get_all_list(&self) -> Result<Vec<SysDictTypeDTO>> {
         let q = SysDictQuery {
             id: None,

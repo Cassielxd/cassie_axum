@@ -13,13 +13,14 @@ pub struct RedisService {
 }
 
 impl RedisService {
+    //创建Redis服务
     pub fn new(url: &str) -> Self {
         println!("conncect redis ({})...", url);
         let client = redis::Client::open(url).unwrap();
         println!("conncect redis success!");
         Self { client }
     }
-
+    //获得Redis连接
     pub async fn get_conn(&self) -> Result<Connection> {
         let conn = self.client.get_async_connection().await;
         if conn.is_err() {

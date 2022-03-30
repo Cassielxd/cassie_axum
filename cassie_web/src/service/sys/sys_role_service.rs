@@ -32,6 +32,7 @@ impl Default for SysRoleService {
     }
 }
 impl SysRoleService {
+    //根据用户id获取角色
     pub async fn role_info(&self, uid_id: i64) -> Result<Vec<i64>> {
         let params = SysRoleQuery {
             id: None,
@@ -55,12 +56,14 @@ impl SysRoleService {
             Ok(Vec::<i64>::new())
         }
     }
+    //删除角色
     pub async fn delete_by_role_id(&self, id: String) {
         self.del(&id).await;
         self.sys_role_menu_service
             .delete_by_role_id(id.parse::<i64>().unwrap())
             .await;
     }
+    //保存角色
     pub async fn save_role(&self, sys_role: SysRoleDTO) {
         let menu_id_list = sys_role.menuid_list.clone();
         let mut entity: SysRole = sys_role.into();

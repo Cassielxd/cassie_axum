@@ -20,6 +20,7 @@ pub struct UploadService {
 }
 
 impl UploadService {
+    //创建上传服务默认实现oss
     pub fn new(config: &ApplicationConfig) -> cassie_common::error::Result<Self> {
         match config.upload_type.as_str() {
             "oss" => {

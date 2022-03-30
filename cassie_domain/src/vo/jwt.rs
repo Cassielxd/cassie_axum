@@ -13,9 +13,11 @@ use serde::{Deserialize, Serialize};
 pub struct JWTToken {
     //账号id
     pub id: i64,
+    //是否超级管理员
     pub super_admin: i32,
     //账号
     pub username: String,
+    //租户编码
     pub agency_code: String,
     //过期时间
     pub exp: usize,

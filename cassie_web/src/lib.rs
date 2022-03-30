@@ -3,14 +3,11 @@
 #![allow(unused_must_use)]
 
 pub mod config;
-
 pub mod admin;
 pub mod cici_casbin;
-
 pub mod middleware;
 //nacos注册中心默认实现
 pub mod nacos;
-
 pub mod routers;
 pub mod service;
 

@@ -30,6 +30,7 @@ impl Default for SysUserService {
     }
 }
 impl SysUserService {
+    //根据id删除用户
     pub async fn delete_user(&self, id: String) {
         let user_info = self.get(id.clone()).await.unwrap();
         self.del(&id).await;
@@ -41,7 +42,7 @@ impl SysUserService {
         lock.remove_grouping_policy(vec![id]).await;
         drop(lock);
     }
-
+    //保存用户
     pub async fn save_info(&self, arg: SysUserDTO) {
         let password = PasswordEncoder::encode(&arg.password.clone().unwrap().as_str());
         let role_id = arg.role_id.clone();
