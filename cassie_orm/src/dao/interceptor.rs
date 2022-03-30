@@ -3,10 +3,12 @@ use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
 
-use cassie_config::config::ApplicationConfig;
-
 #[derive(Debug)]
-pub struct AgencyInterceptor {}
+pub struct AgencyInterceptor {
+    pub enable: bool,
+    pub column: String,
+    pub ignore_table: Vec<String>,
+}
 
 impl SqlIntercept for AgencyInterceptor {
     fn do_intercept(

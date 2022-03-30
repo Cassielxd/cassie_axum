@@ -12,7 +12,12 @@ pub async fn init_rbatis(cassie_config: &ApplicationConfig) -> Rbatis {
             r#"已使用release模式，但是rbatis仍使用debug模式！请删除 Cargo.toml 中 rbatis的配置 features = ["debug_mode"]"#
         );
     }
-    rbatis.add_sql_intercept(AgencyInterceptor {});
+    //拦截器配置
+    rbatis.add_sql_intercept(AgencyInterceptor {
+        enable:cassie_config.tenant.enable.clone(),
+        column: cassie_config.tenant.column.clone(),
+        ignore_table: cassie_config.tenant.ignore_table.clone(),
+    });
     //连接数据库
     println!(
         "rbatis link database ({})...",
