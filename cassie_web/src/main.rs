@@ -44,7 +44,7 @@ pub async fn index() -> impl IntoResponse {
 #[tokio::main]
 async fn main() {
     //初始化上环境下文
-    init_context();
+    init_context().await;
     let cassie_config = CONTAINER.get::<ApplicationConfig>();
     init_log();
     info!(
