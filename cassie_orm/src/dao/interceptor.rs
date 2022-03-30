@@ -10,8 +10,8 @@ pub struct AgencyInterceptor {
     pub ignore_table: Vec<String>,
 }
 impl AgencyInterceptor {
-    fn intercept(&self,sql:&String) -> bool {
-       let s = sql.clone().to_uppercase();
+    fn intercept(&self, sql: &String) -> bool {
+        let s = sql.clone().to_uppercase();
         for row in self.ignore_table.iter() {
             if s.contains(&row.clone().to_uppercase()) {
                 return false;
@@ -21,8 +21,6 @@ impl AgencyInterceptor {
     }
 }
 impl SqlIntercept for AgencyInterceptor {
-
-
     fn do_intercept(
         &self,
         rb: &Rbatis,
@@ -30,12 +28,10 @@ impl SqlIntercept for AgencyInterceptor {
         args: &mut Vec<Bson>,
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
-        if self.enable {
-            if self.intercept(sql) {
-               todo!("待升级")
-            }
+        if self.enable && self.intercept(sql){
+               
         }
-        println!("拦截器sql:{}",sql.clone());
+        println!("拦截器sql:{}", sql.clone());
         return Ok(());
     }
 }
