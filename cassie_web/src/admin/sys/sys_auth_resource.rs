@@ -1,5 +1,5 @@
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use axum::body::Body;
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
@@ -13,7 +13,7 @@ use std::time::Duration;
 use validator::Validate;
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     if let Err(e) = sign.validate() {
         return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
@@ -31,7 +31,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
 }
 
 pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     if uuid.is_empty() {
         return RespVO::<()>::from_error(&Error::from("uuid不能为空!")).resp_json();
     }

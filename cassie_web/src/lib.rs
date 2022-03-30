@@ -19,7 +19,7 @@ use crate::service::ServiceContext;
 use cassie_config::config::ApplicationConfig;
 use state::Container;
 
-pub static CONTAINER: Container![Send + Sync] = <Container![Send + Sync]>::new();
+pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 
 /*初始化环境上下文*/
 pub async fn init_context() {
@@ -28,18 +28,18 @@ pub async fn init_context() {
     let yml_data = include_str!("../application.yml");
     let config = ApplicationConfig::new(yml_data);
     config.validate();
-    CONTAINER.set::<ApplicationConfig>(config);
-    let config = CONTAINER.get::<ApplicationConfig>();
+    APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     println!("-------------------------------------yml配置完成-----------------------------------------------------");
     //第二步初始化数据源
-    CONTAINER.set::<Database>(init_mongdb(config).await);
+    APPLICATION_CONTEXT.set::<Database>(init_mongdb(config).await);
     println!("---------------------------------------mongodb配置完成--------------------------------------------------");
-    CONTAINER.set::<Rbatis>(init_rbatis(config).await);
+    APPLICATION_CONTEXT.set::<Rbatis>(init_rbatis(config).await);
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类
-    CONTAINER.set::<ServiceContext>(ServiceContext::new());
+    APPLICATION_CONTEXT.set::<ServiceContext>(ServiceContext::new());
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
     //第三步初始化casbinCOntext
-    CONTAINER.set::<CasbinService>(CasbinService::default());
+    APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
 }

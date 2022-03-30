@@ -1,5 +1,5 @@
 use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
-use crate::{cici_casbin::is_white_list_api, CONTAINER};
+use crate::{cici_casbin::is_white_list_api, APPLICATION_CONTEXT};
 use axum::http::HeaderValue;
 use axum::{
     async_trait,
@@ -27,7 +27,7 @@ where
     type Rejection = Error;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let cassie_config = CONTAINER.get::<ApplicationConfig>();
+        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();
@@ -52,7 +52,7 @@ where
             match checked_token(token_value).await {
                 Ok(data) => {
                     let data1 = data.clone();
-                    CONTAINER.set_local::<RequestModel, _>(move || RequestModel {
+                    APPLICATION_CONTEXT.set_local::<RequestModel, _>(move || RequestModel {
                         uid: data1.id.clone(),
                         username: data1.username.clone(),
                         agency_code: data1.agency_code.clone(),
@@ -65,7 +65,7 @@ where
                         agency_code: Option::from(data.agency_code),
                     };
                     /*获取验证的  casbin_service*/
-                    let service = CONTAINER.get::<CasbinService>();
+                    let service = APPLICATION_CONTEXT.get::<CasbinService>();
                     /*casbin 验证有效性 处理返回结果集*/
                     if service.call(path, action, vals).await {
                         return Ok(Self {});
@@ -92,7 +92,7 @@ where
  */
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let token = JWTToken::verify(&cassie_config.jwt_secret, token);
     token
 }

@@ -2,7 +2,7 @@ use crate::cici_casbin::casbin_service::CasbinService;
 
 use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
 use axum::routing::get;
@@ -20,7 +20,7 @@ use cassie_domain::request::SysRoleQuery;
  *email:348040933@qq.com
  */
 pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = context
         .sys_role_service
@@ -36,14 +36,14 @@ pub async fn page(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
 }
 
 pub async fn list(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = context.sys_role_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let mut vo = context.sys_role_service.get(id).await.unwrap();
     let menu_list = context
         .sys_role_service
@@ -55,7 +55,7 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     context.sys_role_service.delete_by_role_id(id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
@@ -67,7 +67,7 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysRoleDTO>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     context.sys_role_service.save_role(arg).await;
     RespVO::from(&"保存成功".to_string()).resp_json()
 }
@@ -105,7 +105,7 @@ pub async fn casbin_test() -> impl IntoResponse {
             "POST".to_owned(),
         ],
     ];
-    let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
+    let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
     let mut enforcer = cached_enforcer.write().await;
     enforcer.add_policies(rules).await;
 

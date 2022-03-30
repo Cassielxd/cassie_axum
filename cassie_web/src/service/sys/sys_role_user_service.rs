@@ -1,6 +1,6 @@
 use rbatis::rbatis::Rbatis;
 
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::{
     dto::sys_role_dto::SysRoleUserDTO, entity::sys_entitys::SysRoleUser, request::SysRoleQuery,
@@ -24,7 +24,7 @@ impl Default for SysRoleUserService {
 impl SysRoleUserService {}
 impl CrudService<SysRoleUser, SysRoleUserDTO, SysRoleQuery> for SysRoleUserService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper().do_if(arg.user_id.is_some(), |w| {
             w.like(SysRoleUser::user_id(), &arg.user_id)
         })

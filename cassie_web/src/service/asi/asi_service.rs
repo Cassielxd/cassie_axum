@@ -1,5 +1,5 @@
 use crate::service::crud_service::CrudService;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Result;
 use cassie_domain::request::tree::TreeService;
 use futures::TryStreamExt;
@@ -46,7 +46,7 @@ impl AsiGroupService {
      * @date: 2022/3/22 18:03
      */
     pub async fn get_group_list(&self, group: AsiQuery) -> Result<Vec<AsiGroupDTO>> {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let wrapper = Self::get_wrapper(&group);
         let list: Vec<AsiGroup> = rb.fetch_list_by_wrapper(wrapper).await?;
         Ok(self.build(list))
@@ -59,7 +59,7 @@ impl AsiGroupService {
      * @date: 2022/3/22 18:04
      */
     pub async fn get_group_page(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>> {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let wrapper = Self::get_wrapper(&group);
         //构建分页条件
         let page_request = PageRequest::new(group.page.unwrap_or(1), group.limit.unwrap_or(10));
@@ -83,7 +83,7 @@ impl AsiGroupService {
      *email:348040933@qq.com
      */
     pub async fn save_group(&self, group: AsiGroupDTO) -> Result<i64> {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         /*查询有没有重复的*/
         let g = group.group_code.clone();
         let count = rb
@@ -96,7 +96,7 @@ impl AsiGroupService {
                 "group_code已经存在".to_string(),
             ));
         }
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let mut entity: AsiGroup = group.into();
         entity.agency_code = Some(request_model.agency_code.clone());
         if entity.parent_group_code.is_empty() {
@@ -226,7 +226,7 @@ impl AsiGroupService {
         group: &AsiGroupDTO,
         values: HashMap<String, String>,
     ) {
-        let mdb = CONTAINER.get::<Database>();
+        let mdb = APPLICATION_CONTEXT.get::<Database>();
         let (insert, doc) = self.build_data(id, group, &values);
         let collection = mdb.collection::<Document>(build_table(group).as_str());
         if insert {
@@ -248,7 +248,7 @@ impl AsiGroupService {
         group: &AsiGroupDTO,
         values_map: Vec<HashMap<String, String>>,
     ) {
-        let mdb = CONTAINER.get::<Database>();
+        let mdb = APPLICATION_CONTEXT.get::<Database>();
         let collection = mdb.collection::<Document>(build_table(group).as_str());
         let mut insert_docs = vec![];
         let mut update_docs = vec![];
@@ -280,7 +280,7 @@ impl AsiGroupService {
         id: &String,
         group: &AsiGroupDTO,
     ) -> Result<Vec<HashMap<String, Bson>>> {
-        let mdb = CONTAINER.get::<Database>();
+        let mdb = APPLICATION_CONTEXT.get::<Database>();
         let columns = self
             .asi_column
             .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
@@ -335,7 +335,7 @@ impl AsiGroupService {
         id: &String,
         group: &AsiGroupDTO,
     ) -> Result<Vec<HashMap<String, Bson>>> {
-        let mdb = CONTAINER.get::<Database>();
+        let mdb = APPLICATION_CONTEXT.get::<Database>();
         let columns = self
             .asi_column
             .fetch_list_by_column("group_code", &vec![group.group_code.clone().unwrap()])
@@ -397,7 +397,7 @@ impl Default for AsiGroupService {
 
 impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper()
             .do_if(!arg.group_code.is_empty(), |w| {
                 w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
@@ -425,7 +425,7 @@ pub struct AsiGroupColumnService {}
 
 impl AsiGroupColumnService {
     pub async fn save_column(&self, group: AsiGroupDTO, column: AsiGroupColumnDTO) {
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let id = column.id.clone();
         let mut entity: AsiGroupColumn = column.into();
         entity.group_code = group.group_code;
@@ -451,7 +451,7 @@ impl AsiGroupColumnService {
         )
         .await;
         /*获取当前登录信息*/
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let mut entitys: Vec<AsiGroupColumn> = columns
             .iter()
             .map(|e| {
@@ -473,7 +473,7 @@ impl Default for AsiGroupColumnService {
 
 impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery> for AsiGroupColumnService {
     fn get_wrapper(arg: &AsiQuery) -> Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper().do_if(!arg.group_code.is_empty(), |w| {
             w.eq(AsiGroup::group_code(), arg.group_code.clone().unwrap())
         })

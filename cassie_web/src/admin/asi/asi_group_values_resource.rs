@@ -1,6 +1,6 @@
 use crate::{
     service::{crud_service::CrudService, ServiceContext},
-    CONTAINER,
+    APPLICATION_CONTEXT,
 };
 use axum::{
     extract::{Path, Query},
@@ -13,7 +13,7 @@ use cassie_domain::request::AsiQuery;
 use std::collections::HashMap;
 
 pub async fn list(Path(id): Path<String>, arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = context.asi_service.list(&arg).await;
     if let Ok(r) = vo {
@@ -28,7 +28,7 @@ pub async fn save_from(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String, HashMap<String, String>>>,
 ) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     /*执行验证逻辑*/
     let res = context.asi_service.save_values_for_from(id, arg).await;
     RespVO::from_result(&res).resp_json()
@@ -38,7 +38,7 @@ pub async fn save_table(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String, Vec<HashMap<String, String>>>>,
 ) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     /*执行验证逻辑*/
     let res = context.asi_service.save_values_for_table(id, arg).await;
     RespVO::from_result(&res).resp_json()

@@ -13,7 +13,7 @@ use cassie_web::{
     middleware::auth::Auth,
     nacos::register_service,
     routers::{admin, api},
-    CONTAINER,
+    APPLICATION_CONTEXT,
 };
 use log::info;
 use tower_http::cors::{Any, CorsLayer};
@@ -45,7 +45,7 @@ pub async fn index() -> impl IntoResponse {
 async fn main() {
     //初始化上环境下文
     init_context().await;
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     init_log();
     info!(
         " - Local:   http://{}:{}",

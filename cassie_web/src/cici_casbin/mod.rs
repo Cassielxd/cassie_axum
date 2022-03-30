@@ -1,6 +1,6 @@
 pub mod casbin_service;
 
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use casbin::function_map::key_match2;
 use casbin::rhai::ImmutableString;
 use cassie_config::config::ApplicationConfig;
@@ -35,7 +35,7 @@ pub fn is_super_admin(id: &str, super_admin_ids: &Vec<String>) -> bool {
  *email:348040933
  */
 pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     if is_white_list_api(&path, &cassie_config.admin_white_list_api) {
         println!("白名单:{}", path.clone());
         return true;

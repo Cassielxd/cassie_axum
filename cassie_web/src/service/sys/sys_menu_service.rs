@@ -1,6 +1,6 @@
 use cassie_orm::dao::mapper::{menu_list, user_menu_list};
 use crate::service::crud_service::CrudService;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Result;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::sys_entitys::{CommonField, SysMenu};
@@ -33,14 +33,14 @@ impl SysMenuService {
     }
    //获取所有的菜单
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let result = menu_list(&mut rb.as_executor(), "").await.unwrap();
         Ok(self.build(result.unwrap()))
     }
     //获取用户的菜单
     pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let rb = CONTAINER.get::<Rbatis>();
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let result = if request_model.super_admin > 0 {
             menu_list(&mut rb.as_executor(), "0").await.unwrap()
         } else {
@@ -63,7 +63,7 @@ impl Default for SysMenuService {
 }
 impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
     fn get_wrapper(arg: &SysMenuQuery) -> Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let mut wrapper = rb.new_wrapper();
         if let Some(id_list) = &arg.ids {
             wrapper = wrapper.r#in(SysMenu::id(), id_list);

@@ -1,4 +1,4 @@
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_config::config::ApplicationConfig;
 use log::info;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
@@ -14,7 +14,7 @@ const FRAGMENT: &AsciiSet = &CONTROLS
 
 //nacos服务注册
 pub async fn register_service() {
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //如果开启了nacos注册，则注册服务
     if cassie_config.nacos.nacos_flag {
         info!("register service: {:?}", cassie_config.nacos.nacos_server);
@@ -47,7 +47,7 @@ pub async fn register_service() {
 
 //nacos心跳检测
 pub async fn ping() {
-    let cassie_config = CONTAINER.get::<ApplicationConfig>();
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //
     // nacos 文档中没有说明 metadata 必选, 测试发现，如果没有 metadata 信息， java 端会有错误
     //

@@ -1,6 +1,6 @@
 use crate::service::crud_service::CrudService;
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
 use axum::Json;
 use axum::{response::IntoResponse, Router};
@@ -19,7 +19,7 @@ use cassie_domain::request::SysDictQuery;
  */
 
 pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let arg = arg.unwrap();
     let vo = context
         .sys_dict_value_service
@@ -41,7 +41,7 @@ pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let dto = context.sys_dict_value_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
@@ -53,14 +53,14 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let mut entity = arg.into();
     let vo = context.sys_dict_value_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     let id = arg.id.clone();
     let mut entity = arg.into();
     context
@@ -71,7 +71,7 @@ pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     context.sys_dict_value_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }

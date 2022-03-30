@@ -1,5 +1,5 @@
 use super::crud_service::CrudService;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::request::RequestModel;
 use cassie_domain::{
@@ -26,7 +26,7 @@ impl SysRoleDataScopeService {
     pub async fn save_or_update(&self, role_id: i64, dept_id_list: Option<Vec<i64>>) {
         //先删除角色数据权限关系
         self.delete_by_role_id(role_id).await;
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         //保存角色数据权限关系
         if let Some(list) = dept_id_list {
             let mut vec = Vec::new();
@@ -49,7 +49,7 @@ impl SysRoleDataScopeService {
 }
 impl CrudService<SysRoleDataScope, SysRoleDataScopeDTO, SysRoleQuery> for SysRoleDataScopeService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper()
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRoleDataScope) {

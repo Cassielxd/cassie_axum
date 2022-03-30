@@ -7,12 +7,12 @@ use axum::response::IntoResponse;
 use cassie_common::error::Error;
 
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 
 pub const CONTENT_TYPE: &str = "content-type";
 
 async fn upload(mut multipart: Multipart) -> impl IntoResponse {
-    let context = CONTAINER.get::<ServiceContext>();
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
     if let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
         let file_name = field.file_name().unwrap().to_string();

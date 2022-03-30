@@ -1,5 +1,5 @@
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 use cassie_common::utils::password_encoder::PasswordEncoder;
@@ -38,7 +38,7 @@ impl SysAuthService {
     pub async fn sign_in(&self, arg: &SignInDTO) -> Result<SignInVO> {
         self.is_need_wait_login_ex().await?;
         /*验证码 验证*/
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let user: Option<SysUser> = rb
             .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::username(), &arg.username))
             .await?;
@@ -76,8 +76,8 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn is_need_wait_login_ex(&self) -> Result<()> {
-        let cassie_config = CONTAINER.get::<ApplicationConfig>();
-        let context = CONTAINER.get::<ServiceContext>();
+        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
         if cassie_config.login_fail_retry > 0 {
             let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
             if num.unwrap_or(0) >= cassie_config.login_fail_retry {
@@ -100,8 +100,8 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn add_retry_login_limit_num(&self) -> Result<()> {
-        let cassie_config = CONTAINER.get::<ApplicationConfig>();
-        let context = CONTAINER.get::<ServiceContext>();
+        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
         if cassie_config.login_fail_retry > 0 {
             let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
             let mut num = num.unwrap_or(0);
@@ -129,7 +129,7 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn get_user_info_by_token(&self, token: &JWTToken) -> Result<SignInVO> {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let user: Option<SysUser> = rb
             .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::id(), &token.id))
             .await?;
@@ -143,7 +143,7 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn get_user_info(&self, user: &SysUser) -> Result<SignInVO> {
-        let cassie_config = CONTAINER.get::<ApplicationConfig>();
+        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
         //去除密码，增加安全性
         let mut user = user.clone();
         user.password = None;

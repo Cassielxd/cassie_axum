@@ -8,7 +8,7 @@ use casbin::{
 };
 use cassie_config::config::ApplicationConfig;
 use cassie_orm::dao::init_rbatis;
-use crate::{cici_casbin::cici_match, CONTAINER};
+use crate::{cici_casbin::cici_match, APPLICATION_CONTEXT};
 use async_std::sync::RwLock;
 use cassie_casbin_adapter::cici_adapter::CICIAdapter;
 
@@ -44,7 +44,7 @@ impl CasbinService {
                 .await
                 .unwrap();
             /*初始化适配器*/
-            let config = CONTAINER.get::<ApplicationConfig>();
+            let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
             let a = CICIAdapter::new(init_rbatis(config).await);
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
             /* 添加自定义验证方法 */

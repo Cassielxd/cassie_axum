@@ -1,5 +1,5 @@
 use crate::service::ServiceContext;
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::{
     dto::sys_dict_dto::{SysDictDataDTO, SysDictTypeDTO},
@@ -31,7 +31,7 @@ impl SysDictTypeService {
             order: None,
             order_field: None,
         };
-        let context = CONTAINER.get::<ServiceContext>();
+        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
         let mut dict = self.list(&q).await?;
         let dict_value = context.sys_dict_value_service.list(&q).await?;
         for mut d in &mut dict {
@@ -55,7 +55,7 @@ impl Default for SysDictTypeService {
 }
 impl CrudService<SysDictType, SysDictTypeDTO, SysDictQuery> for SysDictTypeService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper()
     }
 
@@ -80,7 +80,7 @@ impl Default for SysDictDataService {
 }
 impl CrudService<SysDictData, SysDictDataDTO, SysDictQuery> for SysDictDataService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper().do_if(arg.dict_type_id.is_some(), |w| {
             w.eq(SysDictData::dict_type_id(), arg.dict_type_id)
         })

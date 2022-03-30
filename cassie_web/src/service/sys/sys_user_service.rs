@@ -1,4 +1,4 @@
-use crate::CONTAINER;
+use crate::APPLICATION_CONTEXT;
 use cassie_common::utils::password_encoder::PasswordEncoder;
 use cassie_domain::{
     dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery,
@@ -37,7 +37,7 @@ impl SysUserService {
         self.sys_role_user_service
             .del_by_column(SysRoleUser::user_id(), id.clone().as_str())
             .await;
-        let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
+        let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
         let mut lock = cached_enforcer.write().await;
         lock.remove_grouping_policy(vec![id]).await;
         drop(lock);
@@ -47,7 +47,7 @@ impl SysUserService {
         let password = PasswordEncoder::encode(&arg.password.clone().unwrap().as_str());
         let role_id = arg.role_id.clone();
         let mut entity: SysUser = arg.into();
-        let request_model = CONTAINER.get_local::<RequestModel>();
+        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
 
         entity.password = Some(password);
         entity.agency_code = Some(request_model.agency_code.clone());
@@ -70,7 +70,7 @@ impl SysUserService {
         };
         self.sys_role_user_service.save(&mut data).await;
         if let Some(rid) = role_id {
-            let cached_enforcer = CONTAINER.get::<CasbinService>().enforcer.clone();
+            let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
             let mut lock = cached_enforcer.write().await;
             lock.add_grouping_policy(vec![
                 uid.to_string(),
@@ -85,7 +85,7 @@ impl SysUserService {
 
 impl CrudService<SysUser, SysUserDTO, SysUserQuery> for SysUserService {
     fn get_wrapper(arg: &SysUserQuery) -> Wrapper {
-        let rb = CONTAINER.get::<Rbatis>();
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         rb.new_wrapper().eq(SysUser::del_flag(), 0)
     }
 
