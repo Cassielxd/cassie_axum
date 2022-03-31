@@ -4,6 +4,7 @@ use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
+//租户化拦截器
 #[derive(Debug)]
 pub struct AgencyInterceptor {
     //是否开始租户
@@ -17,8 +18,13 @@ impl AgencyInterceptor {
     //拦截判断
     fn intercept(&self, sql: &String) -> bool {
         let s = sql.clone().to_uppercase();
-        for row in self.ignore_table.iter() {
-            if s.contains(&row.clone().to_uppercase()) {
+        //当前sql已经包含column 直接返回
+        if s.contains(&self.column.clone().to_uppercase()) {
+            return false;
+        }
+        //当前忽略的表中如果包含了当前表直接返回
+        for table in self.ignore_table.iter() {
+            if s.contains(&table.clone().to_uppercase()) {
                 return false;
             }
         }

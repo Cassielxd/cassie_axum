@@ -27,6 +27,7 @@ rust axum web 是rust开发的web手脚架项目
 5. nacos注册中心集成
 6. 动态表单实现
 7. 微信小程序工具集开发
+8. 租户化实现
 
 #### 已完成
 
@@ -35,6 +36,8 @@ rust axum web 是rust开发的web手脚架项目
 3. casbin-rs集成,适配器编写
 4. 用户权限jwt 融合casbin-rs
 5. 完成nacos注册和心跳集成
+6. 动态表单实现
+7. 租户化实现
 
 #### 使用说明
 
@@ -61,15 +64,39 @@ rust axum web 是rust开发的web手脚架项目
 
 #[tokio::main]
 async fn main() {
-    // 初始化日志
-    tracing_subscriber::fmt::init();
+    //初始化上环境下文
+    init_context().await;
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    init_log();
+    info!(
+        " - Local:   http://{}:{}",
+        cassie_config.server.host.replace("0.0.0.0", "127.0.0.1"),
+        cassie_config.server.port
+    );
+    //nacos 服务注册
+    register_service().await;
+    let server = format!(
+        "{}:{}",
+        cassie_config.server.host, cassie_config.server.port
+    );
+
+    let cors = CorsLayer::new()
+        .allow_methods(Any)
+        .allow_origin(Any)
+        .allow_headers(Any)
+        .max_age(Duration::from_secs(60) * 10);
+
     //绑定端口 初始化 路由
     let app = Router::new()
-        .route("/index", get(index)).layer(extractor_middleware::<Auth>())
-        .nest("/admin", admin::routers())
-        .nest("/api", api::routers());
-    println!("address:{}", &CONTEXT.config.server);
-    axum::Server::bind(&CONTEXT.config.server.parse().unwrap())
+        .route("/", get(index))
+        .nest(
+            "/admin",
+            admin::routers().layer(extractor_middleware::<Auth>()),
+        )
+        .nest("/api", api::routers())
+        .layer(cors);
+    // 启动服务
+    Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
@@ -93,6 +120,19 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+2022.3.31
+````````````````````````````````````````````````````````````````
+完成租户化开发
+配置 application.yml
+tenant:
+  enable: true   //开启租户
+  column: "agency_code" //租户字段
+  ignore_table:   //忽略表
+    - "sys_log_login"
+````````````````````````````````````````````````````````````````
+
+
+
 2022.3.29
 ````````````````````````````````````````````````````````````````
 包结构重新梳理
