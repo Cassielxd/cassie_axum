@@ -4,7 +4,6 @@ use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
-
 #[derive(Debug)]
 pub struct AgencyInterceptor {
     //是否开始租户
@@ -15,6 +14,7 @@ pub struct AgencyInterceptor {
     pub ignore_table: Vec<String>,
 }
 impl AgencyInterceptor {
+    //拦截判断
     fn intercept(&self, sql: &String) -> bool {
         let s = sql.clone().to_uppercase();
         for row in self.ignore_table.iter() {
@@ -26,6 +26,7 @@ impl AgencyInterceptor {
     }
 }
 impl SqlIntercept for AgencyInterceptor {
+    //sql拦截逻辑
     fn do_intercept(
         &self,
         rb: &Rbatis,
@@ -36,7 +37,7 @@ impl SqlIntercept for AgencyInterceptor {
         if self.enable && self.intercept(sql) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
             let s = format!(" and {} = ?", self.column.clone());
-            sql.insert_str(sql.len(), &*s);
+            sql.insert_str(sql.len(), &s);
             args.push(Bson::String(request_model.agency_code.clone()));
         }
         return Ok(());
