@@ -1,8 +1,9 @@
+use crate::APPLICATION_CONTEXT;
+use cassie_domain::request::RequestModel;
 use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
-
 
 #[derive(Debug)]
 pub struct AgencyInterceptor {
@@ -32,8 +33,12 @@ impl SqlIntercept for AgencyInterceptor {
         args: &mut Vec<Bson>,
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
-        if self.enable && self.intercept(sql) {}
-        println!("拦截器sql:{}", sql.clone());
+        if self.enable && self.intercept(sql) {
+            let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+            let s = format!(" and {} = ?", self.column.clone());
+            sql.insert_str(sql.len(), &*s);
+            args.push(Bson::String(request_model.agency_code.clone()));
+        }
         return Ok(());
     }
 }

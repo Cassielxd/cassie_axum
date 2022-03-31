@@ -17,13 +17,15 @@ pub mod routers;
 pub mod service;
 //前端接口
 pub mod api;
+pub mod interceptor;
 
+use crate::cici_casbin::casbin_service::CasbinService;
+use crate::interceptor::interceptor::AgencyInterceptor;
+use crate::service::ServiceContext;
+use cassie_config::config::ApplicationConfig;
 use cassie_orm::dao::{init_mongdb, init_rbatis};
 use mongodb::Database;
 use rbatis::rbatis::Rbatis;
-use crate::cici_casbin::casbin_service::CasbinService;
-use crate::service::ServiceContext;
-use cassie_config::config::ApplicationConfig;
 use state::Container;
 /*
 整个项目上下文ApplicationContext
@@ -39,22 +41,38 @@ pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Syn
 /*初始化环境上下文*/
 pub async fn init_context() {
     //第一步加载配置
-    println!("-------------------------------------正在启动--------------------------------------------------------");
-    let yml_data = include_str!("../application.yml");
-    let config = ApplicationConfig::new(yml_data);
-    config.validate();
-    APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
-    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    println!("-------------------------------------yml配置完成-----------------------------------------------------");
+    init_config().await;
     //第二步初始化数据源
-    APPLICATION_CONTEXT.set::<Database>(init_mongdb(config).await);
-    println!("---------------------------------------mongodb配置完成--------------------------------------------------");
-    APPLICATION_CONTEXT.set::<Rbatis>(init_rbatis(config).await);
-    println!("---------------------------------------mysql配置完成------------------------------------------------------");
+    init_database().await;
     //第三步初始化所有的 服务类
     APPLICATION_CONTEXT.set::<ServiceContext>(ServiceContext::new());
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
     //第三步初始化casbinCOntext
     APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
+}
+
+pub async fn init_config() {
+    println!("-------------------------------------正在启动--------------------------------------------------------");
+    let yml_data = include_str!("../application.yml");
+    let config = ApplicationConfig::new(yml_data);
+    config.validate();
+    APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
+    println!("-------------------------------------yml配置完成-----------------------------------------------------");
+}
+
+pub async fn init_database() {
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+
+    let mut rbatis = init_rbatis(config).await;
+    rbatis.add_sql_intercept(AgencyInterceptor {
+        enable: config.tenant.enable.clone(),
+        column: config.tenant.column.clone(),
+        ignore_table: config.tenant.ignore_table.clone(),
+    });
+    APPLICATION_CONTEXT.set::<Rbatis>(rbatis);
+    println!("---------------------------------------mysql配置完成------------------------------------------------------");
+    let mdb = init_mongdb(config).await;
+    APPLICATION_CONTEXT.set::<Database>(mdb);
+    println!("---------------------------------------mongodb配置完成--------------------------------------------------");
 }

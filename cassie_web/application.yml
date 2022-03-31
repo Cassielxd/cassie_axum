@@ -65,7 +65,7 @@ oss:
   access_endpoint: "http://rivet.oss-cn-beijing.aliyuncs.com"
 
 tenant:
-  enable: false
+  enable: true
   column: "agency_code"
   ignore_table:
     - "sys_log_login"

@@ -1,23 +1,15 @@
 use cassie_config::config::ApplicationConfig;
 use rbatis::rbatis::Rbatis;
-pub mod interceptor;
 pub mod mapper;
-use interceptor::*;
 
 ///实例化 rbatis orm 连接池
 pub async fn init_rbatis(cassie_config: &ApplicationConfig) -> Rbatis {
-    let mut rbatis = Rbatis::new();
+    let rbatis = Rbatis::new();
     if cassie_config.debug.eq(&false) && rbatis.is_debug_mode() {
         panic!(
             r#"已使用release模式，但是rbatis仍使用debug模式！请删除 Cargo.toml 中 rbatis的配置 features = ["debug_mode"]"#
         );
     }
-    //拦截器配置
-    rbatis.add_sql_intercept(AgencyInterceptor {
-        enable:cassie_config.tenant.enable.clone(),
-        column: cassie_config.tenant.column.clone(),
-        ignore_table: cassie_config.tenant.ignore_table.clone(),
-    });
     //连接数据库
     println!(
         "rbatis link database ({})...",

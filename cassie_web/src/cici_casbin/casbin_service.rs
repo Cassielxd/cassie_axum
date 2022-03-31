@@ -2,15 +2,15 @@
 
 use std::sync::Arc;
 
+use crate::{cici_casbin::cici_match, APPLICATION_CONTEXT};
+use async_std::sync::RwLock;
 use casbin::{
     prelude::{TryIntoAdapter, TryIntoModel},
     CachedEnforcer, CoreApi, DefaultModel, Result as CasbinResult,
 };
+use cassie_casbin_adapter::cici_adapter::CICIAdapter;
 use cassie_config::config::ApplicationConfig;
 use cassie_orm::dao::init_rbatis;
-use crate::{cici_casbin::cici_match, APPLICATION_CONTEXT};
-use async_std::sync::RwLock;
-use cassie_casbin_adapter::cici_adapter::CICIAdapter;
 
 #[derive(Clone)]
 pub struct CasbinVals {
