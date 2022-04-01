@@ -63,7 +63,6 @@ cassie_orm = { path = "../cassie_orm" }
 cassie_upload = { path = "../cassie_upload" }
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
-
 [profile.release]
 opt-level = 3
 debug = false
