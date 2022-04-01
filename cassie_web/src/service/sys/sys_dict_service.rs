@@ -10,13 +10,14 @@ use cassie_domain::{
     request::SysDictQuery,
 };
 use rbatis::rbatis::Rbatis;
+
 /**
 *struct:SysDictTypeService
 *desc:定义type处理逻辑
 *author:String
 *email:348040933@qq.com
 */
-#[cached(name = "all_dict_list", time = 60, result = true)]
+#[cached(name = "ALL_DICT_LIST", time = 60, result = true)]
 pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
     let q = SysDictQuery {
         id: None,
