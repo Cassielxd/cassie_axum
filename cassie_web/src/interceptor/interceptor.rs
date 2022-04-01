@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{sql_intercept_map, APPLICATION_CONTEXT};
+use crate::{APPLICATION_CONTEXT, SQL_INTERCEPT_MAP};
 
 use async_std::sync::Mutex;
 use cassie_domain::request::RequestModel;
@@ -65,7 +65,7 @@ impl AgencyInterceptor {
         }
         (0, String::new())
     }
-    //拦截判断
+    //拦截判断 只拦截查询语句
     fn intercept(&self, sql: &String) -> bool {
         let s = sql.clone().to_uppercase();
         if !s.starts_with("SELECT") {
@@ -77,6 +77,7 @@ impl AgencyInterceptor {
                 return false;
             }
         }
+        //如果查询语句的 where条件里已经带了 租户的字段 那就不加了
         let column_index = s.find(&self.column.clone().to_uppercase());
         let from_index = s.find(&"FROM".to_string());
         if let Some(index) = column_index {
@@ -96,15 +97,14 @@ impl SqlIntercept for AgencyInterceptor {
         args: &mut Vec<Bson>,
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
+        //判断是否开启租户化
         if self.enable && self.intercept(sql) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
             let back_sql = sql.clone();
-            let mut map = sql_intercept_map.get().lock().unwrap();
+            let mut map = SQL_INTERCEPT_MAP.get().lock().unwrap();
             if map.contains_key(&back_sql) {
                 let (index, agency_code, sql_c) = map.get(&sql.clone()).unwrap();
-                println!("命中缓存了1:{}", index);
                 if request_model.agency_code.eq(agency_code) {
-                    println!("命中缓存了");
                     sql.insert_str(index.clone(), &sql_c);
                 }
                 return Ok(());

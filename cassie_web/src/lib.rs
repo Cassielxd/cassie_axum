@@ -39,7 +39,7 @@ ServiceContext 服务上下文
 CasbinService 权限服务
 */
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
-pub static sql_intercept_map: state::Storage<Mutex<HashMap<String, (usize, String, String)>>> =
+pub static SQL_INTERCEPT_MAP: state::Storage<Mutex<HashMap<String, (usize, String, String)>>> =
     state::Storage::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
@@ -73,7 +73,8 @@ pub async fn init_database() {
         column: config.tenant.column.clone(),
         ignore_table: config.tenant.ignore_table.clone(),
     });
-    sql_intercept_map.set(Mutex::new(HashMap::new()));
+    //初始化拦截器 租户化映射
+    SQL_INTERCEPT_MAP.set(Mutex::new(HashMap::new()));
     APPLICATION_CONTEXT.set::<Rbatis>(rbatis);
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     let mdb = init_mongdb(config).await;
