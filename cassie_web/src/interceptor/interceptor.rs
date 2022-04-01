@@ -1,8 +1,5 @@
-use std::collections::HashMap;
-
 use crate::{APPLICATION_CONTEXT, SQL_INTERCEPT_MAP};
 
-use async_std::sync::Mutex;
 use cassie_domain::request::RequestModel;
 use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
@@ -102,11 +99,10 @@ impl SqlIntercept for AgencyInterceptor {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
             let back_sql = sql.clone();
             let mut map = SQL_INTERCEPT_MAP.get().lock().unwrap();
-            if map.contains_key(&back_sql) {
-                let (index, agency_code, sql_c) = map.get(&sql.clone()).unwrap();
-                if request_model.agency_code.eq(agency_code) {
-                    sql.insert_str(index.clone(), &sql_c);
-                }
+            let formate_back = format!("{}__{}", back_sql, request_model.agency_code);
+            if map.contains_key(&formate_back) {
+                let (index, sql_c) = map.get(&formate_back.clone()).unwrap();
+                sql.insert_str(index.clone(), &sql_c);
                 return Ok(());
             }
             let up_sql = sql.clone().to_uppercase();
@@ -118,11 +114,9 @@ impl SqlIntercept for AgencyInterceptor {
                 "LIMIT".to_string(),
                 "".to_string(),
             ];
-
             let (index, sql_c) = self.build(&up_sql, keywords);
             sql.insert_str(index, &sql_c);
-            println!("拆入缓存:{}", index);
-            map.insert(back_sql, (index, request_model.agency_code.clone(), sql_c));
+            map.insert(formate_back, (index, sql_c));
         }
         return Ok(());
     }

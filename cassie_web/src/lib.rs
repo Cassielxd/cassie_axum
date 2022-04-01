@@ -39,7 +39,7 @@ ServiceContext 服务上下文
 CasbinService 权限服务
 */
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
-pub static SQL_INTERCEPT_MAP: state::Storage<Mutex<HashMap<String, (usize, String, String)>>> =
+pub static SQL_INTERCEPT_MAP: state::Storage<Mutex<HashMap<String, (usize, String)>>> =
     state::Storage::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
