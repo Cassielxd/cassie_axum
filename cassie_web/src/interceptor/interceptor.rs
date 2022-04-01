@@ -1,4 +1,8 @@
-use crate::APPLICATION_CONTEXT;
+use std::collections::HashMap;
+
+use crate::{sql_intercept_map, APPLICATION_CONTEXT};
+
+use async_std::sync::Mutex;
 use cassie_domain::request::RequestModel;
 use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
@@ -93,6 +97,18 @@ impl SqlIntercept for AgencyInterceptor {
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
         if self.enable && self.intercept(sql) {
+            let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+            let back_sql = sql.clone();
+            let mut map = sql_intercept_map.get().lock().unwrap();
+            if map.contains_key(&back_sql) {
+                let (index, agency_code, sql_c) = map.get(&sql.clone()).unwrap();
+                println!("命中缓存了1:{}", index);
+                if request_model.agency_code.eq(agency_code) {
+                    println!("命中缓存了");
+                    sql.insert_str(index.clone(), &sql_c);
+                }
+                return Ok(());
+            }
             let up_sql = sql.clone().to_uppercase();
             //修改租户化方式直接拼接 不可更该顺序
             let keywords = vec![
@@ -100,10 +116,18 @@ impl SqlIntercept for AgencyInterceptor {
                 "GROUP".to_string(),
                 "ORDER".to_string(),
                 "LIMIT".to_string(),
+                "".to_string(),
             ];
+
             let (index, sql_c) = self.build(&up_sql, keywords);
             sql.insert_str(index, &sql_c);
+            println!("拆入缓存:{}", index);
+            map.insert(back_sql, (index, request_model.agency_code.clone(), sql_c));
         }
         return Ok(());
+    }
+
+    fn name(&self) -> &str {
+        std::any::type_name::<Self>()
     }
 }
