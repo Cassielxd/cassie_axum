@@ -6,6 +6,7 @@ use axum::Json;
 use axum::{response::IntoResponse, Router};
 use cassie_common::RespVO;
 
+use crate::service::sys_dict_service::get_all_list;
 use axum::extract::{Path, Query};
 use cassie_domain::dto::sys_dict_dto::SysDictTypeDTO;
 use cassie_domain::entity::PageData;
@@ -77,7 +78,7 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
 
 pub async fn all() -> impl IntoResponse {
     let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let vo = context.sys_dict_type_service.get_all_list().await;
+    let vo = get_all_list().await;
     RespVO::from_result(&vo).resp_json()
 }
 

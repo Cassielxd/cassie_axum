@@ -69,3 +69,5 @@ tenant:
   column: "agency_code"
   ignore_table:
     - "sys_log_login"
+    - "sys_dict_type"
+    - "sys_dict_data"

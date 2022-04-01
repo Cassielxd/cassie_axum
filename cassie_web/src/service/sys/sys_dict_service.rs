@@ -1,14 +1,14 @@
+use super::crud_service::CrudService;
 use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
+use cached::proc_macro::cached;
+use cassie_common::error::Result;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::{
     dto::sys_dict_dto::{SysDictDataDTO, SysDictTypeDTO},
     entity::sys_entitys::{SysDictData, SysDictType},
     request::SysDictQuery,
 };
-
-use super::crud_service::CrudService;
-use cassie_common::error::Result;
 use rbatis::rbatis::Rbatis;
 /**
 *struct:SysDictTypeService
@@ -16,36 +16,37 @@ use rbatis::rbatis::Rbatis;
 *author:String
 *email:348040933@qq.com
 */
+#[cached(name = "all_dict_list", time = 60, result = true)]
+pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
+    let q = SysDictQuery {
+        id: None,
+        dict_type_id: None,
+        dict_type: None,
+        dict_name: None,
+        page: None,
+        limit: None,
+        order: None,
+        order_field: None,
+    };
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let mut dict = context.sys_dict_type_service.list(&q).await?;
+    let dict_value = context.sys_dict_value_service.list(&q).await?;
+    for mut d in &mut dict {
+        let mut data = vec![];
+        for dv in &dict_value {
+            if d.id == dv.dict_type_id {
+                //添加到
+                data.push(dv.clone());
+            }
+        }
+        d.data_list = Option::Some(data);
+    }
+    Ok(dict)
+}
 pub struct SysDictTypeService {}
 
 impl SysDictTypeService {
     //获取所有的type
-    pub async fn get_all_list(&self) -> Result<Vec<SysDictTypeDTO>> {
-        let q = SysDictQuery {
-            id: None,
-            dict_type_id: None,
-            dict_type: None,
-            dict_name: None,
-            page: None,
-            limit: None,
-            order: None,
-            order_field: None,
-        };
-        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-        let mut dict = self.list(&q).await?;
-        let dict_value = context.sys_dict_value_service.list(&q).await?;
-        for mut d in &mut dict {
-            let mut data = vec![];
-            for dv in &dict_value {
-                if d.id == dv.dict_type_id {
-                    //添加到
-                    data.push(dv.clone());
-                }
-            }
-            d.data_list = Option::Some(data);
-        }
-        Ok(dict)
-    }
 }
 
 impl Default for SysDictTypeService {
