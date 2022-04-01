@@ -63,7 +63,7 @@ impl CasbinService {
         })
     }
 
-    pub fn get_enforcer(&mut self) -> Arc<RwLock<CachedEnforcer>> {
+    pub fn get_enforcer(&self) -> Arc<RwLock<CachedEnforcer>> {
         self.enforcer.clone()
     }
 
@@ -78,7 +78,7 @@ impl CasbinService {
      */
     pub async fn call(&self, path: String, action: String, vals: CasbinVals) -> bool {
         /*获取验证器*/
-        let cloned_enforcer = self.enforcer.clone();
+        let cloned_enforcer = self.get_enforcer();
         let uid = vals.uid.clone();
         /*获取对应的 用户 用户为空直接返回false*/
         if !vals.uid.is_empty() {
