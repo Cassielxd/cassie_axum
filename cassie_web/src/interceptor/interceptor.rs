@@ -42,9 +42,21 @@ impl SqlIntercept for AgencyInterceptor {
     ) -> Result<(), Error> {
         if self.enable && self.intercept(sql) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-            let s = format!(" and {} = ?", self.column.clone());
-            sql.insert_str(sql.len(), &s);
-            args.push(Bson::String(request_model.agency_code.clone()));
+            //修改租户化方式直接拼接 不使用占位符
+            let w = if !sql.clone().to_uppercase().contains("WHERE") {
+                format!(
+                    " where  {} = '{}'",
+                    self.column.clone(),
+                    request_model.agency_code.clone()
+                )
+            } else {
+                format!(
+                    " and {} = '{}'",
+                    self.column.clone(),
+                    request_model.agency_code.clone()
+                )
+            };
+            sql.insert_str(sql.len(), &w);
         }
         return Ok(());
     }

@@ -71,3 +71,4 @@ tenant:
     - "sys_log_login"
     - "sys_dict_type"
     - "sys_dict_data"
+    - "sys_menu"
