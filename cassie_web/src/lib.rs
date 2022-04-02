@@ -27,8 +27,6 @@ use cassie_orm::dao::{init_mongdb, init_rbatis};
 use mongodb::Database;
 use rbatis::rbatis::Rbatis;
 use state::Container;
-use std::collections::HashMap;
-use std::sync::Mutex;
 /*
 整个项目上下文ApplicationContext
 包括：
@@ -39,8 +37,6 @@ ServiceContext 服务上下文
 CasbinService 权限服务
 */
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
-pub static SQL_INTERCEPT_MAP: state::Storage<Mutex<HashMap<String, (usize, String)>>> =
-    state::Storage::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
     //第一步加载配置
@@ -73,8 +69,6 @@ pub async fn init_database() {
         column: config.tenant.column.clone(),
         ignore_table: config.tenant.ignore_table.clone(),
     });
-    //初始化拦截器 租户化映射
-    SQL_INTERCEPT_MAP.set(Mutex::new(HashMap::new()));
     APPLICATION_CONTEXT.set::<Rbatis>(rbatis);
     println!("---------------------------------------mysql配置完成------------------------------------------------------");
     let mdb = init_mongdb(config).await;

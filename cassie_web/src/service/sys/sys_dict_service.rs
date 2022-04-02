@@ -17,7 +17,7 @@ use rbatis::rbatis::Rbatis;
 *author:String
 *email:348040933@qq.com
 */
-#[cached(name = "ALL_DICT_LIST", time = 60, result = true)]
+#[cached(name = "ALL_DICT_LIST", time = 180, result = true, size = 100)]
 pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
     let q = SysDictQuery {
         id: None,

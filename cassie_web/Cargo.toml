@@ -55,6 +55,9 @@ mongodb = { version = "2.1.0", default-features = false, features = ["async-std-
 
 state = { version = "0.5", features = ["tls"] }
 cached = {version="0.34.0", features = ["async","redis_async_std","redis_tokio"]}
+
+#sqlparse
+sqlparser = "0.15.0"
 #cassie
 cassie_domain = { path = "../cassie_domain" }
 cassie_common = { path = "../cassie_common" }

@@ -1,5 +1,4 @@
-use crate::{APPLICATION_CONTEXT, SQL_INTERCEPT_MAP};
-
+use crate::APPLICATION_CONTEXT;
 use cached::proc_macro::cached;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
@@ -7,7 +6,9 @@ use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
-
+use sqlparser::ast::{BinaryOperator, Expr, Ident, Value as Text};
+use sqlparser::dialect::GenericDialect;
+use sqlparser::parser::Parser;
 //租户化拦截器
 #[derive(Debug)]
 pub struct AgencyInterceptor {
@@ -18,53 +19,7 @@ pub struct AgencyInterceptor {
     //需要忽略的表
     pub ignore_table: Vec<String>,
 }
-impl AgencyInterceptor {
-    fn find_index(&self, sql: &String, ketword: &str) -> Option<usize> {
-        match ketword {
-            "WHERE" => match sql.find(ketword) {
-                None => {
-                    return None;
-                }
-                Some(i) => {
-                    return Some(i + 5);
-                }
-            },
-            "ORDER" | "GROUP" | "LIMIT" => sql.find(ketword),
-            _ => {
-                return Some(sql.len());
-            }
-        }
-    }
-    fn build(&self, up_sql: &String, keyword: Vec<String>) -> (usize, String) {
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-        for key in keyword {
-            match self.find_index(&up_sql, &key) {
-                None => {}
-                Some(size) => {
-                    if key.eq("WHERE") {
-                        return (
-                            size,
-                            format!(
-                                "  {} = '{}' and ",
-                                self.column.clone(),
-                                request_model.agency_code.clone()
-                            ),
-                        );
-                    }
-                    return (
-                        size,
-                        format!(
-                            " where {} = '{}' ",
-                            self.column.clone(),
-                            request_model.agency_code.clone()
-                        ),
-                    );
-                }
-            };
-        }
-        (0, String::new())
-    }
-}
+impl AgencyInterceptor {}
 impl SqlIntercept for AgencyInterceptor {
     //sql拦截逻辑
     fn do_intercept(
@@ -77,26 +32,9 @@ impl SqlIntercept for AgencyInterceptor {
         //判断是否开启租户化
         if self.enable && intercept(sql.clone()) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-            let back_sql = sql.clone();
-            let mut map = SQL_INTERCEPT_MAP.get().lock().unwrap();
-            let formate_back = format!("{}__{}", back_sql, request_model.agency_code);
-            if map.contains_key(&formate_back) {
-                let (index, sql_c) = map.get(&formate_back.clone()).unwrap();
-                sql.insert_str(index.clone(), &sql_c);
-                return Ok(());
-            }
-            let up_sql = sql.clone().to_uppercase();
             //修改租户化方式直接拼接 不可更该顺序
-            let keywords = vec![
-                "WHERE".to_string(),
-                "GROUP".to_string(),
-                "ORDER".to_string(),
-                "LIMIT".to_string(),
-                "".to_string(),
-            ];
-            let (index, sql_c) = self.build(&up_sql, keywords);
-            sql.insert_str(index, &sql_c);
-            map.insert(formate_back, (index, sql_c));
+            *sql = build(sql.clone(), request_model.agency_code.clone());
+            //添加租户化条件
         }
         return Ok(());
     }
@@ -107,7 +45,7 @@ impl SqlIntercept for AgencyInterceptor {
 }
 
 //拦截判断 只拦截查询语句
-#[cached(time = 60)]
+#[cached(time = 60, size = 100)]
 pub fn intercept(sql: String) -> bool {
     println!("进入拦截判断");
     let s = sql.clone().to_uppercase();
@@ -130,4 +68,52 @@ pub fn intercept(sql: String) -> bool {
         }
     }
     true
+}
+
+//租户化sql生成
+#[cached(time = 60, size = 100)]
+pub fn build(up_sql: String, agency_code: String) -> String {
+    //获取配置类
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    //获取默认数据库方言
+    let dialect = GenericDialect {}; // or AnsiDialect, or your own dialect ...
+                                     //解析sql
+    let atc = Parser::parse_sql(&dialect, &up_sql).unwrap();
+    //这里只有一条sql所以获取第一条  SQL可以解析多个
+    if let Some(data) = atc.get(0) {
+        //模式匹配 只管 select 的情况
+        if let sqlparser::ast::Statement::Query(q) = data {
+            if let sqlparser::ast::SetExpr::Select(select) = &q.body {
+                //克隆一份做备份
+                let mut select1 = select.clone();
+                //处理租户字段
+                select1.selection = match select.selection.clone() {
+                    //如果原SQL已经有查询条件 则直接加上 租户化条件
+                    Some(selection) => Option::from(Expr::BinaryOp {
+                        left: Box::new(selection),
+                        op: BinaryOperator::And,
+                        right: Box::new(Expr::BinaryOp {
+                            left: Box::new(Expr::Identifier(Ident {
+                                value: config.tenant.column.clone(),
+                                quote_style: None,
+                            })),
+                            op: BinaryOperator::Eq,
+                            right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
+                        }),
+                    }),
+                    //如果原始sql里没有查询条件 则直接加上租户化条件
+                    None => Some(Expr::BinaryOp {
+                        left: Box::new(Expr::Identifier(Ident {
+                            value: config.tenant.column.clone(),
+                            quote_style: None,
+                        })),
+                        op: BinaryOperator::Eq,
+                        right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
+                    }),
+                };
+                return select1.to_string();
+            }
+        }
+    }
+    up_sql
 }
