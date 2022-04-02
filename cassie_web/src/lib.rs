@@ -50,7 +50,7 @@ pub async fn init_context() {
     //第三步初始化所有的 服务类
     APPLICATION_CONTEXT.set::<ServiceContext>(ServiceContext::new());
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
-    //第三步初始化casbinCOntext
+    //第三步初始化casbinCContext
     APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
 }
@@ -59,7 +59,7 @@ pub async fn init_config() {
     println!("-------------------------------------正在启动--------------------------------------------------------");
     let yml_data = include_str!("../application.yml");
     let config = ApplicationConfig::new(yml_data);
-    
+
     APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
     println!("-------------------------------------yml配置完成-----------------------------------------------------");
 }

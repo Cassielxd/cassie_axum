@@ -5,7 +5,7 @@ use cassie_common::error::Result;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::sys_entitys::{CommonField, SysMenu};
 use cassie_domain::request::tree::TreeService;
-use cassie_domain::request::{RequestModel, SysMenuQuery};
+use cassie_domain::request::SysMenuQuery;
 use cassie_orm::dao::mapper::{menu_list, user_menu_list};
 use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
@@ -66,11 +66,11 @@ impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
         arg.children = childs;
     }
 }
+
 //获取用户的菜单
 #[cached(name = "USER_MENU_LIST", time = 60, result = true)]
 pub async fn get_user_menu_list(uid: String, super_admin: i32) -> Result<Vec<SysMenuDTO>> {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-
     let result = if super_admin > 0 {
         menu_list(&mut rb.as_executor(), "0").await.unwrap()
     } else {

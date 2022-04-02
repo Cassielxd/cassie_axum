@@ -27,7 +27,13 @@ impl UploadService {
                 println!("---------------------------------存储类型oss-----------------------------------------------------");
                 config.oss.validate();
                 Ok(Self {
-                    inner: Box::new(OssService::new(config.oss.key_id.clone(), config.oss.key_secret.clone(), config.oss.endpoint.clone(), config.oss.bucket.clone(), config.oss.access_endpoint.clone())),
+                    inner: Box::new(OssService::new(
+                        config.oss.key_id.clone(),
+                        config.oss.key_secret.clone(),
+                        config.oss.endpoint.clone(),
+                        config.oss.bucket.clone(),
+                        config.oss.access_endpoint.clone(),
+                    )),
                 })
             }
             e => {

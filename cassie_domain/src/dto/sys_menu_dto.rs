@@ -23,6 +23,7 @@ pub struct SysMenuDTO {
     pub path: Option<String>,
     pub children: Option<Vec<SysMenuDTO>>,
 }
+
 impl_field_name_method!(SysMenuDTO {
     id,
     pid,
