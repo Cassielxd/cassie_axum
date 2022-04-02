@@ -47,7 +47,6 @@ impl SqlIntercept for AgencyInterceptor {
 //拦截判断 只拦截查询语句
 #[cached(time = 60, size = 100)]
 pub fn intercept(sql: String) -> bool {
-    println!("进入拦截判断");
     let s = sql.clone().to_uppercase();
     if !s.starts_with("SELECT") {
         return false;

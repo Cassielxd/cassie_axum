@@ -1,4 +1,3 @@
-use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
@@ -11,7 +10,6 @@ use cassie_domain::vo::sign_in::SignInVO;
 use rbatis::crud::CRUD;
 use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;
-use std::time::Duration;
 
 const REDIS_KEY_RETRY: &'static str = "login:login_retry";
 /**
@@ -36,7 +34,6 @@ impl SysAuthService {
      *email:348040933@qq.com
      */
     pub async fn sign_in(&self, arg: &SignInDTO) -> Result<SignInVO> {
-        self.is_need_wait_login_ex().await?;
         /*验证码 验证*/
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let user: Option<SysUser> = rb
@@ -63,65 +60,12 @@ impl SysAuthService {
             error = Some(Error::from("密码不正确!"));
         }
         if error.is_some() {
-            self.add_retry_login_limit_num().await?;
             return Err(error.unwrap());
         }
         let sign_in_vo = self.get_user_info(&user).await?;
         return Ok(sign_in_vo);
     }
-    /**
-     *method:is_need_wait_login_ex
-     *desc:用户错误后 是否需要等待
-     *author:String
-     *email:348040933@qq.com
-     */
-    pub async fn is_need_wait_login_ex(&self) -> Result<()> {
-        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-        if cassie_config.login_fail_retry > 0 {
-            let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
-            if num.unwrap_or(0) >= cassie_config.login_fail_retry {
-                let wait_sec: i64 = context.cache_service.ttl(REDIS_KEY_RETRY).await?;
-                if wait_sec > 0 {
-                    return Err(Error::from(format!(
-                        "操作过于频繁，请等待{}秒后重试!",
-                        wait_sec
-                    )));
-                }
-            }
-        }
-        return Ok(());
-    }
 
-    /**
-     *method:add_retry_login_limit_num
-     *desc:增加redis重试记录
-     *author:String
-     *email:348040933@qq.com
-     */
-    pub async fn add_retry_login_limit_num(&self) -> Result<()> {
-        let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-        if cassie_config.login_fail_retry > 0 {
-            let num: Option<u64> = context.cache_service.get_json(REDIS_KEY_RETRY).await?;
-            let mut num = num.unwrap_or(0);
-            if num > cassie_config.login_fail_retry {
-                num = cassie_config.login_fail_retry;
-            }
-            num += 1;
-            context
-                .cache_service
-                .set_string_ex(
-                    REDIS_KEY_RETRY,
-                    &num.to_string(),
-                    Some(Duration::from_secs(
-                        cassie_config.login_fail_retry_wait_sec as u64,
-                    )),
-                )
-                .await?;
-        }
-        return Ok(());
-    }
     /**
      *method:get_user_info_by_token
      *desc:根据token获取 暂时没用到

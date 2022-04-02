@@ -9,7 +9,6 @@ use captcha::Captcha;
 use cassie_common::error::Error;
 use cassie_common::RespVO;
 use cassie_domain::dto::sign_in::SignInDTO;
-use std::time::Duration;
 use validator::Validate;
 
 pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
@@ -26,6 +25,10 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
             return RespVO::<()>::from_error(&Error::E("验证码错误".to_string())).resp_json();
         }
     }
+    context
+        .cache_service
+        .remove_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .await;
     let vo = context.sys_auth_service.sign_in(&sign).await;
     return RespVO::from_result(&vo).resp_json();
 }
@@ -46,16 +49,15 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
     let png = captcha.as_png().unwrap();
     let captcha_str = captcha.chars_as_string().to_lowercase();
     async_std::task::block_on(async {
-        context
+        let res = context
             .cache_service
-            .set_string_ex(
+            .set_string(
                 &format!("captch:uuid_{}", uuid.clone()),
                 captcha_str.as_str(),
-                Some(Duration::from_secs(180)),
             )
             .await;
+        println!("{:?}", res);
     });
-    println!("获取到了");
     Response::builder()
         .header("Access-Control-Allow-Origin", "*")
         .header("Cache-Control", "no-cache")

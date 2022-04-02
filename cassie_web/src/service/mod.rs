@@ -41,7 +41,7 @@ impl ServiceContext {
     pub fn new() -> Self {
         let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
         Self {
-            cache_service: CacheService::new().unwrap(),
+            cache_service: CacheService::new(),
             sys_auth_service: Default::default(),
             sys_user_service: Default::default(),
             sys_role_service: Default::default(),

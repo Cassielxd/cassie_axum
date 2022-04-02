@@ -1,42 +1,26 @@
-use crate::service::mem_service::MemService;
-use crate::service::redis_service::RedisService;
+use crate::service::redis_service::CassieRedisService;
 use crate::APPLICATION_CONTEXT;
 use async_trait::async_trait;
 use cassie_common::error::Result;
 use cassie_config::config::ApplicationConfig;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use std::time::Duration;
 //缓存服务接口
-#[async_trait]
-pub trait ICacheService: Sync + Send {
-    async fn set_string(&self, k: &str, v: &str) -> Result<String>;
-
-    async fn get_string(&self, k: &str) -> Result<String>;
-
-    async fn set_string_ex(&self, k: &str, v: &str, ex: Option<Duration>) -> Result<String>;
-
-    async fn ttl(&self, k: &str) -> Result<i64>;
-}
 pub struct CacheService {
-    pub inner: Box<dyn ICacheService>,
+    pub inner: Box<dyn ICassieCacheService>,
 }
 
 impl CacheService {
-    pub fn new() -> cassie_common::error::Result<Self> {
+    pub fn new() -> Self {
         let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
         match cassie_config.cache_type.as_str() {
-            "mem" => {
-                println!(" cache_type: mem");
-                Ok(Self {
-                    inner: Box::new(MemService::default()),
-                })
-            }
             "redis" => {
                 println!("cache_type: redis");
-                Ok(Self {
-                    inner: Box::new(RedisService::new(&cassie_config.redis_url)),
-                })
+                Self {
+                    inner: Box::new(async_std::task::block_on(async {
+                        CassieRedisService::new(&cassie_config.redis_url).await
+                    })),
+                }
             }
             e => {
                 panic!(
@@ -48,11 +32,14 @@ impl CacheService {
     }
 
     pub async fn set_string(&self, k: &str, v: &str) -> Result<String> {
-        self.inner.set_string(k, v).await
+        self.inner.cache_set(k, v).await
     }
 
     pub async fn get_string(&self, k: &str) -> Result<String> {
-        self.inner.get_string(k).await
+        self.inner.cache_get(k).await
+    }
+    pub async fn remove_string(&self, k: &str) -> Result<String> {
+        self.inner.cache_remove(k).await
     }
 
     pub async fn set_json<T>(&self, k: &str, v: &T) -> Result<String>
@@ -87,12 +74,13 @@ impl CacheService {
         }
         Ok(data.unwrap())
     }
+}
 
-    pub async fn set_string_ex(&self, k: &str, v: &str, ex: Option<Duration>) -> Result<String> {
-        self.inner.set_string_ex(k, v, ex).await
-    }
+#[async_trait]
+pub trait ICassieCacheService: Sync + Send {
+    async fn cache_set(&self, k: &str, v: &str) -> Result<String>;
 
-    pub async fn ttl(&self, k: &str) -> Result<i64> {
-        self.inner.ttl(k).await
-    }
+    async fn cache_get(&self, k: &str) -> Result<String>;
+
+    async fn cache_remove(&self, k: &str) -> Result<String>;
 }

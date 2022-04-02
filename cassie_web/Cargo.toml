@@ -54,7 +54,7 @@ percent-encoding = "2.1.0"
 mongodb = { version = "2.1.0", default-features = false, features = ["async-std-runtime"] }
 
 state = { version = "0.5", features = ["tls"] }
-cached = {version="0.34.0"}
+cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
 
 #sqlparse
 sqlparser = "0.15.0"
