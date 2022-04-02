@@ -1,4 +1,5 @@
 use crate::service::crud_service::CrudService;
+use crate::service::sys_menu_service::get_user_menu_list;
 use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
@@ -10,7 +11,7 @@ use axum::{
 use cassie_common::RespVO;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
-use cassie_domain::request::SysMenuQuery;
+use cassie_domain::request::{RequestModel, SysMenuQuery};
 
 /**
  *method:/menu
@@ -43,7 +44,12 @@ pub async fn list() -> impl IntoResponse {
 
 pub async fn nav() -> impl IntoResponse {
     let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let vo = context.sys_menu_service.get_user_menu_list().await;
+    let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+    let vo = get_user_menu_list(
+        request_model.uid.clone().to_string(),
+        request_model.super_admin,
+    )
+    .await;
     RespVO::from_result(&vo).resp_json()
 }
 

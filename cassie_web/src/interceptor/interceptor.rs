@@ -1,5 +1,7 @@
 use crate::{APPLICATION_CONTEXT, SQL_INTERCEPT_MAP};
 
+use cached::proc_macro::cached;
+use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
@@ -62,28 +64,6 @@ impl AgencyInterceptor {
         }
         (0, String::new())
     }
-    //拦截判断 只拦截查询语句
-    fn intercept(&self, sql: &String) -> bool {
-        let s = sql.clone().to_uppercase();
-        if !s.starts_with("SELECT") {
-            return false;
-        }
-        //当前忽略的表中如果包含了当前表直接返回
-        for table in self.ignore_table.iter() {
-            if s.contains(&table.clone().to_uppercase()) {
-                return false;
-            }
-        }
-        //如果查询语句的 where条件里已经带了 租户的字段 那就不加了
-        let column_index = s.find(&self.column.clone().to_uppercase());
-        let from_index = s.find(&"FROM".to_string());
-        if let Some(index) = column_index {
-            if index > from_index.unwrap() {
-                return false;
-            }
-        }
-        true
-    }
 }
 impl SqlIntercept for AgencyInterceptor {
     //sql拦截逻辑
@@ -95,7 +75,7 @@ impl SqlIntercept for AgencyInterceptor {
         is_prepared_sql: bool,
     ) -> Result<(), Error> {
         //判断是否开启租户化
-        if self.enable && self.intercept(sql) {
+        if self.enable && intercept(sql.clone()) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
             let back_sql = sql.clone();
             let mut map = SQL_INTERCEPT_MAP.get().lock().unwrap();
@@ -124,4 +104,30 @@ impl SqlIntercept for AgencyInterceptor {
     fn name(&self) -> &str {
         std::any::type_name::<Self>()
     }
+}
+
+//拦截判断 只拦截查询语句
+#[cached(time = 60)]
+pub fn intercept(sql: String) -> bool {
+    println!("进入拦截判断");
+    let s = sql.clone().to_uppercase();
+    if !s.starts_with("SELECT") {
+        return false;
+    }
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    //当前忽略的表中如果包含了当前表直接返回
+    for table in config.tenant.ignore_table.iter() {
+        if s.contains(&table.clone().to_uppercase()) {
+            return false;
+        }
+    }
+    //如果查询语句的 where条件里已经带了 租户的字段 那就不加了
+    let column_index = s.find(&config.tenant.column.clone().to_uppercase());
+    let from_index = s.find(&"FROM".to_string());
+    if let Some(index) = column_index {
+        if index > from_index.unwrap() {
+            return false;
+        }
+    }
+    true
 }

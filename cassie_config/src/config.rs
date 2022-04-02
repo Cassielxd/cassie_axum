@@ -102,7 +102,7 @@ pub struct ApplicationConfig {
 impl ApplicationConfig {
     pub fn new(yml_data: &str) -> Self {
         let config = match serde_yaml::from_str(yml_data) {
-            Ok(config) => config,
+            Ok(e) => e,
             Err(e) => panic!("{}", e),
         };
         config

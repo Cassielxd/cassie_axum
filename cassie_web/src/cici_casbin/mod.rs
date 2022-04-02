@@ -37,12 +37,10 @@ pub fn is_super_admin(id: &str, super_admin_ids: &Vec<String>) -> bool {
 pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     if is_white_list_api(&path, &cassie_config.admin_white_list_api) {
-        println!("白名单:{}", path.clone());
         return true;
     }
 
     if !user.is_empty() && is_super_admin(&user, &cassie_config.super_admin_ids) {
-        println!("管理员");
         return true;
     }
     return false;

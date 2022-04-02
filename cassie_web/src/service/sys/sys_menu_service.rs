@@ -1,14 +1,14 @@
-use cassie_orm::dao::mapper::{menu_list, user_menu_list};
 use crate::service::crud_service::CrudService;
-use crate::APPLICATION_CONTEXT;
+use crate::{ServiceContext, APPLICATION_CONTEXT};
+use cached::proc_macro::cached;
 use cassie_common::error::Result;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::sys_entitys::{CommonField, SysMenu};
 use cassie_domain::request::tree::TreeService;
 use cassie_domain::request::{RequestModel, SysMenuQuery};
+use cassie_orm::dao::mapper::{menu_list, user_menu_list};
 use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
-
 /**
 *struct:SysMenuService
 *desc:菜单基础服务
@@ -31,28 +31,10 @@ impl SysMenuService {
             role_id.unwrap()
         };
     }
-   //获取所有的菜单
+    //获取所有的菜单
     pub async fn menu_list(&self) -> Result<Vec<SysMenuDTO>> {
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let result = menu_list(&mut rb.as_executor(), "").await.unwrap();
-        Ok(self.build(result.unwrap()))
-    }
-    //获取用户的菜单
-    pub async fn get_user_menu_list(&self) -> Result<Vec<SysMenuDTO>> {
-        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-        let result = if request_model.super_admin > 0 {
-            menu_list(&mut rb.as_executor(), "0").await.unwrap()
-        } else {
-            user_menu_list(
-                &mut rb.as_executor(),
-                request_model.uid.to_string().as_str(),
-                "0",
-            )
-            .await
-            .unwrap()
-        };
-
         Ok(self.build(result.unwrap()))
     }
 }
@@ -83,4 +65,19 @@ impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
     fn set_children(&self, arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
         arg.children = childs;
     }
+}
+//获取用户的菜单
+#[cached(name = "USER_MENU_LIST", time = 60, result = true)]
+pub async fn get_user_menu_list(uid: String, super_admin: i32) -> Result<Vec<SysMenuDTO>> {
+    let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+
+    let result = if super_admin > 0 {
+        menu_list(&mut rb.as_executor(), "0").await.unwrap()
+    } else {
+        user_menu_list(&mut rb.as_executor(), uid.as_str(), "0")
+            .await
+            .unwrap()
+    };
+    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    Ok(context.sys_menu_service.build(result.unwrap()))
 }

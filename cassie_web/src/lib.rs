@@ -59,7 +59,7 @@ pub async fn init_config() {
     println!("-------------------------------------正在启动--------------------------------------------------------");
     let yml_data = include_str!("../application.yml");
     let config = ApplicationConfig::new(yml_data);
-    config.validate();
+    
     APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
     println!("-------------------------------------yml配置完成-----------------------------------------------------");
 }
