@@ -55,6 +55,7 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
             )
             .await;
     });
+    println!("获取到了");
     Response::builder()
         .header("Access-Control-Allow-Origin", "*")
         .header("Cache-Control", "no-cache")
