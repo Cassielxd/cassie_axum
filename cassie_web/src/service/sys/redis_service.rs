@@ -1,5 +1,8 @@
+use std::fmt::Display;
+
 use async_trait::async_trait;
 use cassie_common::error::{Error, Result};
+use serde::{de::DeserializeOwned, Serialize};
 
 use super::cache_service::ICassieCacheService;
 use cached::{AsyncRedisCache, IOCachedAsync};
