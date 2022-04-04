@@ -18,7 +18,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
     }
     if let Ok(code) = context
         .cache_service
-        .get_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .get_string(&format!("_captch:uuid_{}", &sign.uuid.clone().unwrap()))
         .await
     {
         if !code.eq(&sign.vcode.clone().unwrap()) {
@@ -27,7 +27,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
     }
     context
         .cache_service
-        .remove_string(&format!("captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .remove_string(&format!("_captch:uuid_{}", &sign.uuid.clone().unwrap()))
         .await;
     let vo = context.sys_auth_service.sign_in(&sign).await;
     return RespVO::from_result(&vo).resp_json();

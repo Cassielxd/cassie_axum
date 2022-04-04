@@ -4,7 +4,7 @@ use axum::{
     extract::extractor_middleware,
     response::{Html, IntoResponse},
     routing::get,
-    Router, Server,
+    Router, Server, http::Uri, handler::Handler,
 };
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
@@ -16,6 +16,7 @@ use cassie_web::{
     APPLICATION_CONTEXT,
 };
 use log::info;
+use reqwest::StatusCode;
 use tower_http::cors::{Any, CorsLayer};
 
 pub async fn index() -> impl IntoResponse {
@@ -34,7 +35,9 @@ pub async fn index() -> impl IntoResponse {
     </html>",
     )
 }
-
+async fn fallback(uri: Uri) -> impl IntoResponse {
+    (StatusCode::NOT_FOUND, format!("资源不存在", uri))
+}
 /**
  *method:main
  *desc:程序主入口方法 admin 管理端api api:小程序,h5,app使用
@@ -73,6 +76,7 @@ async fn main() {
             admin::routers().layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers())
+        .fallback(fallback.into_service())
         .layer(cors);
     // 启动服务
     Server::bind(&server.parse().unwrap())

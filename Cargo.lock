@@ -635,9 +635,10 @@ dependencies = [
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
- "cached",
- "quote",
- "syn",
+ "async-std",
+ "futures",
+ "pharos",
+ "tokio",
 ]
 
 [[package]]
@@ -2421,6 +2422,16 @@ dependencies = [
  "maplit",
  "pest",
  "sha-1 0.8.2",
+]
+
+[[package]]
+name = "pharos"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9567389417feee6ce15dd6527a8a1ecac205ef62c2932bcf3d9f6fc5b78b414"
+dependencies = [
+ "futures",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
