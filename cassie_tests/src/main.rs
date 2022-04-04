@@ -24,7 +24,7 @@ impl Goddess {
         // It's infallible. Observers that error will be dropped, since the only kind of errors on
         // channels are when the channel is closed.
         //
-        let _ = self.pharos.send(GoddessEvent{a:"1".to_string()}).await;
+        let _ = self.pharos.send(GoddessEvent { a: "1".to_string() }).await;
     }
 }
 
@@ -35,9 +35,8 @@ impl Goddess {
 #[derive(Clone, Debug, PartialEq)]
 //
 pub struct GoddessEvent {
-    a:String
+    a: String,
 }
-
 
 // This is the needed implementation of Observable. We might one day have a derive for this,
 // but it's not so interesting, since you always have to point it to your pharos object,
@@ -61,7 +60,7 @@ async fn main() {
     let s2 = isis.clone();
     tokio::task::spawn(a(s2));
     // trigger an eve
-   
+
     for _ in 0..100 {
         let s1 = isis.clone();
         tokio::task::spawn(async move {

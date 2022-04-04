@@ -2,9 +2,11 @@ use std::time::Duration;
 
 use axum::{
     extract::extractor_middleware,
+    handler::Handler,
+    http::Uri,
     response::{Html, IntoResponse},
     routing::get,
-    Router, Server, http::Uri, handler::Handler,
+    Router, Server,
 };
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
@@ -36,7 +38,10 @@ pub async fn index() -> impl IntoResponse {
     )
 }
 async fn fallback(uri: Uri) -> impl IntoResponse {
-    (StatusCode::NOT_FOUND, format!("资源不存在{}", uri))
+    (
+        StatusCode::NOT_FOUND,
+        format!("resource not found :{}", uri),
+    )
 }
 /**
  *method:main
