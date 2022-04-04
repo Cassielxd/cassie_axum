@@ -36,7 +36,7 @@ pub async fn index() -> impl IntoResponse {
     )
 }
 async fn fallback(uri: Uri) -> impl IntoResponse {
-    (StatusCode::NOT_FOUND, format!("资源不存在", uri))
+    (StatusCode::NOT_FOUND, format!("资源不存在{}", uri))
 }
 /**
  *method:main
