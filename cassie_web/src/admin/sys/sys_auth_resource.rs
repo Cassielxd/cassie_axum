@@ -52,7 +52,7 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
         let res = context
             .cache_service
             .set_string(
-                &format!("captch:uuid_{}", uuid.clone()),
+                &format!("_captch:uuid_{}", uuid.clone()),
                 captcha_str.as_str(),
             )
             .await;

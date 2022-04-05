@@ -1,4 +1,5 @@
 use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
+use crate::observe::event::CassieEvent;
 use crate::{cici_casbin::is_white_list_api, APPLICATION_CONTEXT};
 use axum::http::HeaderValue;
 use axum::{
@@ -10,6 +11,7 @@ use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use cassie_domain::vo::jwt::JWTToken;
+use pharos::SharedPharos;
 
 /**
  *struct:Auth
@@ -28,6 +30,8 @@ where
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+        let pharos = APPLICATION_CONTEXT.get::<SharedPharos<CassieEvent>>();
+        pharos.notify(CassieEvent::Log {}).await;
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();

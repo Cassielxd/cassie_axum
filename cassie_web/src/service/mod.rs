@@ -1,4 +1,5 @@
 pub mod asi;
+pub mod event;
 pub mod sys;
 
 use crate::APPLICATION_CONTEXT;
@@ -6,6 +7,7 @@ use crate::APPLICATION_CONTEXT;
 use self::{
     asi::asi_service::AsiGroupService,
     cache_service::CacheService,
+    event_service::EventService,
     sys_auth_service::SysAuthService,
     sys_dict_service::{SysDictDataService, SysDictTypeService},
     sys_menu_service::SysMenuService,
@@ -15,8 +17,8 @@ use self::{
 };
 use cassie_config::config::ApplicationConfig;
 use cassie_upload::upload::upload_service::UploadService;
+pub use event::*;
 pub use sys::*;
-
 pub struct ServiceContext {
     pub cache_service: CacheService,
     /*权限服务 */
@@ -35,6 +37,7 @@ pub struct ServiceContext {
     pub asi_service: AsiGroupService,
     /*上传服务*/
     pub upload_service: UploadService,
+    pub event_service: EventService,
 }
 
 impl ServiceContext {
@@ -51,6 +54,7 @@ impl ServiceContext {
             sys_dict_value_service: Default::default(),
             asi_service: Default::default(),
             upload_service: UploadService::new(config).unwrap(),
+            event_service: EventService::new(),
         }
     }
 }

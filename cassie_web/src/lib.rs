@@ -20,6 +20,7 @@ pub mod service;
 //前端接口
 pub mod api;
 pub mod interceptor;
+pub mod observe;
 
 use crate::cici_casbin::casbin_service::CasbinService;
 use crate::interceptor::interceptor::AgencyInterceptor;
@@ -27,6 +28,8 @@ use crate::service::ServiceContext;
 use cassie_config::config::ApplicationConfig;
 use cassie_orm::dao::{init_mongdb, init_rbatis};
 use mongodb::Database;
+use observe::{consumer::init_consumer, event::CassieEvent};
+use pharos::SharedPharos;
 use rbatis::rbatis::Rbatis;
 use state::Container;
 /*
@@ -51,6 +54,14 @@ pub async fn init_context() {
     //第三步初始化casbinCContext
     APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
+    init_event_bus().await;
+    println!("---------------------------------------event_bus初始化完成------------------------------------------------");
+}
+
+//初始化 event bus事件处理器
+pub async fn init_event_bus() {
+    APPLICATION_CONTEXT.set::<SharedPharos<CassieEvent>>(SharedPharos::default());
+    tokio::task::spawn(init_consumer());
 }
 
 pub async fn init_config() {

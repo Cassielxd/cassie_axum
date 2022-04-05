@@ -9,6 +9,7 @@ author = "String<348040933@qq.com>"
 [dependencies]
 axum ={version="0.4.8",features = ["multipart"] }
 tokio = { version = "1", features = ["full", "fs", "io-util", "sync"] }
+tower ={version="0.4.0",features = ["full"] }
 tower-http = { version = "0.2.0", features = ["cors"] }
 #serde and json
 serde = { version = "1", features = ["derive"] }
@@ -58,6 +59,7 @@ cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
 
 #sqlparse
 sqlparser = "0.15.0"
+pharos = "0.5.3"
 #cassie
 cassie_domain = { path = "../cassie_domain" }
 cassie_common = { path = "../cassie_common" }

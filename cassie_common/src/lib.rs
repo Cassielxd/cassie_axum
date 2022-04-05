@@ -61,6 +61,7 @@ where
 
     pub fn resp_json(&self) -> Response<Body> {
         Response::builder()
+            .extension(|| {})
             .header("Access-Control-Allow-Origin", "*")
             .header("Cache-Control", "no-cache")
             .header("Content-Type", "text/json;charset=UTF-8")
