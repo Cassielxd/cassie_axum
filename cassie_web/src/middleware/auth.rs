@@ -1,5 +1,4 @@
 use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
-use crate::observe::event::CassieEvent;
 use crate::{cici_casbin::is_white_list_api, APPLICATION_CONTEXT};
 use axum::http::HeaderValue;
 use axum::{
@@ -11,7 +10,6 @@ use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use cassie_domain::vo::jwt::JWTToken;
-use pharos::SharedPharos;
 
 /**
  *struct:Auth
