@@ -55,7 +55,7 @@ pub async fn init_context() {
     APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
     init_event_bus().await;
-    println!("---------------------------------------event_bus初始化完成------------------------------------------------");
+    println!("---------------------------------------EventBus初始化完成------------------------------------------------");
 }
 
 //初始化 event bus事件处理器

@@ -120,6 +120,28 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+2022.4.5
+````````````````````````````````````````````````````````````````
+//完成eventBus 1.0开发
+//事件基本对象
+pub enum CassieEvent {
+    Log {},//日志
+    Sms {
+        sms_type: u8,//消息
+    },
+    Custom {
+        event_type: u8, //自定义事件 1 脚本 2 其他业务分类(待定)
+        data: HashMap<String, String>,
+    },
+}
+//发布事件
+ let pharos = APPLICATION_CONTEXT.get::<SharedPharos<CassieEvent>>();
+        pharos.notify(CassieEvent::Log {}).await;
+
+````````````````````````````````````````````````````````````````
+
+
+
 2022.3.31
 ````````````````````````````````````````````````````````````````
 完成租户化开发
