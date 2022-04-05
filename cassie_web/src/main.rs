@@ -2,7 +2,7 @@ use axum::{
     extract::extractor_middleware,
     handler::Handler,
     http::Uri,
-    response::{Html, IntoResponse, Response},
+    response::{Html, IntoResponse},
     routing::get,
     Router, Server,
 };
@@ -10,15 +10,15 @@ use cassie_config::config::ApplicationConfig;
 use cassie_web::{
     config::log::init_log,
     init_context,
-    middleware::auth::Auth,
+    middleware::{auth::Auth, event::EventMiddleware},
     nacos::register_service,
     routers::{admin, api},
     APPLICATION_CONTEXT,
 };
 use log::info;
 use reqwest::StatusCode;
-use std::{convert::Infallible, time::Duration};
-use tower::{util::AndThenLayer, ServiceBuilder};
+use std::time::Duration;
+use tower::layer::layer_fn;
 use tower_http::cors::{Any, CorsLayer};
 
 pub async fn index() -> impl IntoResponse {
@@ -67,8 +67,6 @@ async fn main() {
         cassie_config.server.host, cassie_config.server.port
     );
 
-    let middleware_stack = ServiceBuilder::new().layer(AndThenLayer::new(map_response));
-
     let cors = CorsLayer::new()
         .allow_methods(Any)
         .allow_origin(Any)
@@ -85,13 +83,10 @@ async fn main() {
         .nest("/api", api::routers())
         .fallback(fallback.into_service())
         .layer(cors)
-        .layer(middleware_stack);
+        .layer(layer_fn(|inner| EventMiddleware { inner }));
     // 启动服务
     Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-async fn map_response(res: Response) -> Result<Response, Infallible> {
-    Ok(res)
 }
