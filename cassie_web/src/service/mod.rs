@@ -7,7 +7,6 @@ use crate::APPLICATION_CONTEXT;
 use self::{
     asi::asi_service::AsiGroupService,
     cache_service::CacheService,
-    event_service::EventService,
     sys_auth_service::SysAuthService,
     sys_dict_service::{SysDictDataService, SysDictTypeService},
     sys_menu_service::SysMenuService,
@@ -37,7 +36,6 @@ pub struct ServiceContext {
     pub asi_service: AsiGroupService,
     /*上传服务*/
     pub upload_service: UploadService,
-    pub event_service: EventService,
 }
 
 impl ServiceContext {
@@ -54,7 +52,6 @@ impl ServiceContext {
             sys_dict_value_service: Default::default(),
             asi_service: Default::default(),
             upload_service: UploadService::new(config).unwrap(),
-            event_service: EventService::new(),
         }
     }
 }

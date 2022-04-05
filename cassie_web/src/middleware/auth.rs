@@ -30,8 +30,7 @@ where
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-        let pharos = APPLICATION_CONTEXT.get::<SharedPharos<CassieEvent>>();
-        pharos.notify(CassieEvent::Log {}).await;
+
         /*获取method path */
         let action = req.method().clone().to_string();
         let path = req.uri().clone().to_string();
