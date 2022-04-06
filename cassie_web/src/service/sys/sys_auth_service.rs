@@ -1,3 +1,5 @@
+use crate::observe::event::CassieEvent;
+use crate::service::event_service::fire_event;
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
@@ -10,7 +12,6 @@ use cassie_domain::vo::sign_in::SignInVO;
 use rbatis::crud::CRUD;
 use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;
-
 const REDIS_KEY_RETRY: &'static str = "login:login_retry";
 /**
 *struct:SysAuthService
@@ -63,6 +64,14 @@ impl SysAuthService {
             return Err(error.unwrap());
         }
         let sign_in_vo = self.get_user_info(&user).await?;
+        let event = CassieEvent::LogLogin {
+            operation: Some("0".to_string()),
+            user_agent: Some("admin".to_string()),
+            ip: None,
+            creator_name: arg.username.clone(),
+            creator: user.id.clone(),
+        };
+        fire_event(event).await;
         return Ok(sign_in_vo);
     }
 

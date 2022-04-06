@@ -121,10 +121,11 @@ where
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        let uid = if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>(){
+        let uid = if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>() {
             request_model.uid
-        }else{
-            0};
+        } else {
+            0
+        };
         /*设置公共字段*/
         self.set_save_common_fields(
             CommonField {

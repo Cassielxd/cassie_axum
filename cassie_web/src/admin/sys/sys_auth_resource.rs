@@ -1,5 +1,6 @@
 use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
+
 use axum::body::Body;
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
@@ -30,6 +31,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
         .remove_string(&format!("_captch:uuid_{}", &sign.uuid.clone().unwrap()))
         .await;
     let vo = context.sys_auth_service.sign_in(&sign).await;
+
     return RespVO::from_result(&vo).resp_json();
 }
 

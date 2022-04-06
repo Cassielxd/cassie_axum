@@ -41,7 +41,7 @@ where
             msg: Some(format!("请登录")),
             data: None,
         };
-       
+
         /*判断是否在白名单里 如果不在进行验证*/
         if !is_white_list_api(path.clone()) {
             let token_value = token.to_str().unwrap_or("");

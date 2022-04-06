@@ -1,12 +1,14 @@
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::request::RequestModel;
 use futures::future::BoxFuture;
-use pharos::SharedPharos;
 use std::task::{Context, Poll};
 use tokio::time::Instant;
 use tower::Service;
 
-use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, APPLICATION_CONTEXT, service::event_service::fire_event};
+use crate::{
+    cici_casbin::is_white_list_api, observe::event::CassieEvent,
+    service::event_service::fire_event, APPLICATION_CONTEXT,
+};
 #[derive(Clone)]
 pub struct EventMiddleware<S> {
     pub inner: S,
@@ -54,7 +56,7 @@ where
                 request_params: None,
                 request_method: Some(action.clone()),
                 request_time: Some(start.elapsed().as_millis().to_string()),
-                status
+                status,
             };
             fire_event(event).await;
             Ok(response)
