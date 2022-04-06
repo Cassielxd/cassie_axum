@@ -95,3 +95,9 @@ pub struct AsiQuery {
     pub order: Option<String>,
     pub order_field: Option<String>,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct LogQuery {}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct EventQuery {}

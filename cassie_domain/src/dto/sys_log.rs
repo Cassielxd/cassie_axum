@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SysLogLoginDto {
     pub id: Option<i64>,
-    pub operation: Option<i8>,
+    pub operation: Option<String>,
     pub user_agent: Option<String>,
     pub ip: Option<String>,
     pub creator_name: Option<String>,
@@ -43,7 +43,7 @@ impl Into<SysLogLogin> for SysLogLoginDto {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SysLogOperationDto {
     pub id: Option<i64>,
-    pub operation: Option<i8>,
+    pub operation: Option<String>,
     pub request_uri: Option<String>,
     pub ip: Option<String>,
     pub creator_name: Option<String>,

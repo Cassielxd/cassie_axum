@@ -4,7 +4,7 @@ use rbatis::DateTimeNative;
 #[derive(Clone, Debug)]
 pub struct SysLogLogin {
     pub id: Option<i64>,
-    pub operation: Option<i8>,
+    pub operation: Option<String>,
     pub user_agent: Option<String>,
     pub ip: Option<String>,
     pub creator_name: Option<String>,
@@ -25,7 +25,7 @@ impl_field_name_method!(SysLogLogin {
 #[derive(Clone, Debug)]
 pub struct SysLogOperation {
     pub id: Option<i64>,
-    pub operation: Option<i8>,
+    pub operation: Option<String>,
     pub request_uri: Option<String>,
     pub ip: Option<String>,
     pub creator_name: Option<String>,

@@ -26,16 +26,16 @@ pub async fn init_rbatis(cassie_config: &ApplicationConfig) -> Rbatis {
 
 use mongodb::{options::ClientOptions, Client, Database};
 
-pub async fn init_mongdb(cassie_config: &ApplicationConfig) -> Database {
+pub async fn init_mongodb(cassie_config: &ApplicationConfig) -> Database {
     let client_options = ClientOptions::parse(cassie_config.mongodb_url.clone().as_str())
         .await
-        .expect(" mongdb link database fail!");
+        .expect(" mongodb link database fail!");
     println!(
-        "mongdb link database ({})...",
+        "mongodb link database ({})...",
         cassie_config.mongodb_url.clone()
     );
     let client = Client::with_options(client_options).unwrap();
-    println!("mongdb link database success!");
+    println!("mongodb link database success!");
     let db = client.database("cassie");
     db
 }

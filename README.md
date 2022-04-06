@@ -120,6 +120,25 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+2022.4.6
+````````````````````````````````````````````````````````````````
+//添加登录日志功能
+//添加操作日志功能
+ //构建操作日志event对象
+            let event = CassieEvent::LogOperation {
+                operation: Some(action.clone()),
+                request_uri: Some(path.clone()),
+                ip: None,
+                creator_name,
+                request_params: None,
+                request_method: Some(action.clone()),
+                request_time: Some(start.elapsed().as_millis().to_string()),
+                status,
+            };
+            //发布事件
+            fire_event(event).await;
+````````````````````````````````````````````````````````````````
+
 2022.4.5
 ````````````````````````````````````````````````````````````````
 //完成eventBus 1.0开发
