@@ -1,7 +1,7 @@
 use async_std::prelude::StreamExt;
 use pharos::{Channel, SharedPharos};
 
-use crate::{service::event_service::consume, APPLICATION_CONTEXT};
+use crate::{service::consume, APPLICATION_CONTEXT};
 
 use super::event::CassieEvent;
 

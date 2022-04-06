@@ -26,7 +26,7 @@ use crate::cici_casbin::casbin_service::CasbinService;
 use crate::interceptor::interceptor::AgencyInterceptor;
 use crate::service::ServiceContext;
 use cassie_config::config::ApplicationConfig;
-use cassie_orm::dao::{init_mongdb, init_rbatis};
+use cassie_orm::dao::{init_mongodb, init_rbatis};
 use mongodb::Database;
 use observe::{consumer::init_consumer, event::CassieEvent};
 use pharos::SharedPharos;
@@ -44,10 +44,13 @@ CasbinService 权限服务
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
+    println!("-------------------------------------CassieApplication正在启动--------------------------------------------------------");
     //第一步加载配置
     init_config().await;
+    println!("-------------------------------------ConfigContext配置完成-----------------------------------------------------");
     //第二步初始化数据源
     init_database().await;
+    println!("---------------------------------------DataBase配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类
     APPLICATION_CONTEXT.set::<ServiceContext>(ServiceContext::new());
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
@@ -65,12 +68,10 @@ pub async fn init_event_bus() {
 }
 
 pub async fn init_config() {
-    println!("-------------------------------------正在启动--------------------------------------------------------");
     let yml_data = include_str!("../application.yml");
     let config = ApplicationConfig::new(yml_data);
 
     APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
-    println!("-------------------------------------yml配置完成-----------------------------------------------------");
 }
 
 pub async fn init_database() {
@@ -83,8 +84,7 @@ pub async fn init_database() {
         ignore_table: config.tenant.ignore_table.clone(),
     });
     APPLICATION_CONTEXT.set::<Rbatis>(rbatis);
-    println!("---------------------------------------mysql配置完成------------------------------------------------------");
-    let mdb = init_mongdb(config).await;
+
+    let mdb = init_mongodb(config).await;
     APPLICATION_CONTEXT.set::<Database>(mdb);
-    println!("---------------------------------------mongodb配置完成--------------------------------------------------");
 }

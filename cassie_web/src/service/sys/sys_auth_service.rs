@@ -1,5 +1,5 @@
 use crate::observe::event::CassieEvent;
-use crate::service::event_service::fire_event;
+use crate::service::fire_event;
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_common::error::Result;

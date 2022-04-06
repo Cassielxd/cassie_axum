@@ -1,66 +1,31 @@
-use cassie_domain::entity::log::{SysLogLogin, SysLogOperation};
-use pharos::SharedPharos;
-
-use crate::{
-    observe::event::CassieEvent,
-    service::{crud_service::CrudService, ServiceContext},
-    APPLICATION_CONTEXT,
+use crate::{service::crud_service::CrudService, APPLICATION_CONTEXT};
+use cassie_common::error::Result;
+use cassie_domain::{
+    dto::sys_event_dto::EventConfigDTO, entity::event::EventConfig, request::EventQuery,
 };
+use rbatis::rbatis::Rbatis;
 
-//事件消费 待二次开发 todo
-pub async fn consume(e: CassieEvent) {
-    let service = APPLICATION_CONTEXT.get::<ServiceContext>();
-    //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
-    match e {
-        CassieEvent::LogLogin {
-            operation,
-            user_agent,
-            ip,
-            creator_name,
-            creator,
-        } => {
-            let mut entity = SysLogLogin {
-                id: None,
-                operation,
-                user_agent,
-                ip,
-                creator_name,
-                creator,
-                create_date: None,
-            };
-            service.log_login_service.save(&mut entity).await;
-        }
-        CassieEvent::LogOperation {
-            operation,
-            request_uri,
-            ip,
-            creator_name,
-            request_params,
-            request_method,
-            request_time,
-            status,
-        } => {
-            let mut entity = SysLogOperation {
-                id: None,
-                operation,
-                request_uri,
-                request_params,
-                request_method,
-                request_time,
-                status,
-                ip,
-                creator_name,
-                creator: None,
-                create_date: None,
-            };
-            service.log_operation_service.save(&mut entity).await;
-        }
-        CassieEvent::Sms { sms_type } => {}
-        CassieEvent::Custom { event_type, data } => todo!(),
+pub struct EventConfigService {}
+impl EventConfigService {
+    pub async fn load_event(&self) -> Result<Vec<EventConfigDTO>> {
+        let query = vec!["0".to_string()];
+        let list = self
+            .fetch_list_by_column(EventConfig::status(), &query)
+            .await;
+        list
     }
 }
-//发布事件
-pub async fn fire_event(e: CassieEvent) {
-    let pharos = APPLICATION_CONTEXT.get::<SharedPharos<CassieEvent>>();
-    pharos.notify(e).await;
+impl CrudService<EventConfig, EventConfigDTO, EventQuery> for EventConfigService {
+    fn get_wrapper(arg: &EventQuery) -> rbatis::wrapper::Wrapper {
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+        rb.new_wrapper()
+    }
+
+    fn set_save_common_fields(
+        &self,
+        common: cassie_domain::entity::sys_entitys::CommonField,
+        data: &mut EventConfig,
+    ) {
+        data.id = common.id;
+    }
 }
