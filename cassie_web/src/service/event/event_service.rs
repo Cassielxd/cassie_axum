@@ -1,7 +1,4 @@
-use cassie_domain::{
-    entity::log::{SysLogLogin, SysLogOperation},
-    request::RequestModel,
-};
+use cassie_domain::entity::log::{SysLogLogin, SysLogOperation};
 use pharos::SharedPharos;
 
 use crate::{

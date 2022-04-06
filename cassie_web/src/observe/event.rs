@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use cassie_domain::request::RequestModel;
-
 #[derive(Clone, Debug, PartialEq)]
 pub enum CassieEvent {
     LogLogin {
