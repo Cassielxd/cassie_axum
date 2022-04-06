@@ -6,6 +6,7 @@ use axum::{
     routing::get,
     Router, Server,
 };
+use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
     config::log::init_log,
@@ -38,10 +39,13 @@ pub async fn index() -> impl IntoResponse {
     )
 }
 async fn fallback(uri: Uri) -> impl IntoResponse {
-    (
-        StatusCode::NOT_FOUND,
-        format!("resource not found :{}", uri),
-    )
+    let msg = format!("资源不存在：{}", uri);
+    RespVO::<String> {
+        code: Some(-1),
+        msg: Some(msg),
+        data: None,
+    }
+    .resp_json()
 }
 /**
  *method:main
@@ -79,8 +83,8 @@ async fn main() {
         .nest(
             "/admin",
             admin::routers()
-                .layer(layer_fn(|inner| EventMiddleware { inner }))
-                .layer(extractor_middleware::<Auth>()),
+                .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
+                .layer(extractor_middleware::<Auth>()), //最先执行的
         )
         .nest("/api", api::routers())
         .fallback(fallback.into_service())
