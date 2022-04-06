@@ -78,12 +78,13 @@ async fn main() {
         .route("/", get(index))
         .nest(
             "/admin",
-            admin::routers().layer(extractor_middleware::<Auth>()),
+            admin::routers()
+                .layer(layer_fn(|inner| EventMiddleware { inner }))
+                .layer(extractor_middleware::<Auth>()),
         )
         .nest("/api", api::routers())
         .fallback(fallback.into_service())
-        .layer(cors)
-        .layer(layer_fn(|inner| EventMiddleware { inner }));
+        .layer(cors);
     // 启动服务
     Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())

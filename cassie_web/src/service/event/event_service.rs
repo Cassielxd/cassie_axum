@@ -1,19 +1,61 @@
+use cassie_domain::entity::log::{SysLogLogin, SysLogOperation};
 use pharos::SharedPharos;
 
-use crate::{observe::event::CassieEvent, APPLICATION_CONTEXT};
+use crate::{
+    observe::event::CassieEvent,
+    service::{crud_service::CrudService, ServiceContext},
+    APPLICATION_CONTEXT,
+};
 
 //事件消费 待二次开发 todo
 pub async fn consume(e: CassieEvent) {
+    let service = APPLICATION_CONTEXT.get::<ServiceContext>();
     match e {
-        CassieEvent::Log {} => {
-            todo!("日志处理");
+        CassieEvent::LogLogin {
+            operation,
+            user_agent,
+            ip,
+            creator_name,
+            creator,
+        } => {
+            let mut entity = SysLogLogin {
+                id: None,
+                operation,
+                user_agent,
+                ip,
+                creator_name,
+                creator,
+                create_date: None,
+            };
+            service.log_login_service.save(&mut entity).await;
         }
-        CassieEvent::Sms { sms_type } => {
-            todo!("消息事件处理")
+        CassieEvent::LogOperation {
+            operation,
+            request_uri,
+            ip,
+            creator_name,
+            request_params,
+            request_method,
+            request_time,
+            status,
+        } => {
+            let mut entity = SysLogOperation {
+                id: None,
+                operation,
+                request_uri,
+                request_params,
+                request_method,
+                request_time,
+                status,
+                ip,
+                creator_name,
+                creator: None,
+                create_date: None,
+            };
+            service.log_operation_service.save(&mut entity).await;
         }
-        CassieEvent::Custom { event_type, data } => {
-            todo!("自定义事件处理")
-        }
+        CassieEvent::Sms { sms_type } => {}
+        CassieEvent::Custom { event_type, data } => todo!(),
     }
 }
 //发布事件

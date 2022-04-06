@@ -1,5 +1,6 @@
 pub mod asi;
 pub mod event;
+pub mod log;
 pub mod sys;
 
 use crate::APPLICATION_CONTEXT;
@@ -14,10 +15,12 @@ use self::{
     sys_role_service::SysRoleService,
     sys_user_service::SysUserService,
 };
+use crate::service::log::log_service::{LogLoginService, LogOperationService};
 use cassie_config::config::ApplicationConfig;
 use cassie_upload::upload::upload_service::UploadService;
 pub use event::*;
 pub use sys::*;
+
 pub struct ServiceContext {
     pub cache_service: CacheService,
     /*权限服务 */
@@ -36,6 +39,8 @@ pub struct ServiceContext {
     pub asi_service: AsiGroupService,
     /*上传服务*/
     pub upload_service: UploadService,
+    pub log_login_service: LogLoginService,
+    pub log_operation_service: LogOperationService,
 }
 
 impl ServiceContext {
@@ -52,6 +57,8 @@ impl ServiceContext {
             sys_dict_value_service: Default::default(),
             asi_service: Default::default(),
             upload_service: UploadService::new(config).unwrap(),
+            log_login_service: Default::default(),
+            log_operation_service: Default::default(),
         }
     }
 }

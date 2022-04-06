@@ -41,8 +41,9 @@ where
             msg: Some(format!("请登录")),
             data: None,
         };
+        println!("我是一处");
         /*判断是否在白名单里 如果不在进行验证*/
-        if !is_white_list_api(&path, &cassie_config.admin_white_list_api) {
+        if !is_white_list_api(path.clone()) {
             let token_value = token.to_str().unwrap_or("");
             /*token为空提示登录*/
             if token_value.is_empty() {

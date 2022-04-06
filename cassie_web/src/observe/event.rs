@@ -2,7 +2,23 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum CassieEvent {
-    Log {},
+    LogLogin {
+        operation: Option<i8>,
+        user_agent: Option<String>,
+        ip: Option<String>,
+        creator_name: Option<String>,
+        creator: Option<i64>,
+    },
+    LogOperation {
+        operation: Option<i8>,
+        request_uri: Option<String>,
+        ip: Option<String>,
+        creator_name: Option<String>,
+        request_params: Option<String>,
+        request_method: Option<String>,
+        request_time: Option<String>,
+        status: Option<i8>,
+    },
     Sms {
         sms_type: u8,
     },

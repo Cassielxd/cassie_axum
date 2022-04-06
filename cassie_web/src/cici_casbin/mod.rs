@@ -1,18 +1,20 @@
 pub mod casbin_service;
 
 use crate::APPLICATION_CONTEXT;
+use cached::proc_macro::cached;
 use casbin::function_map::key_match2;
 use casbin::rhai::ImmutableString;
 use cassie_config::config::ApplicationConfig;
-
 ///是否处在白名单接口中
-pub fn is_white_list_api(path: &str, white_list_api: &Vec<String>) -> bool {
+#[cached(time = 60, size = 100)]
+pub fn is_white_list_api(path: String) -> bool {
     if path.eq("/") {
         return true;
     }
-    for x in white_list_api {
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    for x in &cassie_config.admin_white_list_api {
         //匹配 user/:id 模式
-        if key_match2(path, x) || x.contains(path) {
+        if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str()) {
             return true;
         }
     }
@@ -36,7 +38,7 @@ pub fn is_super_admin(id: &str, super_admin_ids: &Vec<String>) -> bool {
  */
 pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    if is_white_list_api(&path, &cassie_config.admin_white_list_api) {
+    if is_white_list_api(path.clone().to_string()) {
         return true;
     }
 
