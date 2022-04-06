@@ -1,10 +1,12 @@
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::request::RequestModel;
 use futures::future::BoxFuture;
+use pharos::SharedPharos;
 use std::task::{Context, Poll};
+use tokio::time::Instant;
 use tower::Service;
 
-use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, APPLICATION_CONTEXT};
+use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, APPLICATION_CONTEXT, service::event_service::fire_event};
 #[derive(Clone)]
 pub struct EventMiddleware<S> {
     pub inner: S,
@@ -26,6 +28,7 @@ where
         /*获取method path */
         let action = request.method().clone().to_string();
         let path = request.uri().clone().to_string();
+        let body = request.body().clone();
 
         let creator_name = if !is_white_list_api(path.clone()) {
             let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
@@ -33,21 +36,27 @@ where
         } else {
             None
         };
-
+        //pharos.notify(event).await;
         let future = self.inner.call(request);
         Box::pin(async move {
+            let start = Instant::now();
             let response: Response = future.await?;
-            let mut event = CassieEvent::LogOperation {
-                operation: None,
+            let status = if response.status().is_success() {
+                Some(1)
+            } else {
+                Some(0)
+            };
+            let event = CassieEvent::LogOperation {
+                operation: Some(action.clone()),
                 request_uri: Some(path.clone()),
                 ip: None,
-                creator_name: creator_name,
+                creator_name,
                 request_params: None,
-                request_method: None,
-                request_time: None,
-                status: None,
+                request_method: Some(action.clone()),
+                request_time: Some(start.elapsed().as_millis().to_string()),
+                status
             };
-
+            fire_event(event).await;
             Ok(response)
         })
     }

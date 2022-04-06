@@ -1,4 +1,4 @@
-use cassie_domain::entity::log::{SysLogLogin, SysLogOperation};
+use cassie_domain::{entity::log::{SysLogLogin, SysLogOperation}, request::RequestModel};
 use pharos::SharedPharos;
 
 use crate::{
@@ -10,6 +10,7 @@ use crate::{
 //事件消费 待二次开发 todo
 pub async fn consume(e: CassieEvent) {
     let service = APPLICATION_CONTEXT.get::<ServiceContext>();
+    //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
     match e {
         CassieEvent::LogLogin {
             operation,

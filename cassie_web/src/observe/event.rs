@@ -1,16 +1,18 @@
 use std::collections::HashMap;
 
+use cassie_domain::request::RequestModel;
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum CassieEvent {
     LogLogin {
-        operation: Option<i8>,
+        operation: Option<String>,
         user_agent: Option<String>,
         ip: Option<String>,
         creator_name: Option<String>,
         creator: Option<i64>,
     },
     LogOperation {
-        operation: Option<i8>,
+        operation: Option<String>,
         request_uri: Option<String>,
         ip: Option<String>,
         creator_name: Option<String>,
