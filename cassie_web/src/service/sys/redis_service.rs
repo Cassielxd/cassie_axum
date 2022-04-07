@@ -9,14 +9,14 @@ pub struct CassieRedisService {
 }
 impl CassieRedisService {
     pub async fn new(url: &str) -> Self {
-        println!("conncect redis ({})...", url);
+        println!("connect redis ({})...", url);
         let client = AsyncRedisCache::<String, String>::new("_cassie_".to_string(), 360)
             .set_connection_string(url)
             .set_refresh(true)
             .build()
             .await
             .unwrap();
-        println!("conncect redis success!");
+        println!("connect redis success!");
         Self { client }
     }
 }

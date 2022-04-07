@@ -1,9 +1,13 @@
-use rhai::{Engine, EvalAltResult};
+use std::collections::HashMap;
 
-pub fn main() -> Result<(), Box<EvalAltResult>>                          
-{
-    let engine = Engine::new();
-    let script = "print(40 + 2);";
-    engine.run(script)?;
-    Ok(())
+use cassie_rules::core::rules::RulesContext;
+use rhai::{Scope, Dynamic};
+
+pub fn main() {
+    let mut rc = RulesContext::default();
+    let mut rule = HashMap::new();
+    rule.insert("test".to_string(), "print(\"hello world\");".to_string());
+    rc.load_rules(rule);
+    rc.run_ast("test");
+    let s =Scope::new();
 }
