@@ -6,6 +6,9 @@ use rbatis::plugin::intercept::SqlIntercept;
 use rbatis::rbatis::Rbatis;
 use rbatis::Error;
 use rbson::Bson;
+use sqlparser::ast::OnInsert;
+use sqlparser::ast::Select;
+use sqlparser::ast::SqliteOnConflict;
 use sqlparser::ast::Statement::Insert;
 use sqlparser::ast::Statement::Query as Iquwey;
 use sqlparser::ast::{
@@ -47,7 +50,7 @@ impl SqlIntercept for AgencyInterceptor {
         std::any::type_name::<Self>()
     }
 }
-
+//判断查询语句是不是需要租户化
 fn intercept_query(from: Vec<TableWithJoins>) -> bool {
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     for elem in from.iter() {
@@ -72,7 +75,7 @@ fn intercept_query(from: Vec<TableWithJoins>) -> bool {
     }
     true
 }
-
+//判断insert语句是不是需要租户化
 fn intercept_insert(table_info: ObjectName) -> bool {
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let ObjectName(table_info) = table_info;
@@ -101,38 +104,8 @@ pub fn build(up_sql: String, agency_code: String) -> String {
         match data {
             Iquwey(q) => {
                 if let sqlparser::ast::SetExpr::Select(select) = &q.body {
-                    let select1 = select.clone().from;
-                    if intercept_query(select1) {
-                        //克隆一份做备份
-                        let mut select1 = select.clone();
-                        //处理租户字段
-                        select1.selection = match select.selection.clone() {
-                            //如果原SQL已经有查询条件 则直接加上 租户化条件
-                            Some(selection) => Option::from(Expr::BinaryOp {
-                                left: Box::new(selection),
-                                op: BinaryOperator::And,
-                                right: Box::new(Expr::BinaryOp {
-                                    left: Box::new(Expr::Identifier(Ident {
-                                        value: config.tenant.column.clone(),
-                                        quote_style: None,
-                                    })),
-                                    op: BinaryOperator::Eq,
-                                    right: Box::new(Expr::Value(Text::SingleQuotedString(
-                                        agency_code,
-                                    ))),
-                                }),
-                            }),
-                            //如果原始sql里没有查询条件 则直接加上租户化条件
-                            None => Some(Expr::BinaryOp {
-                                left: Box::new(Expr::Identifier(Ident {
-                                    value: config.tenant.column.clone(),
-                                    quote_style: None,
-                                })),
-                                op: BinaryOperator::Eq,
-                                right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
-                            }),
-                        };
-                        return select1.to_string();
+                    if intercept_query(select.clone().from) {
+                        return build_select(*select.clone(), agency_code);
                     }
                 }
             }
@@ -149,39 +122,22 @@ pub fn build(up_sql: String, agency_code: String) -> String {
             } => {
                 //判断是否需要租户化
                 if intercept_insert(table_name.clone()) {
-                    let mut c = columns.clone();
-                    let agency_column = Ident {
-                        value: config.tenant.column.clone(),
-                        quote_style: None,
-                    };
-                    //判断columns是否为空已经包含了租户字段
-                    if !columns.contains(&agency_column) {
-                        c.push(agency_column);
-                        match &source.body {
-                            sqlparser::ast::SetExpr::Values(value) => {
-                                //组装value
-                                let mut a1 = value.0.get(0).unwrap().clone();
-                                a1.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
-                                    agency_code,
-                                )));
-                                let insert = Insert {
-                                    or: or.clone(),
-                                    table_name: table_name.clone(),
-                                    columns: c,
-                                    overwrite: overwrite.clone(),
-                                    source: Box::new(Query {
-                                        body: SetExpr::Values(Values(vec![a1])),
-                                        ..*source.clone()
-                                    }),
-                                    partitioned: partitioned.clone(),
-                                    after_columns: after_columns.clone(),
-                                    table: table.clone(),
-                                    on: on.clone(),
-                                };
-                                return insert.to_string();
-                            }
-                            _ => println!(),
+                    match build_insert(
+                        agency_code,
+                        or.clone(),
+                        table_name.clone(),
+                        columns.clone(),
+                        overwrite.clone(),
+                        source.clone(),
+                        partitioned.clone(),
+                        after_columns.clone(),
+                        table.clone(),
+                        on.clone(),
+                    ) {
+                        Some(sql) => {
+                            return sql;
                         }
+                        None => println!(),
                     }
                 }
             }
@@ -189,4 +145,86 @@ pub fn build(up_sql: String, agency_code: String) -> String {
         }
     }
     up_sql
+}
+//构建租户化insert语句
+fn build_insert(
+    agency_code: String,
+    or: Option<SqliteOnConflict>,
+    table_name: ObjectName,
+    columns: Vec<Ident>,
+    overwrite: bool,
+    source: Box<Query>,
+    partitioned: Option<Vec<Expr>>,
+    after_columns: Vec<Ident>,
+    table: bool,
+    on: Option<OnInsert>,
+) -> Option<String> {
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    let mut c = columns.clone();
+    let agency_column = Ident {
+        value: config.tenant.column.clone(),
+        quote_style: None,
+    };
+    //判断columns是否为空已经包含了租户字段
+    if !columns.contains(&agency_column) {
+        c.push(agency_column);
+        match &source.body {
+            sqlparser::ast::SetExpr::Values(value) => {
+                //组装value
+                let mut a1 = value.0.get(0).unwrap().clone();
+                a1.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
+                    agency_code,
+                )));
+                let insert = Insert {
+                    or: or.clone(),
+                    table_name: table_name.clone(),
+                    columns: c,
+                    overwrite: overwrite.clone(),
+                    source: Box::new(Query {
+                        body: SetExpr::Values(Values(vec![a1])),
+                        ..*source.clone()
+                    }),
+                    partitioned: partitioned.clone(),
+                    after_columns: after_columns.clone(),
+                    table: table.clone(),
+                    on: on.clone(),
+                };
+                return Some(insert.to_string());
+            }
+            _ => return None,
+        }
+    }
+    return None;
+}
+//构建租户化select
+fn build_select(select: Select, agency_code: String) -> String {
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    //克隆一份做备份
+    let mut select1 = select.clone();
+    //处理租户字段
+    select1.selection = match select.selection.clone() {
+        //如果原SQL已经有查询条件 则直接加上 租户化条件
+        Some(selection) => Option::from(Expr::BinaryOp {
+            left: Box::new(selection),
+            op: BinaryOperator::And,
+            right: Box::new(Expr::BinaryOp {
+                left: Box::new(Expr::Identifier(Ident {
+                    value: config.tenant.column.clone(),
+                    quote_style: None,
+                })),
+                op: BinaryOperator::Eq,
+                right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
+            }),
+        }),
+        //如果原始sql里没有查询条件 则直接加上租户化条件
+        None => Some(Expr::BinaryOp {
+            left: Box::new(Expr::Identifier(Ident {
+                value: config.tenant.column.clone(),
+                quote_style: None,
+            })),
+            op: BinaryOperator::Eq,
+            right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
+        }),
+    };
+    return select1.to_string();
 }
