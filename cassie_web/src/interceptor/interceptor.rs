@@ -147,16 +147,19 @@ pub fn build(up_sql: String, agency_code: String) -> String {
                 table,
                 on,
             } => {
+                //判断是否需要租户化
                 if intercept_insert(table_name.clone()) {
                     let mut c = columns.clone();
                     let agency_column = Ident {
                         value: config.tenant.column.clone(),
                         quote_style: None,
                     };
+                    //判断columns是否为空已经包含了租户字段
                     if !columns.contains(&agency_column) {
                         c.push(agency_column);
                         match &source.body {
                             sqlparser::ast::SetExpr::Values(value) => {
+                                //组装value
                                 let mut a1 = value.0.get(0).unwrap().clone();
                                 a1.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
                                     agency_code,
