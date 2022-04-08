@@ -35,12 +35,12 @@ pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
     for mut d in &mut dict {
         let mut data = vec![];
         for dv in &dict_value {
-            if d.id == dv.dict_type_id {
+            if d.id() == dv.dict_type_id() {
                 //添加到
                 data.push(dv.clone());
             }
         }
-        d.data_list = Option::Some(data);
+        d.set_data_list(Option::Some(data));
     }
     Ok(dict)
 }

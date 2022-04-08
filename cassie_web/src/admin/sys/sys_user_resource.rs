@@ -25,8 +25,8 @@ pub async fn page(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.page.clone(),
-                page_size: arg.limit.clone(),
+                page_no: arg.page().clone(),
+                page_size: arg.limit().clone(),
             },
         )
         .await;
@@ -64,7 +64,7 @@ pub async fn info() -> impl IntoResponse {
         .get(request_model.uid.to_string())
         .await
         .unwrap();
-    vo.password = None;
+    vo.set_password(None);
     RespVO::from(&vo).resp_json()
 }
 

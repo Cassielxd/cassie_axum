@@ -26,8 +26,8 @@ pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
         .page(
             &arg,
             PageData {
-                page_no: arg.page.clone(),
-                page_size: arg.limit.clone(),
+                page_no: arg.page().clone(),
+                page_size: arg.limit().clone(),
             },
         )
         .await;
@@ -46,6 +46,7 @@ pub async fn nav() -> impl IntoResponse {
     let vo = get_user_menu_list(
         request_model.uid.clone().to_string(),
         request_model.super_admin,
+        request_model.agency_code.clone(),
     )
     .await;
     RespVO::from_result(&vo).resp_json()

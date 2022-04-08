@@ -1,55 +1,35 @@
 use crate::entity::sys_entitys::SysUser;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
-#[derive(Clone, Debug, Serialize, Validate, Deserialize)]
+#[derive(Clone, Debug, Serialize, Validate, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysUserDTO {
-    pub id: Option<i64>,
+    id: Option<i64>,
     #[validate(required)]
-    pub username: Option<String>,
+    username: Option<String>,
     #[validate(length(min = 6, message = "密码最少6个字符"))]
-    pub password: Option<String>,
-    pub real_name: Option<String>,
-    pub head_url: Option<String>,
-    pub gender: Option<u8>,
+    password: Option<String>,
+    real_name: Option<String>,
+    head_url: Option<String>,
+    gender: Option<u8>,
     #[validate(email)]
-    pub email: Option<String>,
+    email: Option<String>,
     #[validate(required)]
-    pub mobile: Option<String>,
+    mobile: Option<String>,
     #[validate(required)]
-    pub role_id: Option<i64>,
-    pub dept_id: Option<i32>,
-    pub super_admin: Option<i32>,
-    pub agency_code: Option<String>,
-    pub remark: Option<String>,
-    pub status: Option<i32>,
-    pub del_flag: Option<i32>,
-    pub creator: Option<i64>,
-    pub create_date: Option<rbatis::DateTimeNative>,
-    pub updater: Option<i64>,
-    pub update_date: Option<rbatis::DateTimeNative>,
+    role_id: Option<i64>,
+    dept_id: Option<i32>,
+    super_admin: Option<i32>,
+    agency_code: Option<String>,
+    remark: Option<String>,
+    status: Option<i32>,
+    del_flag: Option<i32>,
+    creator: Option<i64>,
+    create_date: Option<rbatis::DateTimeNative>,
+    updater: Option<i64>,
+    update_date: Option<rbatis::DateTimeNative>,
 }
 
-impl_field_name_method!(SysUserDTO {
-    id,
-    username,
-    password,
-    real_name,
-    head_url,
-    agency_code,
-    gender,
-    email,
-    mobile,
-    dept_id,
-    super_admin,
-    remark,
-    status,
-    del_flag,
-    creator,
-    create_date,
-    updater,
-    update_date,
-    role_id
-});
 impl Into<SysUser> for SysUserDTO {
     fn into(self) -> SysUser {
         SysUser {

@@ -20,15 +20,15 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
         return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
     if let Ok(code) = cache_service
-        .get_string(&format!("_captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .get_string(&format!("_captch:uuid_{}", &sign.uuid().clone().unwrap()))
         .await
     {
-        if !code.eq(&sign.vcode.clone().unwrap()) {
+        if !code.eq(&sign.vcode().clone().unwrap()) {
             return RespVO::<()>::from_error(&Error::E("验证码错误".to_string())).resp_json();
         }
     }
     cache_service
-        .remove_string(&format!("_captch:uuid_{}", &sign.uuid.clone().unwrap()))
+        .remove_string(&format!("_captch:uuid_{}", &sign.uuid().clone().unwrap()))
         .await;
     let vo = sys_auth_service.sign_in(&sign).await;
 

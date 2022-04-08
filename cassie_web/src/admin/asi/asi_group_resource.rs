@@ -42,7 +42,8 @@ pub async fn save(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
 
 pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
     let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
-    let id = arg.id.clone();
+
+    let id = arg.id().clone();
     asi_service
         .update_by_id(id.unwrap().to_string(), &mut arg.into())
         .await;

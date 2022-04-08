@@ -48,15 +48,8 @@ impl SysRoleMenuService {
         //先删除角色菜单关系
         self.delete_by_role_id(role_id).await;
         /*添加到casbin权限表里*/
-        let query = SysMenuQuery {
-            ids: None,
-            pids: menu_id_list.clone(),
-            pid: None,
-            page: None,
-            limit: None,
-            order: None,
-            order_field: None,
-        };
+        let mut query = SysMenuQuery::default();
+        query.set_pids(menu_id_list.clone());
         let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();

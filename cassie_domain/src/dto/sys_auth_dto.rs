@@ -1,6 +1,7 @@
 /// 授权
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysAuthDTO {
-    pub access_token: String,
-    pub path: String,
+    access_token: String,
+    path: String,
 }

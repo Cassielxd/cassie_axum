@@ -6,29 +6,19 @@ use crate::entity::sys_entitys::SysParams;
 /**
  * 系统参数定义DTO
  */
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysParamsDTO {
-    pub id: Option<i64>,
-    pub param_code: Option<String>,
-    pub param_value: Option<String>,
-    pub remark: Option<String>,
-    pub del_flag: Option<u8>,
-    pub creator: Option<i64>,
-    pub create_date: Option<DateTimeNative>,
-    pub updater: Option<i64>,
-    pub update_date: Option<DateTimeNative>,
+    id: Option<i64>,
+    param_code: Option<String>,
+    param_value: Option<String>,
+    remark: Option<String>,
+    del_flag: Option<u8>,
+    creator: Option<i64>,
+    create_date: Option<DateTimeNative>,
+    updater: Option<i64>,
+    update_date: Option<DateTimeNative>,
 }
-impl_field_name_method!(SysParamsDTO {
-    id,
-    param_code,
-    param_value,
-    del_flag,
-    remark,
-    creator,
-    create_date,
-    updater,
-    update_date,
-});
 
 impl Into<SysParams> for SysParamsDTO {
     fn into(self) -> SysParams {

@@ -6,7 +6,8 @@ use validator_derive::Validate;
 /**
  * 角色dto
  */
-#[derive(Clone, Debug, Serialize, Deserialize, Validate)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysRoleDTO {
     pub id: Option<i64>,
     pub name: Option<String>,
@@ -19,18 +20,6 @@ pub struct SysRoleDTO {
     pub update_date: Option<DateTimeNative>,
     pub menuid_list: Option<Vec<i64>>,
 }
-impl_field_name_method!(SysRoleDTO {
-    id,
-    name,
-    dept_id,
-    del_flag,
-    remark,
-    creator,
-    create_date,
-    updater,
-    update_date,
-    menuid_list
-});
 
 impl Into<SysRole> for SysRoleDTO {
     fn into(self) -> SysRole {
@@ -65,7 +54,8 @@ impl From<SysRole> for SysRoleDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysRoleDataScopeDTO {
     pub id: Option<i64>,
     pub role_id: Option<i64>,
@@ -73,13 +63,6 @@ pub struct SysRoleDataScopeDTO {
     pub creator: Option<i64>,
     pub create_date: Option<DateTimeNative>,
 }
-impl_field_name_method!(SysRoleDataScopeDTO {
-    id,
-    role_id,
-    dept_id,
-    creator,
-    create_date,
-});
 
 impl Into<SysRoleDataScope> for SysRoleDataScopeDTO {
     fn into(self) -> SysRoleDataScope {
@@ -105,7 +88,8 @@ impl From<SysRoleDataScope> for SysRoleDataScopeDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysRoleMenuDTO {
     pub id: Option<i64>,
     pub role_id: Option<i64>,
@@ -113,13 +97,6 @@ pub struct SysRoleMenuDTO {
     pub creator: Option<i64>,
     pub create_date: Option<DateTimeNative>,
 }
-impl_field_name_method!(SysRoleMenuDTO {
-    id,
-    role_id,
-    menu_id,
-    creator,
-    create_date,
-});
 
 impl Into<SysRoleMenu> for SysRoleMenuDTO {
     fn into(self) -> SysRoleMenu {
@@ -145,7 +122,8 @@ impl From<SysRoleMenu> for SysRoleMenuDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysRoleUserDTO {
     pub id: Option<i64>,
     pub role_id: Option<i64>,
@@ -153,13 +131,6 @@ pub struct SysRoleUserDTO {
     pub creator: Option<i64>,
     pub create_date: Option<DateTimeNative>,
 }
-impl_field_name_method!(SysRoleUserDTO {
-    id,
-    role_id,
-    user_id,
-    creator,
-    create_date,
-});
 
 impl Into<SysRoleUser> for SysRoleUserDTO {
     fn into(self) -> SysRoleUser {

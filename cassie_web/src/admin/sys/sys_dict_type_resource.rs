@@ -60,7 +60,7 @@ pub async fn save(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
 
 pub async fn edit(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
     let sys_dict_type_service = APPLICATION_CONTEXT.get::<SysDictTypeService>();
-    let id = arg.id.clone();
+    let id = arg.id().clone();
     let mut entity = arg.into();
     sys_dict_type_service
         .update_by_id(id.unwrap().to_string(), &mut entity)

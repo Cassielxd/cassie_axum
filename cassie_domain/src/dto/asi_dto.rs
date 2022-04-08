@@ -3,20 +3,26 @@ use crate::request::tree::TreeModel;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 
-#[derive(Clone, Debug, Serialize, Validate, Deserialize)]
+#[derive(Clone, Debug, Serialize, Validate, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct AsiGroupDTO {
-    pub id: Option<i64>,
+    id: Option<i64>,
     #[validate(required)]
-    pub cate_id: Option<i64>,
+    cate_id: Option<i64>,
     #[validate(length(min = 4, message = "名称最少4个字"))]
-    pub name: Option<String>,
-    pub info: Option<String>,
+    name: Option<String>,
+
+    info: Option<String>,
     #[validate(length(min = 6, message = "分组编码最少6个字"))]
-    pub group_code: Option<String>,
-    pub agency_code: Option<String>,
-    pub group_type: Option<String>,
-    pub parent_group_code: Option<String>,
-    pub children: Option<Vec<AsiGroupDTO>>,
+    group_code: Option<String>,
+
+    agency_code: Option<String>,
+
+    group_type: Option<String>,
+
+    parent_group_code: Option<String>,
+
+    children: Option<Vec<AsiGroupDTO>>,
 }
 
 impl TreeModel for AsiGroupDTO {
@@ -28,15 +34,6 @@ impl TreeModel for AsiGroupDTO {
         Some(self.group_code.clone().unwrap())
     }
 }
-
-impl_field_name_method!(AsiGroupDTO {
-    id,
-    cate_id,
-    name,
-    info,
-    group_code,
-    agency_code
-});
 
 impl Into<AsiGroup> for AsiGroupDTO {
     fn into(self) -> AsiGroup {
@@ -69,47 +66,40 @@ impl From<AsiGroup> for AsiGroupDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Validate)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct AsiGroupColumnDTO {
-    pub id: Option<i64>,
-    pub agency_code: Option<String>,
-    pub product_code: Option<String>,
-    pub group_code: Option<String>,
+    id: Option<i64>,
+
+    agency_code: Option<String>,
+
+    product_code: Option<String>,
+
+    group_code: Option<String>,
     #[validate(required)]
     #[validate(length(min = 2, message = "最少2个字符"))]
-    pub column_code: Option<String>,
+    column_code: Option<String>,
     #[validate(required)]
     #[validate(length(min = 2, message = "最少2个字符"))]
-    pub column_name: Option<String>,
+    column_name: Option<String>,
     #[validate(required)]
-    pub data_type: Option<String>,
+    data_type: Option<String>,
     #[validate(required)]
-    pub example_value: Option<String>,
+    example_value: Option<String>,
     #[validate(required)]
-    pub max_length: Option<i64>,
+    max_length: Option<i64>,
     #[validate(required)]
-    pub is_required: Option<String>,
-    pub display_order: Option<i8>,
-    pub default_value: Option<String>,
-    pub display_length: Option<i64>,
-    pub is_display: Option<i8>,
+    is_required: Option<String>,
+
+    display_order: Option<i8>,
+
+    default_value: Option<String>,
+
+    display_length: Option<i64>,
+
+    is_display: Option<i8>,
 }
-impl_field_name_method!(AsiGroupColumnDTO {
-    id,
-    agency_code,
-    product_code,
-    group_code,
-    column_code,
-    column_name,
-    data_type,
-    example_value,
-    max_length,
-    is_required,
-    display_order,
-    default_value,
-    display_length,
-    is_display
-});
+
 impl Into<AsiGroupColumn> for AsiGroupColumnDTO {
     fn into(self) -> AsiGroupColumn {
         AsiGroupColumn {
@@ -152,28 +142,26 @@ impl From<AsiGroupColumn> for AsiGroupColumnDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Validate)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct AsiGroupValuesDTO {
-    pub id: Option<i64>,
-    pub agency_code: Option<String>,
-    pub product_code: Option<String>,
-    pub group_code: Option<String>,
+    id: Option<i64>,
+
+    agency_code: Option<String>,
+
+    product_code: Option<String>,
+
+    group_code: Option<String>,
+
     #[validate(required)]
-    pub column_code: Option<String>,
+    column_code: Option<String>,
+
     #[validate(required)]
-    pub column_value: Option<String>,
+    column_value: Option<String>,
     #[validate(required)]
-    pub ref_id: Option<i64>,
+    ref_id: Option<i64>,
 }
-impl_field_name_method!(AsiGroupValuesDTO {
-    id,
-    agency_code,
-    product_code,
-    group_code,
-    column_code,
-    column_value,
-    ref_id
-});
+
 impl Into<AsiGroupValues> for AsiGroupValuesDTO {
     fn into(self) -> AsiGroupValues {
         AsiGroupValues {

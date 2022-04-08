@@ -10,30 +10,20 @@ use crate::entity::sys_entitys::{SysDictData, SysDictType};
 /**
  * 字典定义DTO
  */
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysDictTypeDTO {
-    pub id: Option<i64>,
-    pub dict_type: Option<String>,
-    pub dict_name: Option<String>,
-    pub remark: Option<String>,
-    pub sort: Option<u32>,
-    pub creator: Option<i64>,
-    pub create_date: Option<DateTimeNative>,
-    pub updater: Option<i64>,
-    pub update_date: Option<DateTimeNative>,
-    pub data_list: Option<Vec<SysDictDataDTO>>,
+    id: Option<i64>,
+    dict_type: Option<String>,
+    dict_name: Option<String>,
+    remark: Option<String>,
+    sort: Option<u32>,
+    creator: Option<i64>,
+    create_date: Option<DateTimeNative>,
+    updater: Option<i64>,
+    update_date: Option<DateTimeNative>,
+    data_list: Option<Vec<SysDictDataDTO>>,
 }
-impl_field_name_method!(SysDictTypeDTO {
-    id,
-    dict_type,
-    dict_name,
-    sort,
-    remark,
-    creator,
-    create_date,
-    updater,
-    update_date,
-});
 
 impl Into<SysDictType> for SysDictTypeDTO {
     fn into(self) -> SysDictType {
@@ -72,31 +62,20 @@ impl From<SysDictType> for SysDictTypeDTO {
  * 字典值DTO
  */
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysDictDataDTO {
-    pub id: Option<i64>,
-    pub dict_type_id: Option<i64>,
-    pub dict_label: Option<String>,
-    pub dict_value: Option<String>,
-    pub remark: Option<String>,
-    pub sort: Option<u32>,
-    pub creator: Option<i64>,
-    pub create_date: Option<DateTimeNative>,
-    pub updater: Option<i64>,
-    pub update_date: Option<DateTimeNative>,
+    id: Option<i64>,
+    dict_type_id: Option<i64>,
+    dict_label: Option<String>,
+    dict_value: Option<String>,
+    remark: Option<String>,
+    sort: Option<u32>,
+    creator: Option<i64>,
+    create_date: Option<DateTimeNative>,
+    updater: Option<i64>,
+    update_date: Option<DateTimeNative>,
 }
-impl_field_name_method!(SysDictDataDTO {
-    id,
-    dict_type_id,
-    dict_label,
-    dict_value,
-    sort,
-    remark,
-    creator,
-    create_date,
-    updater,
-    update_date,
-});
 
 impl Into<SysDictData> for SysDictDataDTO {
     fn into(self) -> SysDictData {

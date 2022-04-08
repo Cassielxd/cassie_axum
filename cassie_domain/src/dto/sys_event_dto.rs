@@ -1,23 +1,24 @@
 use crate::entity::event::EventConfig;
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct EventConfigDTO {
-    pub id: Option<i64>,
-    pub status: Option<String>,
-    pub extend1: Option<String>,
-    pub extend2: Option<String>,
-    pub extend3: Option<String>,
-    pub description: Option<String>,
-    pub agency_code: Option<String>,
-    pub path: Option<String>,
-    pub resource_name: Option<String>,
-    pub oprate_description: Option<String>,
-    pub event_type: Option<String>,
-    pub event_code: Option<String>,
-    pub event_name: Option<String>,
-    pub lock_user_id: Option<String>,
-    pub event_script: Option<String>,
-    pub need_persist: Option<String>,
+    id: Option<i64>,
+    status: Option<String>,
+    extend1: Option<String>,
+    extend2: Option<String>,
+    extend3: Option<String>,
+    description: Option<String>,
+    agency_code: Option<String>,
+    path: Option<String>,
+    resource_name: Option<String>,
+    oprate_description: Option<String>,
+    event_type: Option<String>,
+    event_code: Option<String>,
+    event_name: Option<String>,
+    lock_user_id: Option<String>,
+    event_script: Option<String>,
+    need_persist: Option<String>,
 }
 
 impl From<EventConfig> for EventConfigDTO {

@@ -1,3 +1,5 @@
+use std::default;
+
 use serde::{Deserialize, Serialize};
 
 /**
@@ -6,15 +8,16 @@ use serde::{Deserialize, Serialize};
 *author:String
 *email:348040933
 */
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysUserQuery {
-    pub id: Option<i64>,
-    pub username: Option<String>,
-    pub gender: Option<String>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    id: Option<i64>,
+    username: Option<String>,
+    gender: Option<String>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 /**
 *struct:struct
@@ -22,7 +25,8 @@ pub struct SysUserQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysDictQuery {
     pub id: Option<i64>,
     pub dict_type_id: Option<i64>,
@@ -39,7 +43,8 @@ pub struct SysDictQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysParamsQuery {
     pub id: Option<i64>,
     pub param_code: Option<String>,
@@ -55,7 +60,8 @@ pub struct SysParamsQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysRoleQuery {
     pub id: Option<u64>,
     pub name: Option<String>,
@@ -74,30 +80,34 @@ pub struct SysRoleQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysMenuQuery {
-    pub ids: Option<Vec<i64>>,
-    pub pids: Option<Vec<i64>>,
-    pub pid: Option<i64>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    ids: Option<Vec<i64>>,
+    pids: Option<Vec<i64>>,
+    pid: Option<i64>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct AsiQuery {
-    pub column_code: Option<String>,
-    pub group_code: Option<String>,
-    pub parent_group_code: Option<String>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    column_code: Option<String>,
+    group_code: Option<String>,
+    parent_group_code: Option<String>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct LogQuery {}
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct EventQuery {}

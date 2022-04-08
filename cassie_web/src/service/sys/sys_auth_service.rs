@@ -38,12 +38,12 @@ impl SysAuthService {
         /*验证码 验证*/
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let user: Option<SysUser> = rb
-            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::username(), &arg.username))
+            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::username(), &arg.username()))
             .await?;
         let user = user.ok_or_else(|| {
             Error::from(format!(
                 "账号:{} 不存在!",
-                arg.username.clone().unwrap_or_default()
+                arg.username().clone().unwrap_or_default()
             ))
         })?;
         if user.status.eq(&Some(0)) {
@@ -54,7 +54,7 @@ impl SysAuthService {
             user.password
                 .as_ref()
                 .ok_or_else(|| Error::from("错误的用户数据，密码为空!"))?,
-            arg.password
+            arg.password()
                 .as_ref()
                 .ok_or_else(|| Error::from("密码不能为空"))?,
         ) {
@@ -68,7 +68,7 @@ impl SysAuthService {
             operation: Some("0".to_string()),
             user_agent: Some("admin".to_string()),
             ip: None,
-            creator_name: arg.username.clone(),
+            creator_name: arg.username().clone(),
             creator: user.id.clone(),
         };
         fire_event(event).await;
@@ -84,9 +84,9 @@ impl SysAuthService {
     pub async fn get_user_info_by_token(&self, token: &JWTToken) -> Result<SignInVO> {
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let user: Option<SysUser> = rb
-            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::id(), &token.id))
+            .fetch_by_wrapper(rb.new_wrapper().eq(SysUser::id(), &token.id()))
             .await?;
-        let user = user.ok_or_else(|| Error::from(format!("账号:{} 不存在!", token.username)))?;
+        let user = user.ok_or_else(|| Error::from(format!("账号:{} 不存在!", token.username())))?;
         return self.get_user_info(&user).await;
     }
     /**
@@ -105,19 +105,16 @@ impl SysAuthService {
             .id
             .clone()
             .ok_or_else(|| Error::from("错误的用户数据，id为空!"))?;
-        let mut sign_vo = SignInVO {
-            user: Some(user.clone().into()),
-            access_token: String::new(),
-        };
+        let mut sign_vo = SignInVO::default();
+        sign_vo.set_user(Some(user.clone().into()));
         //提前查找所有权限，避免在各个函数方法中重复查找
-        let jwt_token = JWTToken {
-            id: user_id,
-            super_admin: user.super_admin.clone().unwrap_or_default(),
-            username: user.username.clone().unwrap_or(String::new()),
-            agency_code: agency_code.unwrap_or_default(),
-            exp: DateTimeNative::now().timestamp_millis() as usize,
-        };
-        sign_vo.access_token = jwt_token.create_token(&cassie_config.jwt_secret)?;
+        let mut jwt_token = JWTToken::default();
+        jwt_token.set_id(user_id);
+        jwt_token.set_super_admin(user.super_admin.clone().unwrap_or_default());
+        jwt_token.set_username(user.username.clone().unwrap_or_default());
+        jwt_token.set_agency_code(agency_code.clone().unwrap_or_default());
+        jwt_token.set_exp(DateTimeNative::now().timestamp_millis() as usize);
+        sign_vo.set_access_token(jwt_token.create_token(&cassie_config.jwt_secret)?);
         return Ok(sign_vo);
     }
 }

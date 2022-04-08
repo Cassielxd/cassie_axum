@@ -9,10 +9,10 @@ pub fn validate_value(
     values: &HashMap<String, String>,
 ) -> Result<()> {
     for cloumn in columns {
-        if cloumn.is_required.clone().unwrap() == "Y".to_string()
-            && !values.contains_key(&cloumn.column_code.clone().unwrap())
+        if cloumn.is_required().clone().unwrap() == "Y".to_string()
+            && !values.contains_key(&cloumn.column_code().clone().unwrap())
         {
-            let msg = format!("列{}不能为空!", cloumn.column_code.clone().unwrap());
+            let msg = format!("列{}不能为空!", cloumn.column_code().clone().unwrap());
             return Err(Error::E(msg));
         }
     }

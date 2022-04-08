@@ -7,3 +7,4 @@ edition = "2021"
 [lib]
 proc-macro = true
 [dependencies]
+sqlparser = "0.15.0"

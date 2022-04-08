@@ -7,6 +7,7 @@ pub async fn user_menu_list(
     rb: &mut RbatisExecutor<'_, '_>,
     user_id: &str,
     t: &str,
+    agency_code: &str,
 ) -> Option<Vec<SysMenu>> {
     todo!()
 }

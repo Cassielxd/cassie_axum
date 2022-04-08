@@ -1,9 +1,12 @@
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+use getset::{CopyGetters, Getters, Setters};
+
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
 pub struct NacosConfig {
     pub nacos_flag: bool,
     pub nacos_server: String,
     pub application_name: String,
 }
+
 //add value to config
 impl NacosConfig {
     pub fn validate(&self) {
@@ -17,20 +20,20 @@ impl NacosConfig {
         }
     }
 }
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
 pub struct ServerConfig {
     ///当前服务地址
     pub host: String,
     pub port: String,
 }
 
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
 pub struct TenantConfig {
     pub enable: bool,
     pub column: String,
     pub ignore_table: Vec<String>,
 }
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
 pub struct OSSConfig {
     pub key_id: String,
     pub key_secret: String,
@@ -51,10 +54,11 @@ impl OSSConfig {
 }
 
 ///服务启动配置
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
 pub struct ApplicationConfig {
     pub debug: bool,
     ///redis地址
+    #[getset(get_copy = "pub", set = "pub", get_mut = "pub")]
     pub redis_url: String,
     //mongodb_url地址
     pub mongodb_url: String,

@@ -7,3 +7,5 @@ pub mod request;
 pub mod vo;
 #[macro_use]
 extern crate rbatis;
+#[macro_use]
+extern crate getset;

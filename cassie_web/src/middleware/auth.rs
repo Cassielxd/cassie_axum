@@ -55,16 +55,16 @@ where
                 Ok(data) => {
                     let data1 = data.clone();
                     APPLICATION_CONTEXT.set_local::<RequestModel, _>(move || RequestModel {
-                        uid: data1.id.clone(),
-                        username: data1.username.clone(),
-                        agency_code: data1.agency_code.clone(),
+                        uid: data1.id().clone(),
+                        username: data1.username().clone(),
+                        agency_code: data1.agency_code().clone(),
                         product_code: "".to_string(),
-                        super_admin: data1.super_admin,
+                        super_admin: data1.super_admin().clone(),
                     });
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
-                        uid: data.id.to_string(),
-                        agency_code: Option::from(data.agency_code),
+                        uid: data.id().to_string(),
+                        agency_code: Option::from(data.agency_code().clone()),
                     };
                     /*获取验证的  casbin_service*/
                     let service = APPLICATION_CONTEXT.get::<CasbinService>();

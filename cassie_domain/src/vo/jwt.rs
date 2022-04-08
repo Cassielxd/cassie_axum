@@ -9,18 +9,19 @@ use serde::{Deserialize, Serialize};
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
 pub struct JWTToken {
     //账号id
-    pub id: i64,
+    id: i64,
     //是否超级管理员
-    pub super_admin: i32,
+    super_admin: i32,
     //账号
-    pub username: String,
+    username: String,
     //租户编码
-    pub agency_code: String,
+    agency_code: String,
     //过期时间
-    pub exp: usize,
+    exp: usize,
 }
 
 impl JWTToken {

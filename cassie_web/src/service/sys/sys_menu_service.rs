@@ -47,10 +47,10 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
     fn get_wrapper(arg: &SysMenuQuery) -> Wrapper {
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let mut wrapper = rb.new_wrapper();
-        if let Some(id_list) = &arg.ids {
+        if let Some(id_list) = &arg.ids() {
             wrapper = wrapper.r#in(SysMenu::id(), id_list);
         }
-        if let Some(id_list) = &arg.pids {
+        if let Some(id_list) = &arg.pids() {
             wrapper = wrapper.r#in(SysMenu::pid(), id_list);
         }
         wrapper
@@ -63,20 +63,30 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
 }
 impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
     fn set_children(&self, arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
-        arg.children = childs;
+        arg.set_children(childs);
     }
 }
 
 //获取用户的菜单
 #[cached(name = "USER_MENU_LIST", time = 60, result = true, size = 100)]
-pub async fn get_user_menu_list(uid: String, super_admin: i32) -> Result<Vec<SysMenuDTO>> {
+pub async fn get_user_menu_list(
+    uid: String,
+    super_admin: i32,
+    agency_code: String,
+) -> Result<Vec<SysMenuDTO>> {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+    print!("{}", super_admin);
     let result = if super_admin > 0 {
         menu_list(&mut rb.as_executor(), "0").await.unwrap()
     } else {
-        user_menu_list(&mut rb.as_executor(), uid.as_str(), "0")
-            .await
-            .unwrap()
+        user_menu_list(
+            &mut rb.as_executor(),
+            uid.as_str(),
+            "0",
+            agency_code.as_str(),
+        )
+        .await
+        .unwrap()
     };
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     Ok(sys_menu_service.build(result.unwrap()))

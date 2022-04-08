@@ -7,10 +7,11 @@ use serde::{Deserialize, Serialize};
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
 pub struct SignInVO {
-    pub user: Option<SysUserDTO>,
-    pub access_token: String,
+    user: Option<SysUserDTO>,
+    access_token: String,
 }
 
 impl ToString for SignInVO {

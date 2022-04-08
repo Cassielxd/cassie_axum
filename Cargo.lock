@@ -650,6 +650,7 @@ dependencies = [
 name = "cassie_config"
 version = "0.1.0"
 dependencies = [
+ "getset",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -660,6 +661,7 @@ name = "cassie_domain"
 version = "0.1.0"
 dependencies = [
  "cassie_common",
+ "getset",
  "jsonwebtoken",
  "rbatis",
  "rbson",
@@ -691,6 +693,9 @@ dependencies = [
 [[package]]
 name = "cassie_tests"
 version = "0.1.0"
+dependencies = [
+ "sqlparser",
+]
 
 [[package]]
 name = "cassie_upload"
@@ -1444,6 +1449,18 @@ dependencies = [
  "cfg-if 1.0.0",
  "libc",
  "wasi 0.10.2+wasi-snapshot-preview1",
+]
+
+[[package]]
+name = "getset"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e45727250e75cc04ff2846a66397da8ef2b3db8e40e0cef4df67950a07621eb9"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

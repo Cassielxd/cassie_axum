@@ -44,8 +44,8 @@ impl SysUserService {
     }
     //保存用户
     pub async fn save_info(&self, arg: SysUserDTO) {
-        let password = PasswordEncoder::encode(&arg.password.clone().unwrap().as_str());
-        let role_id = arg.role_id.clone();
+        let password = PasswordEncoder::encode(&arg.password().clone().unwrap().as_str());
+        let role_id = arg.role_id().clone();
         let mut entity: SysUser = arg.into();
         let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
 

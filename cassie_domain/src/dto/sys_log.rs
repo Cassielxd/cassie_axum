@@ -1,15 +1,16 @@
 use crate::entity::log::{SysLogLogin, SysLogOperation};
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysLogLoginDto {
-    pub id: Option<i64>,
-    pub operation: Option<String>,
-    pub user_agent: Option<String>,
-    pub ip: Option<String>,
-    pub creator_name: Option<String>,
-    pub creator: Option<i64>,
-    pub create_date: Option<DateTimeNative>,
+    id: Option<i64>,
+    operation: Option<String>,
+    user_agent: Option<String>,
+    ip: Option<String>,
+    creator_name: Option<String>,
+    creator: Option<i64>,
+    create_date: Option<DateTimeNative>,
 }
 
 impl From<SysLogLogin> for SysLogLoginDto {
@@ -40,19 +41,20 @@ impl Into<SysLogLogin> for SysLogLoginDto {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[getset(get = "pub", set = "pub")]
 pub struct SysLogOperationDto {
-    pub id: Option<i64>,
-    pub operation: Option<String>,
-    pub request_uri: Option<String>,
-    pub ip: Option<String>,
-    pub creator_name: Option<String>,
-    pub request_params: Option<String>,
-    pub request_method: Option<String>,
-    pub request_time: Option<String>,
-    pub status: Option<i8>,
-    pub creator: Option<i64>,
-    pub create_date: Option<DateTimeNative>,
+    id: Option<i64>,
+    operation: Option<String>,
+    request_uri: Option<String>,
+    ip: Option<String>,
+    creator_name: Option<String>,
+    request_params: Option<String>,
+    request_method: Option<String>,
+    request_time: Option<String>,
+    status: Option<i8>,
+    creator: Option<i64>,
+    create_date: Option<DateTimeNative>,
 }
 impl Into<SysLogOperation> for SysLogOperationDto {
     fn into(self) -> SysLogOperation {
