@@ -48,7 +48,7 @@ impl RulesContext {
         let ast = self.ast_map.get(id);
         match ast {
             Some(ast) => {
-                self.engine.run_ast(ast);
+                let _res = self.engine.run_ast(ast);
             }
             None => {
                 println!("{}", "没有找到规则");
@@ -60,7 +60,7 @@ impl RulesContext {
         let ast = self.ast_map.get(id);
         match ast {
             Some(ast) => {
-                self.engine.run_ast_with_scope(scope, ast);
+                let _res = self.engine.run_ast_with_scope(scope, ast);
             }
             None => {
                 println!("{}", "没有找到规则");
