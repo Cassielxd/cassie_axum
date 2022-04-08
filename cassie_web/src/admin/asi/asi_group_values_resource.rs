@@ -1,5 +1,5 @@
 use crate::{
-    service::{crud_service::CrudService, ServiceContext},
+    service::{asi::asi_service::AsiGroupService, crud_service::CrudService},
     APPLICATION_CONTEXT,
 };
 use axum::{
@@ -13,12 +13,12 @@ use cassie_domain::request::AsiQuery;
 use std::collections::HashMap;
 
 pub async fn list(Path(id): Path<String>, arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     let arg = arg.unwrap();
-    let vo = context.asi_service.list(&arg).await;
+    let vo = asi_service.list(&arg).await;
     if let Ok(r) = vo {
         let group = r.get(0);
-        let r = context.asi_service.value_list(&id, &group.unwrap()).await;
+        let r = asi_service.value_list(&id, &group.unwrap()).await;
         return RespVO::from_result(&r).resp_json();
     }
     RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json()
@@ -28,9 +28,9 @@ pub async fn save_from(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String, HashMap<String, String>>>,
 ) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     /*执行验证逻辑*/
-    let res = context.asi_service.save_values_for_from(id, arg).await;
+    let res = asi_service.save_values_for_from(id, arg).await;
     RespVO::from_result(&res).resp_json()
 }
 
@@ -38,9 +38,9 @@ pub async fn save_table(
     Path(id): Path<String>,
     Json(arg): Json<HashMap<String, Vec<HashMap<String, String>>>>,
 ) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     /*执行验证逻辑*/
-    let res = context.asi_service.save_values_for_table(id, arg).await;
+    let res = asi_service.save_values_for_table(id, arg).await;
     RespVO::from_result(&res).resp_json()
 }
 

@@ -1,5 +1,5 @@
 use crate::service::crud_service::CrudService;
-use crate::service::ServiceContext;
+use crate::service::sys_user_service::SysUserService;
 use crate::APPLICATION_CONTEXT;
 use axum::extract::{Path, Query};
 use axum::response::IntoResponse;
@@ -19,10 +19,9 @@ use validator::Validate;
  *email:348040933@qq.com
  */
 pub async fn page(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
     let arg = arg.unwrap();
-    let vo = context
-        .sys_user_service
+    let vo = sys_user_service
         .page(
             &arg,
             PageData {
@@ -41,9 +40,9 @@ pub async fn page(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn list(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
     let arg = arg.unwrap();
-    let vo = context.sys_user_service.list(&arg).await;
+    let vo = sys_user_service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
 /**
@@ -53,16 +52,15 @@ pub async fn list(arg: Option<Query<SysUserQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let vo = context.sys_user_service.get(id).await;
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
+    let vo = sys_user_service.get(id).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn info() -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
     let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-    let mut vo = context
-        .sys_user_service
+    let mut vo = sys_user_service
         .get(request_model.uid.to_string())
         .await
         .unwrap();
@@ -77,20 +75,20 @@ pub async fn info() -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
     let user = arg;
     if let Err(e) = user.validate() {
         return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
 
-    context.sys_user_service.save_info(user).await;
+    sys_user_service.save_info(user).await;
 
     return RespVO::from(&"保存成功".to_string()).resp_json();
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    context.sys_user_service.delete_user(id).await;
+    let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
+    sys_user_service.delete_user(id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 pub fn init_router() -> Router {

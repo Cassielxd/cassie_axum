@@ -1,5 +1,4 @@
 use super::crud_service::CrudService;
-use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
 use cached::proc_macro::cached;
 use cassie_common::error::Result;
@@ -29,9 +28,10 @@ pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
         order: None,
         order_field: None,
     };
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let mut dict = context.sys_dict_type_service.list(&q).await?;
-    let dict_value = context.sys_dict_value_service.list(&q).await?;
+    let sys_dict_type_service = APPLICATION_CONTEXT.get::<SysDictTypeService>();
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
+    let mut dict = sys_dict_type_service.list(&q).await?;
+    let dict_value = sys_dict_value_service.list(&q).await?;
     for mut d in &mut dict {
         let mut data = vec![];
         for dv in &dict_value {

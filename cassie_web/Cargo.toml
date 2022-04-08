@@ -66,6 +66,7 @@ cassie_common = { path = "../cassie_common" }
 cassie_config = { path = "../cassie_config" }
 cassie_orm = { path = "../cassie_orm" }
 cassie_upload = { path = "../cassie_upload" }
+cassie_rules = { path = "../cassie_rules" }
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
 [profile.release]

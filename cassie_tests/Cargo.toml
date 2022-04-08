@@ -7,8 +7,3 @@ edition = "2021"
 [lib]
 proc-macro = true
 [dependencies]
-
-pharos = "0.5.3"
-futures = { version="^0.3"}
-async-std = {version="1.10.0",features = ["attributes"]}
-tokio = { version = "1", features = ["full", "fs", "io-util", "sync"] }

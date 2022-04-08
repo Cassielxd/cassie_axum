@@ -1,5 +1,5 @@
 use crate::service::crud_service::CrudService;
-use crate::{ServiceContext, APPLICATION_CONTEXT};
+use crate::APPLICATION_CONTEXT;
 use cached::proc_macro::cached;
 use cassie_common::error::Result;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
@@ -78,6 +78,6 @@ pub async fn get_user_menu_list(uid: String, super_admin: i32) -> Result<Vec<Sys
             .await
             .unwrap()
     };
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    Ok(context.sys_menu_service.build(result.unwrap()))
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
+    Ok(sys_menu_service.build(result.unwrap()))
 }

@@ -1,5 +1,3 @@
-use rbatis::DateTimeNative;
-
 #[crud_table(table_name:sys_event_config)]
 #[derive(Clone, Debug)]
 pub struct EventConfig {

@@ -11,7 +11,7 @@ pub fn init_log() {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //create log dir
     std::fs::create_dir_all(&cassie_config.log_dir);
-    //init fast log
+    //initialize fast log
     fast_log::init_split_log(
         &cassie_config.log_dir,
         str_to_temp_size(&cassie_config.log_temp_size),

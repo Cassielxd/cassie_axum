@@ -1,6 +1,5 @@
 use crate::service::crud_service::CrudService;
-use crate::service::sys_menu_service::get_user_menu_list;
-use crate::service::ServiceContext;
+use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
 use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
 use axum::{
@@ -21,10 +20,9 @@ use cassie_domain::request::{RequestModel, SysMenuQuery};
  */
 
 pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let arg = arg.unwrap();
-    let vo = context
-        .sys_menu_service
+    let vo = sys_menu_service
         .page(
             &arg,
             PageData {
@@ -37,13 +35,13 @@ pub async fn page(arg: Option<Query<SysMenuQuery>>) -> impl IntoResponse {
 }
 
 pub async fn list() -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let vo = context.sys_menu_service.menu_list().await;
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
+    let vo = sys_menu_service.menu_list().await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn nav() -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
     let vo = get_user_menu_list(
         request_model.uid.clone().to_string(),
@@ -60,13 +58,13 @@ pub async fn nav() -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let dto = context.sys_menu_service.get(id).await;
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
+    let dto = sys_menu_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    context.sys_menu_service.del(&id).await;
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
+    sys_menu_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
@@ -78,8 +76,8 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
  */
 
 pub async fn save(Json(arg): Json<SysMenuDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    context.sys_menu_service.save_or_update(arg).await;
+    let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
+    sys_menu_service.save_or_update(arg).await;
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
 

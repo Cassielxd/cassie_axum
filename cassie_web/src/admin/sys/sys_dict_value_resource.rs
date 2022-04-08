@@ -1,5 +1,5 @@
 use crate::service::crud_service::CrudService;
-use crate::service::ServiceContext;
+use crate::service::sys_dict_service::SysDictDataService;
 use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
 use axum::Json;
@@ -19,10 +19,9 @@ use cassie_domain::request::SysDictQuery;
  */
 
 pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
     let arg = arg.unwrap();
-    let vo = context
-        .sys_dict_value_service
+    let vo = sys_dict_value_service
         .page(
             &arg,
             PageData {
@@ -41,8 +40,8 @@ pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let dto = context.sys_dict_value_service.get(id).await;
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
+    let dto = sys_dict_value_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
 
@@ -53,26 +52,25 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
  *email:348040933@qq.com
  */
 pub async fn save(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
     let mut entity = arg.into();
-    let vo = context.sys_dict_value_service.save(&mut entity).await;
+    let vo = sys_dict_value_service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<SysDictDataDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
     let id = arg.id.clone();
     let mut entity = arg.into();
-    context
-        .sys_dict_value_service
+    sys_dict_value_service
         .update_by_id(id.unwrap().to_string(), &mut entity)
         .await;
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    context.sys_dict_value_service.del(&id).await;
+    let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
+    sys_dict_value_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 

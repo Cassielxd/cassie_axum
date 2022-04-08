@@ -1,5 +1,6 @@
+use crate::service::asi::asi_service::AsiGroupService;
 use crate::service::crud_service::CrudService;
-use crate::{service::ServiceContext, APPLICATION_CONTEXT};
+use crate::APPLICATION_CONTEXT;
 use axum::{
     extract::{Path, Query},
     response::IntoResponse,
@@ -9,41 +10,40 @@ use axum::{
 use cassie_common::RespVO;
 use cassie_domain::{dto::asi_dto::AsiGroupDTO, request::AsiQuery};
 pub async fn page(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     let arg = arg.unwrap();
-    let vo = context.asi_service.get_group_page(arg.0).await;
+    let vo = asi_service.get_group_page(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 pub async fn list(arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     let arg = arg.unwrap();
-    let vo = context.asi_service.get_group_list(arg.0).await;
+    let vo = asi_service.get_group_list(arg.0).await;
     RespVO::from_result(&vo).resp_json()
 }
 
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let dto = context.asi_service.get(id).await;
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
+    let dto = asi_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    context.asi_service.del(&id).await;
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
+    asi_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
 
 pub async fn save(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
-    let res = context.asi_service.save_group(arg).await;
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
+    let res = asi_service.save_group(arg).await;
     RespVO::from_result(&res).resp_json()
 }
 
 pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
-    let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+    let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
     let id = arg.id.clone();
-    context
-        .asi_service
+    asi_service
         .update_by_id(id.unwrap().to_string(), &mut arg.into())
         .await;
     RespVO::from(&"更新成功".to_string()).resp_json()

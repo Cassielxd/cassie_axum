@@ -1,6 +1,6 @@
 use super::crud_service::CrudService;
+use super::sys_menu_service::SysMenuService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::service::ServiceContext;
 use crate::APPLICATION_CONTEXT;
 use casbin::MgmtApi;
 use cassie_domain::entity::sys_entitys::CommonField;
@@ -59,11 +59,11 @@ impl SysRoleMenuService {
         };
         let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        let context = APPLICATION_CONTEXT.get::<ServiceContext>();
+        let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
         let r_list = get_menu_list_by_ids(&mut rb.as_executor(), &menu_id_list.clone().unwrap())
             .await
             .unwrap();
-        let menus = context.sys_menu_service.list(&query).await;
+        let menus = sys_menu_service.list(&query).await;
         let mut rules = vec![];
         let mut vec = Vec::new();
         for menu in r_list.unwrap() {

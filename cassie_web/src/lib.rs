@@ -19,18 +19,19 @@ pub mod routers;
 pub mod service;
 //前端接口
 pub mod api;
+pub mod initialize;
 pub mod interceptor;
 pub mod observe;
 
 use crate::cici_casbin::casbin_service::CasbinService;
+use crate::initialize::casbin::init_casbin;
+use crate::initialize::config::init_config;
+use crate::initialize::database::init_database;
+use crate::initialize::event::init_event_bus;
+use crate::initialize::rules::init_rules;
+use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
-use crate::service::ServiceContext;
-use cassie_config::config::ApplicationConfig;
-use cassie_orm::dao::{init_mongodb, init_rbatis};
-use mongodb::Database;
 use observe::{consumer::init_consumer, event::CassieEvent};
-use pharos::SharedPharos;
-use rbatis::rbatis::Rbatis;
 use state::Container;
 /*
 整个项目上下文ApplicationContext
@@ -52,39 +53,13 @@ pub async fn init_context() {
     init_database().await;
     println!("---------------------------------------DataBase配置完成------------------------------------------------------");
     //第三步初始化所有的 服务类
-    APPLICATION_CONTEXT.set::<ServiceContext>(ServiceContext::new());
+    init_service().await;
     println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
     //第三步初始化casbinCContext
-    APPLICATION_CONTEXT.set::<CasbinService>(CasbinService::default());
+    init_casbin().await;
     println!("---------------------------------------CasbinService配置完成----------------------------------------------");
+    init_rules().await;
+    println!("---------------------------------------RulesContext配置完成----------------------------------------------");
     init_event_bus().await;
     println!("---------------------------------------EventBus初始化完成------------------------------------------------");
-}
-
-//初始化 event bus事件处理器
-pub async fn init_event_bus() {
-    APPLICATION_CONTEXT.set::<SharedPharos<CassieEvent>>(SharedPharos::default());
-    tokio::task::spawn(init_consumer());
-}
-
-pub async fn init_config() {
-    let yml_data = include_str!("../application.yml");
-    let config = ApplicationConfig::new(yml_data);
-
-    APPLICATION_CONTEXT.set::<ApplicationConfig>(config);
-}
-
-pub async fn init_database() {
-    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-
-    let mut rbatis = init_rbatis(config).await;
-    rbatis.add_sql_intercept(AgencyInterceptor {
-        enable: config.tenant.enable.clone(),
-        column: config.tenant.column.clone(),
-        ignore_table: config.tenant.ignore_table.clone(),
-    });
-    APPLICATION_CONTEXT.set::<Rbatis>(rbatis);
-
-    let mdb = init_mongodb(config).await;
-    APPLICATION_CONTEXT.set::<Database>(mdb);
 }

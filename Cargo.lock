@@ -691,12 +691,6 @@ dependencies = [
 [[package]]
 name = "cassie_tests"
 version = "0.1.0"
-dependencies = [
- "async-std",
- "futures",
- "pharos",
- "tokio",
-]
 
 [[package]]
 name = "cassie_upload"
@@ -725,6 +719,7 @@ dependencies = [
  "cassie_config",
  "cassie_domain",
  "cassie_orm",
+ "cassie_rules",
  "cassie_upload",
  "chrono",
  "fast_log",
