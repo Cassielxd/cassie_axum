@@ -57,7 +57,7 @@ pub fn intercept(sql: String) -> bool {
         match data {
             sqlparser::ast::Statement::Query(q) => {
                 if let sqlparser::ast::SetExpr::Select(select) = &q.body {
-                    let mut select1 = select.clone().from;
+                    let  select1 = select.clone().from;
                     for elem in select1.iter() {
                         let relation = &elem.relation;
                         match relation {
@@ -103,7 +103,7 @@ pub fn intercept(sql: String) -> bool {
             _ => {}
         }
     }
-    false
+    true
 }
 
 //租户化sql生成
