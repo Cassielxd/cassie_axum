@@ -5,13 +5,13 @@
  Source Server Type    : MySQL
  Source Server Version : 50726
  Source Host           : localhost:3306
- Source Schema         : cassie_admin
+ Source Schema         : rivet_admin
 
  Target Server Type    : MySQL
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 09/02/2022 15:32:34
+ Date: 09/04/2022 18:09:10
 */
 
 SET NAMES utf8mb4;
@@ -22,28 +22,32 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group`;
 CREATE TABLE `asi_group`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据ID',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据ID',
   `cate_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类id',
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据组名称',
   `info` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据提示',
-  `group_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '数据字段',
+  `group_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '分组code',
+  `parent_group_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '父分组code',
+  `group_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'TABLE/FROM',
   `agency_code` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `config_name`(`group_code`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组合数据表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '组合数据表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of asi_group
 -- ----------------------------
-INSERT INTO `asi_group` VALUES (326654624834654208, 1, '商品表单', '商品评价使用', 'pro_group', 'superadmin');
-INSERT INTO `asi_group` VALUES (326896622560743424, 2, '订单里使用表单', '订单里使用评价使用', 'order_group', 'superadmin');
+INSERT INTO `asi_group` VALUES (1, 1, '轮播图', '描述', 'HOME_BANNER', 'HOME', 'TABLE', 'SUPERADMIN');
+INSERT INTO `asi_group` VALUES (2, 2, '弹窗广告', '首页弹窗广告', 'HOME_AD', 'HOME', 'FROM', 'SUPERADMIN');
+INSERT INTO `asi_group` VALUES (3, 0, '首页', '手机端首页展示', 'HOME', '0', NULL, 'SUPERADMIN');
+INSERT INTO `asi_group` VALUES (4, 0, '测试业务分组', '测试业务分组', 'test_group', '0', 'TABLE', 'SUPERADMIN');
 
 -- ----------------------------
 -- Table structure for asi_group_column
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group_column`;
 CREATE TABLE `asi_group_column`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据id',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据id',
   `agency_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户code',
   `product_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `group_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分组code',
@@ -56,24 +60,37 @@ CREATE TABLE `asi_group_column`  (
   `display_order` int(11) NULL DEFAULT NULL COMMENT '显示顺序',
   `default_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认value',
   `display_length` int(11) NULL DEFAULT NULL COMMENT '显示长度',
-  `is_display` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '是否显示',
+  `is_display` int(1) NULL DEFAULT NULL COMMENT '是否显示',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列定义' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列定义' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of asi_group_column
+-- ----------------------------
+INSERT INTO `asi_group_column` VALUES (1, 'superadmin', 'text', 'HOME_BANNER', 'image', '显示图片', 'Img', '', 100, 'Y', 1, '', 100, 2);
+INSERT INTO `asi_group_column` VALUES (3, 'superadmin', 'text', 'HOME_AD', 'name', '弹窗名称', 'String', '活动', 100, 'Y', 1, '', 100, 2);
+INSERT INTO `asi_group_column` VALUES (6, 'superadmin', NULL, 'test_group', 'name', '姓名', 'String', '', 100, 'Y', 0, NULL, NULL, NULL);
+INSERT INTO `asi_group_column` VALUES (7, 'superadmin', NULL, 'test_group', 'age', '年龄', 'String', '', 100, 'Y', 0, NULL, NULL, NULL);
+INSERT INTO `asi_group_column` VALUES (8, 'superadmin', NULL, 'test_group', 'school', '学校', 'String', '', 100, 'Y', 0, NULL, NULL, NULL);
+INSERT INTO `asi_group_column` VALUES (9, 'superadmin', NULL, 'test_group', 'class', '班级', 'String', '', 100, 'Y', 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for asi_group_values
 -- ----------------------------
 DROP TABLE IF EXISTS `asi_group_values`;
 CREATE TABLE `asi_group_values`  (
-  `id` bigint(22) NOT NULL COMMENT '组合数据id',
+  `id` bigint(22) NOT NULL AUTO_INCREMENT COMMENT '组合数据id',
   `agency_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户code',
   `product_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `group_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分组code',
   `column_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '列code',
   `column_value` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '值',
   `ref_id` bigint(32) NULL DEFAULT NULL COMMENT '业务主键',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列数据' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `group_code`(`group_code`) USING BTREE,
+  INDEX `ref_id`(`ref_id`) USING BTREE,
+  INDEX `group_code_ref_id`(`group_code`, `ref_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组合数据列数据' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for casbin_rule
@@ -85,42 +102,42 @@ CREATE TABLE `casbin_rule`  (
   `v0` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `v1` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `v2` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `v3` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `v4` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `v5` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `v3` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
+  `v4` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
+  `v5` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_key_sqlx_adapter`(`ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 196 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of casbin_rule
 -- ----------------------------
--- ----------------------------
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (1, 'g', '1067246875800000002', 'admin', 'superadmin', '', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (3, 'p', 'admin', 'superadmin', '/', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (29, 'p', 'admin', 'superadmin', '/asi/column', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (28, 'p', 'admin', 'superadmin', '/asi/column/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (27, 'p', 'admin', 'superadmin', '/asi/column/save/:group_id', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (25, 'p', 'admin', 'superadmin', '/asi/group', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (26, 'p', 'admin', 'superadmin', '/asi/group/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (24, 'p', 'admin', 'superadmin', '/asi/group/save', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (18, 'p', 'admin', 'superadmin', '/dict/type', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (20, 'p', 'admin', 'superadmin', '/dict/type/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (19, 'p', 'admin', 'superadmin', '/dict/type/save', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (21, 'p', 'admin', 'superadmin', '/dict/value', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (23, 'p', 'admin', 'superadmin', '/dict/value/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (22, 'p', 'admin', 'superadmin', '/dict/value/save', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (14, 'p', 'admin', 'superadmin', '/params', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (16, 'p', 'admin', 'superadmin', '/params/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (15, 'p', 'admin', 'superadmin', '/params/list', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (17, 'p', 'admin', 'superadmin', '/params/save', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (6, 'p', 'admin', 'superadmin', '/role', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (13, 'p', 'admin', 'superadmin', '/role/casbin_test', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (12, 'p', 'admin', 'superadmin', '/role/save', 'POST', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (2, 'p', 'admin', 'superadmin', '/user', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (7, 'p', 'admin', 'superadmin', '/user/:id', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (4, 'p', 'admin', 'superadmin', '/user/list', 'GET', '', '');
-INSERT INTO `casbin_rule`(`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`) VALUES (5, 'p', 'admin', 'superadmin', '/user/save', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (195, 'g', '2', '19', 'superadmin', '', '', '');
+INSERT INTO `casbin_rule` VALUES (183, 'p', '19', 'superadmin', '/dict/type', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (184, 'p', '19', 'superadmin', '/dict/type', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (185, 'p', '19', 'superadmin', '/dict/type', 'PUT', '', '');
+INSERT INTO `casbin_rule` VALUES (186, 'p', '19', 'superadmin', '/dict/type/:id', 'DELETE', '', '');
+INSERT INTO `casbin_rule` VALUES (187, 'p', '19', 'superadmin', '/dict/type/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (194, 'p', '19', 'superadmin', '/dict/type/all', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (188, 'p', '19', 'superadmin', '/dict/value', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (189, 'p', '19', 'superadmin', '/dict/value', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (190, 'p', '19', 'superadmin', '/dict/value', 'PUT', '', '');
+INSERT INTO `casbin_rule` VALUES (192, 'p', '19', 'superadmin', '/dict/value/:id', 'DELETE', '', '');
+INSERT INTO `casbin_rule` VALUES (191, 'p', '19', 'superadmin', '/dict/value/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (177, 'p', '19', 'superadmin', '/menu', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (175, 'p', '19', 'superadmin', '/menu', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (176, 'p', '19', 'superadmin', '/menu', 'PUT', '', '');
+INSERT INTO `casbin_rule` VALUES (174, 'p', '19', 'superadmin', '/menu/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (193, 'p', '19', 'superadmin', '/menu/nav', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (178, 'p', '19', 'superadmin', '/params', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (179, 'p', '19', 'superadmin', '/params', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (180, 'p', '19', 'superadmin', '/params', 'PUT', '', '');
+INSERT INTO `casbin_rule` VALUES (181, 'p', '19', 'superadmin', '/params/:id', 'DELETE', '', '');
+INSERT INTO `casbin_rule` VALUES (182, 'p', '19', 'superadmin', '/params/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (171, 'p', '19', 'superadmin', '/role', 'POST', '', '');
+INSERT INTO `casbin_rule` VALUES (172, 'p', '19', 'superadmin', '/role', 'PUT', '', '');
+INSERT INTO `casbin_rule` VALUES (173, 'p', '19', 'superadmin', '/role/:id', 'GET', '', '');
+INSERT INTO `casbin_rule` VALUES (170, 'p', '19', 'superadmin', '/user/info', 'GET', '', '');
 
 -- ----------------------------
 -- Table structure for cicc_wechat_user
@@ -606,38 +623,38 @@ CREATE TABLE `cici_system_config_tab`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '配置分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for mp_account
+-- Table structure for sys_attachment
 -- ----------------------------
-DROP TABLE IF EXISTS `mp_account`;
-CREATE TABLE `mp_account`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
-  `app_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppID',
-  `app_secret` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppSecret',
-  `token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'Token',
-  `aes_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'EncodingAESKey',
-  `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
-  `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
-  `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '公众号账号管理' ROW_FORMAT = Dynamic;
+DROP TABLE IF EXISTS `sys_attachment`;
+CREATE TABLE `sys_attachment`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `attachment_category_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '分类ID 0编辑器,1产品图片,2拼团图片,3砍价图片,4秒杀图片,5文章图片,6组合数据图',
+  `attachment_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '附件名称',
+  `attachment_src` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '附件路径',
+  `upload_type` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '图片上传类型 1本地 2七牛云 3OSS 4COS ',
+  `user_type` int(11) NOT NULL DEFAULT 0 COMMENT '图片上传模块类型 0总后台后台  > 1用户生成',
+  `uid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上传用户的 id',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `attachment_category_id`(`attachment_category_id`) USING BTREE,
+  INDEX `user_type`(`user_type`, `uid`, `upload_type`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '附件管理表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for mp_menu
+-- Table structure for sys_attachment_category
 -- ----------------------------
-DROP TABLE IF EXISTS `mp_menu`;
-CREATE TABLE `mp_menu`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
-  `menu` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单json数据',
-  `app_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'AppID',
-  `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
-  `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
-  `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `uk_app_id`(`app_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '公众号自定义菜单' ROW_FORMAT = Dynamic;
+DROP TABLE IF EXISTS `sys_attachment_category`;
+CREATE TABLE `sys_attachment_category`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '父级ID',
+  `path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '路径',
+  `attachment_category_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类名称',
+  `attachment_category_enname` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分类目录',
+  `sort` smallint(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
+  `mer_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '商户 id',
+  `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '附件分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_dept
@@ -676,7 +693,7 @@ INSERT INTO `sys_dept` VALUES (1067246875800000067, 1067246875800000062, '106724
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_data`;
 CREATE TABLE `sys_dict_data`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `dict_type_id` bigint(20) NOT NULL COMMENT '字典类型ID',
   `dict_label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典标签',
   `dict_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字典值',
@@ -686,32 +703,28 @@ CREATE TABLE `sys_dict_data`  (
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_dict_type_value`(`dict_type_id`, `dict_value`) USING BTREE,
   INDEX `idx_sort`(`sort`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典数据' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict_data
 -- ----------------------------
-INSERT INTO `sys_dict_data` VALUES (1160061112075464705, 1160061077912858625, '男', '0', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1160061146967879681, 1160061077912858625, '女', '1', '', 1, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1160061190127267841, 1160061077912858625, '保密', '2', '', 2, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1225814069634195457, 1225813644059140097, '公告', '0', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1225814107559092225, 1225813644059140097, '会议', '1', '', 1, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1225814271879340034, 1225813644059140097, '其他', '2', '', 2, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1341593562419445762, 1341593474355838978, '停用', '0', '', 1, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1341593595407646722, 1341593474355838978, '正常', '1', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1343069765549191170, 1343069688596295682, '已取消', '-1', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1343069839847092226, 1343069688596295682, '等待付款', '0', '', 1, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_data` VALUES (1343069914518286337, 1343069688596295682, '已完成', '1', '', 2, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10');
+INSERT INTO `sys_dict_data` VALUES (1, 1, '测试1', '1', '添加备注', 1, 1, '2022-03-10 02:40:09', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_data` VALUES (2, 2, '字符串', 'String', '', 1, 1, '2022-03-24 06:49:42', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_data` VALUES (3, 2, '下拉选择', 'Select', '', 2, 1, '2022-03-24 06:50:02', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_data` VALUES (4, 2, '图片', 'Img', '', 3, 1, '2022-03-24 06:50:37', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_data` VALUES (5, 2, '链接', 'Url', '', 5, 1, '2022-03-24 06:50:50', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_data` VALUES (6, 7, 'c1', 'c1', '', 0, 1, '2022-04-09 01:38:57', NULL, NULL, 'superadmin');
 
 -- ----------------------------
 -- Table structure for sys_dict_type
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_type`;
 CREATE TABLE `sys_dict_type`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `dict_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典类型',
   `dict_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '字典名称',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
@@ -720,17 +733,46 @@ CREATE TABLE `sys_dict_type`  (
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `dict_type`(`dict_type`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '字典类型' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_dict_type
 -- ----------------------------
-INSERT INTO `sys_dict_type` VALUES (1160061077912858625, 'gender', '性别', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_type` VALUES (1225813644059140097, 'notice_type', '站内通知-类型', '', 1, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_type` VALUES (1341593474355838978, 'post_status', '岗位管理状态', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
-INSERT INTO `sys_dict_type` VALUES (1343069688596295682, 'order_status', '订单状态', '', 0, 1067246875800000001, '2022-01-01 19:46:09', 1067246875800000001, '2022-01-01 19:46:09');
+INSERT INTO `sys_dict_type` VALUES (1, 'test', '测试', '开发调试', 1, 1, '2022-03-09 08:03:07', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (2, 'asi_colums_type', '数据类型', '动态表单业务分组类型', 0, 1, '2022-03-22 03:05:16', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (3, 'test1', 'test1', '', 0, 1, '2022-03-28 06:27:37', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (4, 'ai', 'ai', '', 0, 1, '2022-04-08 09:09:57', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (5, 'dadsadas', 'dasdas', '', 0, 1, '2022-04-08 11:25:06', NULL, NULL, NULL);
+INSERT INTO `sys_dict_type` VALUES (6, 'gdfgdfgdf', 'gfdgfd', '', 0, 1, '2022-04-08 11:27:16', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (7, 'sdsadasdsadsa', 'sadsadsadsa', '', 0, 1, '2022-04-08 11:36:14', NULL, NULL, 'superadmin');
+INSERT INTO `sys_dict_type` VALUES (8, 'asdsadas', 'sdasdsad', '', 0, 1, '2022-04-09 07:18:25', NULL, NULL, 'superadmin');
+
+-- ----------------------------
+-- Table structure for sys_event_config
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_event_config`;
+CREATE TABLE `sys_event_config`  (
+  `id` bigint(20) NOT NULL COMMENT '主键ID',
+  `STATUS` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '数据状态',
+  `EXTEND1` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '扩展字段1',
+  `EXTEND2` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '扩展字段2',
+  `EXTEND3` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '扩展字段3',
+  `DESCRIPTION` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '描述',
+  `AGENCY_CODE` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户CODE',
+  `path` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '要触发的资源path',
+  `RESOURCE_NAME` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '资源名称',
+  `OPRATE_DESCRIPTION` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作说明',
+  `EVENT_TYPE` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '\'事件类型(推送事件,自定义事件)',
+  `EVENT_CODE` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '事件CODE',
+  `EVENT_NAME` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '事件名称',
+  `EVENT_SCRIPT` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '事件脚本',
+  `LOCK_USER_ID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '当前持锁用户ID',
+  `NEED_PERSIST` tinyint(1) NULL DEFAULT NULL COMMENT '是否重试',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统事件配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_language
@@ -749,78 +791,78 @@ CREATE TABLE `sys_language`  (
 -- ----------------------------
 -- Records of sys_language
 -- ----------------------------
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000002, 'name', 'Authority Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000002, 'name', '权限管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000002, 'name', '權限管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000003, 'name', 'User Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000003, 'name', '用户管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000003, 'name', '用戶管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000004, 'name', 'View', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000004, 'name', '查看', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000004, 'name', '查看', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000005, 'name', 'Add', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000005, 'name', '新增', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000005, 'name', '新增', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000006, 'name', 'Edit', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000006, 'name', '修改', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000006, 'name', '修改', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000007, 'name', 'Delete', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000007, 'name', '删除', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000007, 'name', '刪除', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000008, 'name', 'Export', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000008, 'name', '导出', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000008, 'name', '導出', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000009, 'name', 'Department Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000009, 'name', '部门管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000009, 'name', '部門管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000010, 'name', 'View', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000010, 'name', '查看', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000010, 'name', '查看', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000011, 'name', 'Add', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000011, 'name', '新增', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000011, 'name', '新增', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000012, 'name', 'Edit', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000012, 'name', '修改', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000012, 'name', '修改', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000013, 'name', 'Delete', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000013, 'name', '删除', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000013, 'name', '刪除', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000014, 'name', 'Role Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000014, 'name', '角色管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000014, 'name', '角色管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000015, 'name', 'View', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000015, 'name', '查看', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000015, 'name', '查看', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000016, 'name', 'Add', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000016, 'name', '新增', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000016, 'name', '新增', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000017, 'name', 'Edit', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000017, 'name', '修改', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000017, 'name', '修改', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000018, 'name', 'Delete', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000018, 'name', '删除', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000018, 'name', '刪除', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000019, 'name', 'Setting', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000019, 'name', '系统设置', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000019, 'name', '系統設置', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000020, 'name', 'Menu Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000020, 'name', '菜单管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000020, 'name', '菜單管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000021, 'name', 'View', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000021, 'name', '查看', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000021, 'name', '查看', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000022, 'name', 'Add', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000022, 'name', '新增', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000022, 'name', '新增', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000023, 'name', 'Edit', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000023, 'name', '修改', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000023, 'name', '修改', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000024, 'name', 'Delete', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000024, 'name', '删除', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000024, 'name', '刪除', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000025, 'name', 'Parameter Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000025, 'name', '参数管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000025, 'name', '參數管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 2, 'name', 'Authority Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 2, 'name', '权限管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 2, 'name', '權限管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 3, 'name', 'User Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 3, 'name', '用户管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 3, 'name', '用戶管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 4, 'name', 'View', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 4, 'name', '查看', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 4, 'name', '查看', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 5, 'name', 'Add', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 5, 'name', '新增', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 5, 'name', '新增', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 6, 'name', 'Edit', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 6, 'name', '修改', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 6, 'name', '修改', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 7, 'name', 'Delete', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 7, 'name', '删除', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 7, 'name', '刪除', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 8, 'name', 'Export', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 8, 'name', '导出', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 8, 'name', '導出', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 9, 'name', 'Department Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 9, 'name', '部门管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 9, 'name', '部門管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 10, 'name', 'View', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 10, 'name', '查看', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 10, 'name', '查看', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 11, 'name', 'Add', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 11, 'name', '新增', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 11, 'name', '新增', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 12, 'name', 'Edit', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 12, 'name', '修改', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 12, 'name', '修改', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 13, 'name', 'Delete', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 13, 'name', '删除', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 13, 'name', '刪除', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 14, 'name', 'Role Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 14, 'name', '角色管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 14, 'name', '角色管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 15, 'name', 'View', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 15, 'name', '查看', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 15, 'name', '查看', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 16, 'name', 'Add', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 16, 'name', '新增', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 16, 'name', '新增', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 17, 'name', 'Edit', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 17, 'name', '修改', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 17, 'name', '修改', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 18, 'name', 'Delete', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 18, 'name', '删除', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 18, 'name', '刪除', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 19, 'name', 'Setting', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 19, 'name', '系统设置', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 19, 'name', '系統設置', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 20, 'name', 'Menu Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 20, 'name', '菜单管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 20, 'name', '菜單管理', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 21, 'name', 'View', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 21, 'name', '查看', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 21, 'name', '查看', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 22, 'name', 'Add', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 22, 'name', '新增', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 22, 'name', '新增', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 23, 'name', 'Edit', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 23, 'name', '修改', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 23, 'name', '修改', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 24, 'name', 'Delete', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 24, 'name', '删除', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 24, 'name', '刪除', 'zh-TW');
+INSERT INTO `sys_language` VALUES ('sys_menu', 25, 'name', 'Parameter Management', 'en-US');
+INSERT INTO `sys_language` VALUES ('sys_menu', 25, 'name', '参数管理', 'zh-CN');
+INSERT INTO `sys_language` VALUES ('sys_menu', 25, 'name', '參數管理', 'zh-TW');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000026, 'name', 'View', 'en-US');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000026, 'name', '查看', 'zh-CN');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1067246875800000026, 'name', '查看', 'zh-TW');
@@ -902,9 +944,6 @@ INSERT INTO `sys_language` VALUES ('sys_menu', 1176372255559024642, 'name', '功
 INSERT INTO `sys_language` VALUES ('sys_menu', 1206460008292216834, 'name', 'News Management', 'en-US');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1206460008292216834, 'name', '新闻管理', 'zh-CN');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1206460008292216834, 'name', '新聞管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501800, 'name', 'ECharts', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501800, 'name', 'ECharts', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501800, 'name', 'ECharts', 'zh-TW');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501825, 'name', 'Master And Child', 'en-US');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501825, 'name', '主子表演示', 'zh-CN');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1270380959719501825, 'name', '主子表演示', 'zh-TW');
@@ -929,42 +968,6 @@ INSERT INTO `sys_language` VALUES ('sys_menu', 1300278435729440769, 'name', '報
 INSERT INTO `sys_language` VALUES ('sys_menu', 1300381796852060161, 'name', 'Report List', 'en-US');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1300381796852060161, 'name', '报表列表', 'zh-CN');
 INSERT INTO `sys_language` VALUES ('sys_menu', 1300381796852060161, 'name', '報表列表', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622612987906, 'name', 'Job Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622612987906, 'name', '岗位管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622612987906, 'name', '崗位管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622688485377, 'name', 'View', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622688485377, 'name', '查看', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622688485377, 'name', '查看', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622755594242, 'name', 'Add', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622755594242, 'name', '新增', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622755594242, 'name', '新增', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622835286018, 'name', 'Edit', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622835286018, 'name', '修改', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622835286018, 'name', '修改', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622902394881, 'name', 'Delete', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622902394881, 'name', '删除', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341596622902394881, 'name', '刪除', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341676084016852994, 'name', 'Excel Demo', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341676084016852994, 'name', 'Excel导入演示', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1341676084016852994, 'name', 'Excel導入演示', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074487777677313, 'name', 'Pay Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074487777677313, 'name', '支付管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074487777677313, 'name', '支付管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074685589442561, 'name', 'Order Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074685589442561, 'name', '订单管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074685589442561, 'name', '訂單管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074794440019970, 'name', 'AliPay Log', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074794440019970, 'name', '支付宝回调日志', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1343074794440019970, 'name', '支付寶回調日誌', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419551957005963266, 'name', 'Wechat Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419551957005963266, 'name', '微信管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419551957005963266, 'name', '微信管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419553543706972161, 'name', 'Mp Management', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419553543706972161, 'name', '公众号管理', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419553543706972161, 'name', '公眾號管理', 'zh-TW');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419963799817691137, 'name', 'Custom Menu', 'en-US');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419963799817691137, 'name', '自定义菜单', 'zh-CN');
-INSERT INTO `sys_language` VALUES ('sys_menu', 1419963799817691137, 'name', '自定義選單', 'zh-TW');
 
 -- ----------------------------
 -- Table structure for sys_log_error
@@ -991,8 +994,8 @@ CREATE TABLE `sys_log_error`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_log_login`;
 CREATE TABLE `sys_log_login`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
-  `operation` tinyint(3) UNSIGNED NULL DEFAULT NULL COMMENT '用户操作   0：用户登录   1：用户退出',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `operation` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户操作   0：用户登录   1：用户退出',
   `user_agent` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户代理',
   `ip` varchar(160) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作IP',
   `creator_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
@@ -1000,14 +1003,38 @@ CREATE TABLE `sys_log_login`  (
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '登录日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '登录日志' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_log_login
+-- ----------------------------
+INSERT INTO `sys_log_login` VALUES (1, '0', 'admin', NULL, 'admin', 1, '2022-04-06 07:11:16');
+INSERT INTO `sys_log_login` VALUES (2, '0', 'admin', NULL, 'admin', 1, '2022-04-07 01:26:18');
+INSERT INTO `sys_log_login` VALUES (3, '0', 'admin', NULL, 'admin', 1, '2022-04-07 02:24:19');
+INSERT INTO `sys_log_login` VALUES (4, '0', 'admin', NULL, 'admin', 1, '2022-04-08 08:54:17');
+INSERT INTO `sys_log_login` VALUES (5, '0', 'admin', NULL, 'admin', 1, '2022-04-08 09:01:36');
+INSERT INTO `sys_log_login` VALUES (6, '0', 'admin', NULL, 'admin', 1, '2022-04-08 09:04:35');
+INSERT INTO `sys_log_login` VALUES (7, '0', 'admin', NULL, 'admin', 1, '2022-04-08 09:09:43');
+INSERT INTO `sys_log_login` VALUES (8, '0', 'admin', NULL, 'admin', 1, '2022-04-09 07:17:54');
+INSERT INTO `sys_log_login` VALUES (9, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 07:25:48');
+INSERT INTO `sys_log_login` VALUES (10, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 07:26:06');
+INSERT INTO `sys_log_login` VALUES (11, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 07:26:28');
+INSERT INTO `sys_log_login` VALUES (12, '0', 'admin', NULL, 'admin', 1, '2022-04-09 07:27:45');
+INSERT INTO `sys_log_login` VALUES (13, '0', 'admin', NULL, 'admin', 1, '2022-04-09 07:28:05');
+INSERT INTO `sys_log_login` VALUES (14, '0', 'admin', NULL, 'admin', 1, '2022-04-09 08:16:20');
+INSERT INTO `sys_log_login` VALUES (15, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 08:17:41');
+INSERT INTO `sys_log_login` VALUES (16, '0', 'admin', NULL, 'admin', 1, '2022-04-09 08:36:59');
+INSERT INTO `sys_log_login` VALUES (17, '0', 'admin', NULL, 'admin', 1, '2022-04-09 09:09:52');
+INSERT INTO `sys_log_login` VALUES (18, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 09:24:35');
+INSERT INTO `sys_log_login` VALUES (19, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 09:59:53');
+INSERT INTO `sys_log_login` VALUES (20, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 10:03:37');
 
 -- ----------------------------
 -- Table structure for sys_log_operation
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_log_operation`;
 CREATE TABLE `sys_log_operation`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
   `module` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '模块名称，如：sys',
   `operation` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户操作',
   `request_uri` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '请求URI',
@@ -1023,108 +1050,251 @@ CREATE TABLE `sys_log_operation`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_module`(`module`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 170 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_log_operation
+-- ----------------------------
+INSERT INTO `sys_log_operation` VALUES (1, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 111, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:01:37');
+INSERT INTO `sys_log_operation` VALUES (2, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 115, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:10:43');
+INSERT INTO `sys_log_operation` VALUES (3, NULL, 'GET', '/captcha/123456', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:10:51');
+INSERT INTO `sys_log_operation` VALUES (4, NULL, 'POST', '/login', 'POST', NULL, 5, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:11:16');
+INSERT INTO `sys_log_operation` VALUES (5, NULL, 'GET', '/captcha/123456', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:31:27');
+INSERT INTO `sys_log_operation` VALUES (6, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 113, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:36:00');
+INSERT INTO `sys_log_operation` VALUES (7, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 120, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:40:00');
+INSERT INTO `sys_log_operation` VALUES (8, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-06 07:40:09');
+INSERT INTO `sys_log_operation` VALUES (9, NULL, 'GET', '/captcha/123456', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-07 01:25:58');
+INSERT INTO `sys_log_operation` VALUES (10, NULL, 'POST', '/login', 'POST', NULL, 5, NULL, NULL, 1, NULL, NULL, '2022-04-07 01:26:18');
+INSERT INTO `sys_log_operation` VALUES (11, NULL, 'POST', '/login', 'POST', NULL, 1, NULL, NULL, 1, NULL, NULL, '2022-04-07 02:06:23');
+INSERT INTO `sys_log_operation` VALUES (12, NULL, 'GET', '/captcha/c53d4c36-fedc-4e24-8d98-24c84a2b373d', 'GET', NULL, 131, NULL, NULL, 1, NULL, NULL, '2022-04-07 02:24:05');
+INSERT INTO `sys_log_operation` VALUES (13, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-07 02:24:19');
+INSERT INTO `sys_log_operation` VALUES (14, NULL, 'GET', '/menu/nav?_t=1649298258742', 'GET', NULL, 52, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:19');
+INSERT INTO `sys_log_operation` VALUES (15, NULL, 'GET', '/dict/type/all?_t=1649298258741', 'GET', NULL, 55, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:19');
+INSERT INTO `sys_log_operation` VALUES (16, NULL, 'GET', '/user/info?_t=1649298258823', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:19');
+INSERT INTO `sys_log_operation` VALUES (17, NULL, 'GET', '/asi/group/list?_t=1649298262307', 'GET', NULL, 6, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:22');
+INSERT INTO `sys_log_operation` VALUES (18, NULL, 'GET', '/asi/column/list/test_group?_t=1649298265734', 'GET', NULL, 18, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:26');
+INSERT INTO `sys_log_operation` VALUES (19, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649298289865', 'GET', NULL, 15, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:24:50');
+INSERT INTO `sys_log_operation` VALUES (20, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649298329378', 'GET', NULL, 33, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:25:29');
+INSERT INTO `sys_log_operation` VALUES (21, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649298331469', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-07 02:25:31');
+INSERT INTO `sys_log_operation` VALUES (22, NULL, 'GET', '/captcha/980332d6-236b-40b9-8b0a-e3ac6dcfacc5', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-08 08:54:04');
+INSERT INTO `sys_log_operation` VALUES (23, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-08 08:54:17');
+INSERT INTO `sys_log_operation` VALUES (24, NULL, 'GET', '/dict/type/all?_t=1649408056792', 'GET', NULL, 83, NULL, NULL, 1, 'admin', NULL, '2022-04-08 08:54:17');
+INSERT INTO `sys_log_operation` VALUES (25, NULL, 'GET', '/captcha/20e73352-bbae-4a96-8d4e-fb0c45cde3e4', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:01:26');
+INSERT INTO `sys_log_operation` VALUES (26, NULL, 'POST', '/login', 'POST', NULL, 5, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:01:36');
+INSERT INTO `sys_log_operation` VALUES (27, NULL, 'GET', '/dict/type/all?_t=1649408496054', 'GET', NULL, 80, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:01:36');
+INSERT INTO `sys_log_operation` VALUES (28, NULL, 'GET', '/menu/nav?_t=1649408496054', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:01:36');
+INSERT INTO `sys_log_operation` VALUES (29, NULL, 'GET', '/user/info?_t=1649408496209', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:01:36');
+INSERT INTO `sys_log_operation` VALUES (30, NULL, 'GET', '/captcha/6dc800ff-7400-46e7-8100-1166f40281fa', 'GET', NULL, 113, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:04:16');
+INSERT INTO `sys_log_operation` VALUES (31, NULL, 'POST', '/login', 'POST', NULL, 38, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:04:35');
+INSERT INTO `sys_log_operation` VALUES (32, NULL, 'GET', '/dict/type/all?_t=1649408675372', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:04:35');
+INSERT INTO `sys_log_operation` VALUES (33, NULL, 'GET', '/menu/nav?_t=1649408675372', 'GET', NULL, 36, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:04:35');
+INSERT INTO `sys_log_operation` VALUES (34, NULL, 'GET', '/user/info?_t=1649408675426', 'GET', NULL, 6, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:04:35');
+INSERT INTO `sys_log_operation` VALUES (35, NULL, 'GET', '/captcha/07f9b0fd-ae4e-4f0c-81c2-c110d738c43d', 'GET', NULL, 122, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:06:58');
+INSERT INTO `sys_log_operation` VALUES (36, NULL, 'GET', '/captcha/77808287-9734-447c-886c-8c18a6353412', 'GET', NULL, 121, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:09:35');
+INSERT INTO `sys_log_operation` VALUES (37, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-08 09:09:43');
+INSERT INTO `sys_log_operation` VALUES (38, NULL, 'GET', '/dict/type/all?_t=1649408983452', 'GET', NULL, 51, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:44');
+INSERT INTO `sys_log_operation` VALUES (39, NULL, 'GET', '/menu/nav?_t=1649408983452', 'GET', NULL, 3, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:44');
+INSERT INTO `sys_log_operation` VALUES (40, NULL, 'GET', '/user/info?_t=1649408983546', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:44');
+INSERT INTO `sys_log_operation` VALUES (41, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649408987031', 'GET', NULL, 7, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:47');
+INSERT INTO `sys_log_operation` VALUES (42, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649408989171', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:49');
+INSERT INTO `sys_log_operation` VALUES (43, NULL, 'POST', '/dict/type', 'POST', NULL, 21, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:57');
+INSERT INTO `sys_log_operation` VALUES (44, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649408997561', 'GET', NULL, 10, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:09:58');
+INSERT INTO `sys_log_operation` VALUES (45, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649409014898', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:10:15');
+INSERT INTO `sys_log_operation` VALUES (46, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649409124107', 'GET', NULL, 39, NULL, NULL, 1, 'admin', NULL, '2022-04-08 09:12:04');
+INSERT INTO `sys_log_operation` VALUES (47, NULL, 'GET', '/menu/nav?_t=1649417097808', 'GET', NULL, 24, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:24:58');
+INSERT INTO `sys_log_operation` VALUES (48, NULL, 'GET', '/dict/type/all?_t=1649417097808', 'GET', NULL, 40, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:24:58');
+INSERT INTO `sys_log_operation` VALUES (49, NULL, 'GET', '/user/info?_t=1649417098177', 'GET', NULL, 13, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:24:58');
+INSERT INTO `sys_log_operation` VALUES (50, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649417098276', 'GET', NULL, 4, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:24:58');
+INSERT INTO `sys_log_operation` VALUES (51, NULL, 'POST', '/dict/type', 'POST', NULL, 20, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:25:06');
+INSERT INTO `sys_log_operation` VALUES (52, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649417106713', 'GET', NULL, 26, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:25:07');
+INSERT INTO `sys_log_operation` VALUES (53, NULL, 'GET', '/menu/nav?_t=1649417891396', 'GET', NULL, 10, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:38:12');
+INSERT INTO `sys_log_operation` VALUES (54, NULL, 'GET', '/dict/type/all?_t=1649417891395', 'GET', NULL, 26, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:38:12');
+INSERT INTO `sys_log_operation` VALUES (55, NULL, 'GET', '/user/info?_t=1649417891758', 'GET', NULL, 12, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:38:12');
+INSERT INTO `sys_log_operation` VALUES (56, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649417891861', 'GET', NULL, 18, NULL, NULL, 1, 'admin', NULL, '2022-04-08 11:38:12');
+INSERT INTO `sys_log_operation` VALUES (57, NULL, 'GET', '/dict/type/all?_t=1649468136312', 'GET', NULL, 58, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:39');
+INSERT INTO `sys_log_operation` VALUES (58, NULL, 'GET', '/menu/nav?_t=1649468136313', 'GET', NULL, 32, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:39');
+INSERT INTO `sys_log_operation` VALUES (59, NULL, 'GET', '/user/info?_t=1649468139243', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:39');
+INSERT INTO `sys_log_operation` VALUES (60, NULL, 'GET', '/asi/group/list?_t=1649468143830', 'GET', NULL, 3, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:44');
+INSERT INTO `sys_log_operation` VALUES (61, NULL, 'GET', '/asi/column/list/HOME_BANNER?_t=1649468146306', 'GET', NULL, 19, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:46');
+INSERT INTO `sys_log_operation` VALUES (62, NULL, 'GET', '/asi/column/list/HOME_AD?_t=1649468147515', 'GET', NULL, 26, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:48');
+INSERT INTO `sys_log_operation` VALUES (63, NULL, 'GET', '/asi/column/list/test_group?_t=1649468154499', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:55');
+INSERT INTO `sys_log_operation` VALUES (64, NULL, 'GET', '/asi/column/list/HOME_BANNER?_t=1649468156610', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:57');
+INSERT INTO `sys_log_operation` VALUES (65, NULL, 'GET', '/asi/column/list/HOME_AD?_t=1649468157465', 'GET', NULL, 16, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:57');
+INSERT INTO `sys_log_operation` VALUES (66, NULL, 'GET', '/asi/column/list/test_group?_t=1649468158505', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:35:59');
+INSERT INTO `sys_log_operation` VALUES (67, NULL, 'GET', '/asi/group?order=&order_field=&page=1&limit=10&id=0&group_name=&group_code=&_t=1649468286367', 'GET', NULL, 38, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:06');
+INSERT INTO `sys_log_operation` VALUES (68, NULL, 'GET', '/asi/group/list?_t=1649468290524', 'GET', NULL, 14, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:11');
+INSERT INTO `sys_log_operation` VALUES (69, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649468300162', 'GET', NULL, 12, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:20');
+INSERT INTO `sys_log_operation` VALUES (70, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649468315641', 'GET', NULL, 37, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:36');
+INSERT INTO `sys_log_operation` VALUES (71, NULL, 'GET', '/role?order=&order_field=&page=1&limit=10&name=&_t=1649468316298', 'GET', NULL, 35, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:36');
+INSERT INTO `sys_log_operation` VALUES (72, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649468318722', 'GET', NULL, 8, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:39');
+INSERT INTO `sys_log_operation` VALUES (73, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649468319163', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:39');
+INSERT INTO `sys_log_operation` VALUES (74, NULL, 'GET', '/dict/type/3?_t=1649468325014', 'GET', NULL, 43, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:45');
+INSERT INTO `sys_log_operation` VALUES (75, NULL, 'GET', '/dict/value?order=&order_field=&page=1&limit=10&dict_type_id=7&dict_label=&dict_value=&_t=1649468328262', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:48');
+INSERT INTO `sys_log_operation` VALUES (76, NULL, 'POST', '/dict/value', 'POST', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:57');
+INSERT INTO `sys_log_operation` VALUES (77, NULL, 'GET', '/dict/value?order=&order_field=&page=1&limit=10&dict_type_id=7&dict_label=&dict_value=&_t=1649468337553', 'GET', NULL, 51, NULL, NULL, 1, 'admin', NULL, '2022-04-09 01:38:58');
+INSERT INTO `sys_log_operation` VALUES (78, NULL, 'GET', '/captcha/3e830ab4-2fd1-4dc9-8698-7f9030f3cc1e', 'GET', NULL, 126, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:16:46');
+INSERT INTO `sys_log_operation` VALUES (79, NULL, 'GET', '/captcha/7fa13e58-5cdb-4ac5-8fd0-7e35c9e5ff23', 'GET', NULL, 122, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:17:42');
+INSERT INTO `sys_log_operation` VALUES (80, NULL, 'POST', '/login', 'POST', NULL, 5, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:17:54');
+INSERT INTO `sys_log_operation` VALUES (81, NULL, 'GET', '/dict/type/all?_t=1649488674221', 'GET', NULL, 54, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:17:54');
+INSERT INTO `sys_log_operation` VALUES (82, NULL, 'GET', '/menu/nav?_t=1649488674221', 'GET', NULL, 13, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:17:54');
+INSERT INTO `sys_log_operation` VALUES (83, NULL, 'GET', '/user/info?_t=1649488674330', 'GET', NULL, 27, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:17:54');
+INSERT INTO `sys_log_operation` VALUES (84, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649488680837', 'GET', NULL, 38, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:01');
+INSERT INTO `sys_log_operation` VALUES (85, NULL, 'GET', '/asi/group?order=&order_field=&page=1&limit=10&id=0&group_name=&group_code=&_t=1649488682575', 'GET', NULL, 12, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:03');
+INSERT INTO `sys_log_operation` VALUES (86, NULL, 'GET', '/asi/group/list?_t=1649488683247', 'GET', NULL, 12, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:03');
+INSERT INTO `sys_log_operation` VALUES (87, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649488685212', 'GET', NULL, 22, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:05');
+INSERT INTO `sys_log_operation` VALUES (88, NULL, 'DELETE', '/dict/type', 'DELETE', NULL, 0, NULL, NULL, 0, 'admin', NULL, '2022-04-09 07:18:08');
+INSERT INTO `sys_log_operation` VALUES (89, NULL, 'POST', '/dict/type', 'POST', NULL, 4, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:25');
+INSERT INTO `sys_log_operation` VALUES (90, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649488705553', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:18:26');
+INSERT INTO `sys_log_operation` VALUES (91, NULL, 'GET', '/dict/type/all?_t=1649488835460', 'GET', NULL, 7, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:36');
+INSERT INTO `sys_log_operation` VALUES (92, NULL, 'GET', '/menu/nav?_t=1649488835460', 'GET', NULL, 7, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:36');
+INSERT INTO `sys_log_operation` VALUES (93, NULL, 'GET', '/user/info?_t=1649488835822', 'GET', NULL, 6, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:36');
+INSERT INTO `sys_log_operation` VALUES (94, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649488835956', 'GET', NULL, 4, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:36');
+INSERT INTO `sys_log_operation` VALUES (95, NULL, 'GET', '/dict/type/all?_t=1649488852983', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:53');
+INSERT INTO `sys_log_operation` VALUES (96, NULL, 'GET', '/menu/nav?_t=1649488852983', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:53');
+INSERT INTO `sys_log_operation` VALUES (97, NULL, 'GET', '/user/info?_t=1649488853133', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:53');
+INSERT INTO `sys_log_operation` VALUES (98, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649488853261', 'GET', NULL, 10, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:53');
+INSERT INTO `sys_log_operation` VALUES (99, NULL, 'GET', '/dict/type/all?_t=1649488857882', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:58');
+INSERT INTO `sys_log_operation` VALUES (100, NULL, 'GET', '/menu/nav?_t=1649488857883', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:58');
+INSERT INTO `sys_log_operation` VALUES (101, NULL, 'GET', '/user/info?_t=1649488858037', 'GET', NULL, 1, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:58');
+INSERT INTO `sys_log_operation` VALUES (102, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649488858134', 'GET', NULL, 18, NULL, NULL, 1, 'admin', NULL, '2022-04-09 07:20:58');
+INSERT INTO `sys_log_operation` VALUES (103, NULL, 'GET', '/captcha/eb8becfd-67ca-4982-892c-c8652efbb2db', 'GET', NULL, 115, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:25:19');
+INSERT INTO `sys_log_operation` VALUES (104, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:25:48');
+INSERT INTO `sys_log_operation` VALUES (105, NULL, 'GET', '/dict/type/all?_t=1649489147803', 'GET', NULL, 48, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-09 07:25:48');
+INSERT INTO `sys_log_operation` VALUES (106, NULL, 'POST', '/login', 'POST', NULL, 0, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:25:50');
+INSERT INTO `sys_log_operation` VALUES (107, NULL, 'GET', '/captcha/449e87de-2f0e-4c02-804c-d9135fab69b8', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:25:50');
+INSERT INTO `sys_log_operation` VALUES (108, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:26:06');
+INSERT INTO `sys_log_operation` VALUES (109, NULL, 'GET', '/dict/type/all?_t=1649489165523', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-09 07:26:06');
+INSERT INTO `sys_log_operation` VALUES (110, NULL, 'POST', '/login', 'POST', NULL, 0, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:26:16');
+INSERT INTO `sys_log_operation` VALUES (111, NULL, 'GET', '/captcha/0c24a5dc-7fdf-4b39-87a6-c1b77974b09c', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:26:16');
+INSERT INTO `sys_log_operation` VALUES (112, NULL, 'POST', '/login', 'POST', NULL, 2, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:26:28');
+INSERT INTO `sys_log_operation` VALUES (113, NULL, 'GET', '/dict/type/all?_t=1649489187915', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-09 07:26:28');
+INSERT INTO `sys_log_operation` VALUES (114, NULL, 'POST', '/login', 'POST', NULL, 2, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:27:45');
+INSERT INTO `sys_log_operation` VALUES (115, NULL, 'GET', '/dict/type/all?_t=1649489265450', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-09 07:27:45');
+INSERT INTO `sys_log_operation` VALUES (116, NULL, 'GET', '/captcha/6b008995-5217-44e3-809d-34a04e8c3542', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:27:59');
+INSERT INTO `sys_log_operation` VALUES (117, NULL, 'POST', '/login', 'POST', NULL, 1, NULL, NULL, 1, NULL, NULL, '2022-04-09 07:28:05');
+INSERT INTO `sys_log_operation` VALUES (118, NULL, 'GET', '/dict/type/all?_t=1649489284882', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-09 07:28:05');
+INSERT INTO `sys_log_operation` VALUES (119, NULL, 'GET', '/captcha/a821e423-d353-4f0d-83ec-335b66fee599', 'GET', NULL, 125, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:16:07');
+INSERT INTO `sys_log_operation` VALUES (120, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:16:20');
+INSERT INTO `sys_log_operation` VALUES (121, NULL, 'GET', '/dict/type/all?_t=1649492179672', 'GET', NULL, 60, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:16:20');
+INSERT INTO `sys_log_operation` VALUES (122, NULL, 'GET', '/menu/nav?_t=1649492179673', 'GET', NULL, 27, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:16:20');
+INSERT INTO `sys_log_operation` VALUES (123, NULL, 'GET', '/user/info?_t=1649492179802', 'GET', NULL, 17, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:16:20');
+INSERT INTO `sys_log_operation` VALUES (124, NULL, 'GET', '/captcha/58a53ea6-dc37-4009-8814-7d9c09789900', 'GET', NULL, 113, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:17:05');
+INSERT INTO `sys_log_operation` VALUES (125, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:17:41');
+INSERT INTO `sys_log_operation` VALUES (126, NULL, 'GET', '/dict/type/all?_t=1649492261213', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:17:41');
+INSERT INTO `sys_log_operation` VALUES (127, NULL, 'GET', '/captcha/13f09da3-4147-474f-8a18-0329689a737d', 'GET', NULL, 123, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:36:46');
+INSERT INTO `sys_log_operation` VALUES (128, NULL, 'POST', '/login', 'POST', NULL, 29, NULL, NULL, 1, NULL, NULL, '2022-04-09 08:36:59');
+INSERT INTO `sys_log_operation` VALUES (129, NULL, 'GET', '/dict/type/all?_t=1649493418578', 'GET', NULL, 21, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:36:59');
+INSERT INTO `sys_log_operation` VALUES (130, NULL, 'GET', '/menu/nav?_t=1649493418578', 'GET', NULL, 13, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:36:59');
+INSERT INTO `sys_log_operation` VALUES (131, NULL, 'GET', '/user/info?_t=1649493418650', 'GET', NULL, 16, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:36:59');
+INSERT INTO `sys_log_operation` VALUES (132, NULL, 'GET', '/role?order=&order_field=&page=1&limit=10&name=&_t=1649493423398', 'GET', NULL, 8, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:03');
+INSERT INTO `sys_log_operation` VALUES (133, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649493424627', 'GET', NULL, 23, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:05');
+INSERT INTO `sys_log_operation` VALUES (134, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649493426532', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:07');
+INSERT INTO `sys_log_operation` VALUES (135, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649493427711', 'GET', NULL, 3, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:08');
+INSERT INTO `sys_log_operation` VALUES (136, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649493430653', 'GET', NULL, 21, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:11');
+INSERT INTO `sys_log_operation` VALUES (137, NULL, 'GET', '/asi/group?order=&order_field=&page=1&limit=10&id=0&group_name=&group_code=&_t=1649493433512', 'GET', NULL, 40, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:14');
+INSERT INTO `sys_log_operation` VALUES (138, NULL, 'GET', '/asi/group/list?_t=1649493434473', 'GET', NULL, 28, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:15');
+INSERT INTO `sys_log_operation` VALUES (139, NULL, 'GET', '/asi/column/list/HOME_AD?_t=1649493436804', 'GET', NULL, 30, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:17');
+INSERT INTO `sys_log_operation` VALUES (140, NULL, 'GET', '/asi/column/list/HOME_BANNER?_t=1649493437533', 'GET', NULL, 34, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:18');
+INSERT INTO `sys_log_operation` VALUES (141, NULL, 'GET', '/asi/column/list/test_group?_t=1649493438396', 'GET', NULL, 11, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:37:18');
+INSERT INTO `sys_log_operation` VALUES (142, NULL, 'GET', '/dict/type/all?_t=1649493674623', 'GET', NULL, 66, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:15');
+INSERT INTO `sys_log_operation` VALUES (143, NULL, 'GET', '/menu/nav?_t=1649493674624', 'GET', NULL, 45, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:15');
+INSERT INTO `sys_log_operation` VALUES (144, NULL, 'GET', '/user/info?_t=1649493674787', 'GET', NULL, 12, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:15');
+INSERT INTO `sys_log_operation` VALUES (145, NULL, 'GET', '/asi/group/list?_t=1649493674876', 'GET', NULL, 3, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:15');
+INSERT INTO `sys_log_operation` VALUES (146, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649493682965', 'GET', NULL, 24, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:23');
+INSERT INTO `sys_log_operation` VALUES (147, NULL, 'GET', '/role?order=&order_field=&page=1&limit=10&name=&_t=1649493683624', 'GET', NULL, 22, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:24');
+INSERT INTO `sys_log_operation` VALUES (148, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649493685729', 'GET', NULL, 10, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:26');
+INSERT INTO `sys_log_operation` VALUES (149, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649493686107', 'GET', NULL, 3, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:26');
+INSERT INTO `sys_log_operation` VALUES (150, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649493686468', 'GET', NULL, 24, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:26');
+INSERT INTO `sys_log_operation` VALUES (151, NULL, 'GET', '/asi/group?order=&order_field=&page=1&limit=10&id=0&group_name=&group_code=&_t=1649493688387', 'GET', NULL, 6, NULL, NULL, 1, 'admin', NULL, '2022-04-09 08:41:28');
+INSERT INTO `sys_log_operation` VALUES (152, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:09:52');
+INSERT INTO `sys_log_operation` VALUES (153, NULL, 'PUT', '/role', 'PUT', NULL, 473, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:11:44');
+INSERT INTO `sys_log_operation` VALUES (154, NULL, 'PUT', '/user', 'PUT', NULL, 0, NULL, NULL, 0, 'admin', NULL, '2022-04-09 09:12:13');
+INSERT INTO `sys_log_operation` VALUES (155, NULL, 'PUT', '/user', 'PUT', NULL, 0, NULL, NULL, 0, 'admin', NULL, '2022-04-09 09:12:34');
+INSERT INTO `sys_log_operation` VALUES (156, NULL, 'PUT', '/user', 'PUT', NULL, 92, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:15:45');
+INSERT INTO `sys_log_operation` VALUES (157, NULL, 'DELETE', '/role/17', 'DELETE', NULL, 51, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:17:07');
+INSERT INTO `sys_log_operation` VALUES (158, NULL, 'POST', '/role', 'POST', NULL, 659, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:17:26');
+INSERT INTO `sys_log_operation` VALUES (159, NULL, 'PUT', '/user', 'PUT', NULL, 19, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:17:46');
+INSERT INTO `sys_log_operation` VALUES (160, NULL, 'POST', '/menu', 'POST', NULL, 27, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:20:39');
+INSERT INTO `sys_log_operation` VALUES (161, NULL, 'POST', '/menu', 'POST', NULL, 29, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:21:58');
+INSERT INTO `sys_log_operation` VALUES (162, NULL, 'DELETE', '/role/18', 'DELETE', NULL, 93, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:22:31');
+INSERT INTO `sys_log_operation` VALUES (163, NULL, 'POST', '/role', 'POST', NULL, 772, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:22:52');
+INSERT INTO `sys_log_operation` VALUES (164, NULL, 'PUT', '/user', 'PUT', NULL, 13, NULL, NULL, 1, 'admin', NULL, '2022-04-09 09:23:08');
+INSERT INTO `sys_log_operation` VALUES (165, NULL, 'POST', '/login', 'POST', NULL, 7, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:23:57');
+INSERT INTO `sys_log_operation` VALUES (166, NULL, 'POST', '/login', 'POST', NULL, 33, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:24:07');
+INSERT INTO `sys_log_operation` VALUES (167, NULL, 'POST', '/login', 'POST', NULL, 10, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:24:35');
+INSERT INTO `sys_log_operation` VALUES (168, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:59:53');
+INSERT INTO `sys_log_operation` VALUES (169, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-09 10:03:37');
 
 -- ----------------------------
 -- Table structure for sys_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `pid` bigint(20) NULL DEFAULT NULL COMMENT '上级ID，一级菜单为0',
   `url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单URL',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `menu_type` tinyint(3) UNSIGNED NULL DEFAULT NULL COMMENT '类型   0：菜单   1：按钮',
-  `open_style` tinyint(3) UNSIGNED NULL DEFAULT NULL COMMENT '打开方式   0：内部   1：外部',
+  `method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'GET,POST,PUT,DELETE',
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '路径',
   `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
   `permissions` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '权限标识，如：sys:menu:save',
   `sort` int(11) NULL DEFAULT NULL COMMENT '排序',
   `del_flag` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '删除标识  0：未删除    1：删除',
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  `method` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_pid`(`pid`) USING BTREE,
   INDEX `idx_del_flag`(`del_flag`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单管理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1067246875800000002, 0, '', 0, 0, 'icon-lock', '', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000003, 1067246875800000002, 'sys/user', 0, 0, 'icon-user', '', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000004, 1067246875800000003, '', 1, 0, '', 'sys:user:page,sys:user:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000005, 1067246875800000003, '', 1, 0, '', 'sys:user:save,sys:dept:list,sys:role:list', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000006, 1067246875800000003, '', 1, 0, '', 'sys:user:update,sys:dept:list,sys:role:list', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000007, 1067246875800000003, '', 1, 0, '', 'sys:user:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000008, 1067246875800000003, '', 1, 0, '', 'sys:user:export', 4, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000009, 1067246875800000002, 'sys/dept', 0, 0, 'icon-apartment', '', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000010, 1067246875800000009, '', 1, 0, '', 'sys:dept:list,sys:dept:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000011, 1067246875800000009, '', 1, 0, '', 'sys:dept:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000012, 1067246875800000009, '', 1, 0, '', 'sys:dept:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000013, 1067246875800000009, '', 1, 0, '', 'sys:dept:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000014, 1067246875800000002, 'sys/role', 0, 0, 'icon-team', '', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000015, 1067246875800000014, '', 1, 0, '', 'sys:role:page,sys:role:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000016, 1067246875800000014, '', 1, 0, '', 'sys:role:save,sys:menu:select,sys:dept:list', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000017, 1067246875800000014, '', 1, 0, '', 'sys:role:update,sys:menu:select,sys:dept:list', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000018, 1067246875800000014, '', 1, 0, '', 'sys:role:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000019, 0, '', 0, 0, 'icon-setting', NULL, 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000020, 1067246875800000019, 'sys/menu', 0, 0, 'icon-unorderedlist', NULL, 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000021, 1067246875800000020, NULL, 1, 0, NULL, 'sys:menu:list,sys:menu:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000022, 1067246875800000020, NULL, 1, 0, NULL, 'sys:menu:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000023, 1067246875800000020, NULL, 1, 0, NULL, 'sys:menu:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000024, 1067246875800000020, NULL, 1, 0, NULL, 'sys:menu:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000025, 1067246875800000019, 'sys/params', 0, 0, 'icon-fileprotect', '', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000026, 1067246875800000025, NULL, 1, 0, NULL, 'sys:params:page,sys:params:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000027, 1067246875800000025, NULL, 1, 0, NULL, 'sys:params:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000028, 1067246875800000025, NULL, 1, 0, NULL, 'sys:params:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000029, 1067246875800000025, NULL, 1, 0, NULL, 'sys:params:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000030, 1067246875800000025, '', 1, 0, NULL, 'sys:params:export', 4, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000031, 1067246875800000019, 'sys/dict-type', 0, 0, 'icon-gold', '', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000032, 1067246875800000031, '', 1, 0, '', 'sys:dict:page,sys:dict:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000033, 1067246875800000031, '', 1, 0, '', 'sys:dict:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000034, 1067246875800000031, '', 1, 0, '', 'sys:dict:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000035, 1067246875800000031, '', 1, 0, '', 'sys:dict:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000036, 0, '', 0, 0, 'icon-container', '', 4, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000037, 1067246875800000036, 'sys/log-login', 0, 0, 'icon-filedone', 'sys:log:login', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000038, 1067246875800000036, 'sys/log-operation', 0, 0, 'icon-solution', 'sys:log:operation', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000039, 1067246875800000036, 'sys/log-error', 0, 0, 'icon-file-exception', 'sys:log:error', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000040, 0, '', 0, 0, 'icon-desktop', '', 5, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000041, 1067246875800000040, '{{ApiUrl}}/monitor', 0, 0, 'icon-medicinebox', '', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000042, 1067246875800000040, '{{ApiUrl}}/doc.html', 0, 1, 'icon-file-word', '', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000401, 0, '', 0, 0, 'icon-bell', '', 4, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000402, 1067246875800000401, 'sys/notice', 0, 0, 'icon-bell', 'sys:notice:all,sys:dept:list', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1067246875800000403, 1067246875800000401, 'sys/notice-user', 0, 0, 'icon-notification', 'sys:notice:all', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1164489061834969089, 1067246875800000019, 'sys/region', 0, 0, 'icon-location', '0', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1164492214366130178, 1164489061834969089, '', 1, 0, '', 'sys:region:list,sys:region:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1164492872829915138, 1164489061834969089, '', 1, 0, '', 'sys:region:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1164493252347318273, 1164489061834969089, '', 1, 0, '', 'sys:region:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1164493391254278145, 1164489061834969089, '', 1, 0, '', 'sys:region:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1176372255559024642, 0, '', 0, 0, 'icon-windows', '', 999, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1206460008292216834, 1176372255559024642, 'sys/news', 0, 0, 'icon-file-word', 'demo:news:all', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501800, 1176372255559024642, 'sys/charts', 0, 0, 'icon-tag', '', 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501825, 1176372255559024642, 'sys/product', 0, 0, 'icon-tag', NULL, 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501826, 1270380959719501825, NULL, 1, 0, NULL, 'demo:product:page,demo:product:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501827, 1270380959719501825, NULL, 1, 0, NULL, 'demo:product:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501828, 1270380959719501825, NULL, 1, 0, NULL, 'demo:product:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1270380959719501829, 1270380959719501825, NULL, 1, 0, NULL, 'demo:product:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1300278047072649217, 0, '', 0, 0, 'icon-filesearch', '', 3, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1300278435729440769, 1300278047072649217, '{{ApiUrl}}/sys/ureport/designer', 0, 0, 'icon-book', '', 0, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1300381796852060161, 1300278047072649217, 'sys/ureport', 0, 0, 'icon-up-circle', 'sys:ureport:all', 1, 0, 1067246875800000001, '2022-01-01 19:46:06', 1067246875800000001, '2022-01-01 19:46:06', NULL);
-INSERT INTO `sys_menu` VALUES (1341596622612987906, 1067246875800000002, 'sys/post', 0, 0, 'icon-pic-left', NULL, 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1341596622688485377, 1341596622612987906, NULL, 1, 0, NULL, 'sys:post:page,sys:post:info', 0, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1341596622755594242, 1341596622612987906, NULL, 1, 0, NULL, 'sys:post:save', 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1341596622835286018, 1341596622612987906, NULL, 1, 0, NULL, 'sys:post:update', 2, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1341596622902394881, 1341596622612987906, NULL, 1, 0, NULL, 'sys:post:delete', 3, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1341676084016852994, 1176372255559024642, 'sys/excel', 0, 0, 'icon-table', 'demo:excel:all', 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1343074487777677313, 0, '', 0, 0, 'icon-Dollar', '', 3, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1343074685589442561, 1343074487777677313, 'pay/order', 0, 0, 'icon-unorderedlist', 'pay:order:all', 0, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1343074794440019970, 1343074487777677313, 'pay/alipaynotifylog', 0, 0, 'icon-filedone', 'pay:alipayNotifyLog:all', 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1419551957005963266, 0, '', 0, 0, 'icon-wechat-fill', '', 3, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1419553543706972161, 1419551957005963266, 'mp/account', 0, 0, 'icon-user', 'mp:account:all', 0, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
-INSERT INTO `sys_menu` VALUES (1419963799817691137, 1419551957005963266, 'mp/menu', 0, 0, 'icon-unorderedlist', 'mp:menu:all', 1, 0, 1067246875800000001, '2022-01-01 19:46:10', 1067246875800000001, '2022-01-01 19:46:10', NULL);
+INSERT INTO `sys_menu` VALUES (2, 0, '', '权限管理', 0, NULL, NULL, 'icon-lock', '', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (3, 2, 'sys/user', '用户管理', 0, NULL, NULL, 'icon-user', '', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (4, 3, '', '', 1, 'GET', '/user/info', '', 'sys:user:page,sys:user:info', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (5, 3, '', NULL, 1, NULL, NULL, '', 'sys:user:save,sys:dept:list,sys:role:list', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (6, 3, '', NULL, 1, NULL, NULL, '', 'sys:user:update,sys:dept:list,sys:role:list', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (7, 3, '', NULL, 1, NULL, NULL, '', 'sys:user:delete', 3, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (8, 3, '', NULL, 1, NULL, NULL, '', 'sys:user:export', 4, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (14, 2, 'sys/role', '角色管理', 0, NULL, NULL, 'icon-team', '', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (15, 14, '', '角色信息', 1, NULL, NULL, '', 'sys:role:page,sys:role:info', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (16, 14, '', '保存', 1, 'POST', '/role', '', 'sys:role:save,sys:menu:select,sys:dept:list', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (17, 14, '', NULL, 1, 'PUT', '/role', '', 'sys:role:update,sys:menu:select,sys:dept:list', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (18, 14, '', NULL, 1, 'GET', '/role/:id', '', 'sys:role:delete', 3, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (19, 0, '', '系统设置', 0, NULL, NULL, 'icon-setting', NULL, 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (20, 19, 'sys/menu', '菜单管理', 0, NULL, NULL, 'icon-unorderedlist', NULL, 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (21, 20, NULL, '获取单个', 1, 'GET', '/menu/:id', NULL, 'sys:menu:list,sys:menu:info', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (22, 20, NULL, '新增', 1, 'POST', '/menu', NULL, 'sys:menu:save', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (23, 20, NULL, '修改', 1, 'PUT', '/menu', NULL, 'sys:menu:update', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (24, 20, NULL, '列表', 1, 'GET', '/menu', NULL, 'sys:menu:delete', 3, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (25, 19, 'sys/params', '参数管理', 0, NULL, NULL, 'icon-fileprotect', '', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (26, 25, NULL, '参数列表', 1, 'GET', '/params', NULL, 'sys:params:page,sys:params:info', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (27, 25, NULL, '保存', 1, 'POST', '/params', NULL, 'sys:params:save', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (28, 25, NULL, '更新', 1, 'PUT', '/params', NULL, 'sys:params:update', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (29, 25, NULL, '删除', 1, 'DELETE', '/params/:id', NULL, 'sys:params:delete', 3, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (30, 25, '', '获取单个', 1, 'GET', '/params/:id', NULL, 'sys:params:export', 4, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (31, 19, 'sys/dict-type', '字典管理', 0, '', '', 'icon-gold', '', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (32, 31, '', '字典信息', 1, 'GET', '/dict/type', '', 'sys:dict:page,sys:dict:info', 0, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (33, 31, '', '保存', 1, 'POST', '/dict/type', '', 'sys:dict:save', 1, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (34, 31, '', '更新', 1, 'PUT', '/dict/type', '', 'sys:dict:update', 2, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (35, 31, '', '删除', 1, 'DELETE', '/dict/type/:id', '', 'sys:dict:delete', 3, 0, 1067246875800000001, 'superadmin', '2022-03-09 09:49:51', 1067246875800000001, '2022-03-09 09:49:51');
+INSERT INTO `sys_menu` VALUES (36, 31, NULL, '获取单个', 1, 'GET', '/dict/type/:id', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (37, 31, NULL, '字典值列表', 1, 'GET', '/dict/value', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (38, 31, NULL, '保存', 1, 'POST', '/dict/value', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (39, 31, NULL, '更新', 1, 'PUT', '/dict/value', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (40, 31, NULL, '获取单个', 1, 'GET', '/dict/value/:id', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (41, 31, NULL, '删', 1, 'DELETE', '/dict/value/:id', NULL, NULL, NULL, NULL, NULL, 'superadmin', NULL, NULL, NULL);
+INSERT INTO `sys_menu` VALUES (42, 0, '', '动态表单', 0, NULL, NULL, 'icon-earth', '', 1, 0, 1, 'superadmin', '2022-03-22 02:13:23', NULL, NULL);
+INSERT INTO `sys_menu` VALUES (43, 42, 'asi/asi-group', '业务分组', 0, NULL, NULL, 'icon-layout', '', 0, 0, 1, 'superadmin', '2022-03-22 02:16:31', NULL, NULL);
+INSERT INTO `sys_menu` VALUES (44, 42, 'asi/asi-column', 'asi列管理', 0, NULL, NULL, 'icon-export', '', 1, 0, 1, 'superadmin', '2022-03-22 07:52:46', NULL, NULL);
+INSERT INTO `sys_menu` VALUES (45, 20, '', 'nav', 1, 'GET', '/menu/nav', '', '', 0, 0, 1, 'superadmin', '2022-04-09 09:20:39', NULL, NULL);
+INSERT INTO `sys_menu` VALUES (46, 31, '', 'type/all', 1, 'GET', '/dict/type/all', '', '', 0, 0, 1, 'superadmin', '2022-04-09 09:21:58', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for sys_notice
@@ -1163,21 +1333,26 @@ CREATE TABLE `sys_notice_user`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_params`;
 CREATE TABLE `sys_params`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `param_code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '参数编码',
   `param_value` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '参数值',
-  `param_type` tinyint(4) UNSIGNED NULL DEFAULT 1 COMMENT '类型   0：系统参数   1：非系统参数',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '删除标识  0：未删除    1：删除',
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_param_code`(`param_code`) USING BTREE,
   INDEX `idx_del_flag`(`del_flag`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '参数管理' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '参数管理' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_params
+-- ----------------------------
+INSERT INTO `sys_params` VALUES (1, 'code1', '1', '测试', NULL, 1, '2022-03-16 09:41:33', NULL, NULL, 'superadmin');
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -5018,7 +5193,7 @@ INSERT INTO `sys_region` VALUES (820201, 820200, '离岛', 3, 1, 820201, 1067246
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '角色名称',
   `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `del_flag` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '删除标识  0：未删除    1：删除',
@@ -5026,12 +5201,18 @@ CREATE TABLE `sys_role`  (
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_dept_id`(`dept_id`) USING BTREE,
   INDEX `idx_del_flag`(`del_flag`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色管理' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色管理' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+INSERT INTO `sys_role` VALUES (19, '管理员', '超级管理员', NULL, NULL, 1, '2022-04-09 09:22:51', NULL, 'superadmin', NULL);
 
 -- ----------------------------
 -- Table structure for sys_role_data_scope
@@ -5052,30 +5233,54 @@ CREATE TABLE `sys_role_data_scope`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `role_id` bigint(20) NULL DEFAULT NULL COMMENT '角色ID',
   `menu_id` bigint(20) NULL DEFAULT NULL COMMENT '菜单ID',
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_id`(`role_id`) USING BTREE,
   INDEX `idx_menu_id`(`menu_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关系' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 344682446693994542 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色菜单关系' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_role_menu
+-- ----------------------------
+INSERT INTO `sys_role_menu` VALUES (344682446693994532, 19, 2, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994533, 19, 3, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994534, 19, 14, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994535, 19, 19, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994536, 19, 20, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994537, 19, 25, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994538, 19, 31, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994539, 19, 42, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994540, 19, 43, 1, '2022-04-09 09:22:51', 'superadmin');
+INSERT INTO `sys_role_menu` VALUES (344682446693994541, 19, 44, 1, '2022-04-09 09:22:51', 'superadmin');
 
 -- ----------------------------
 -- Table structure for sys_role_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_user`;
 CREATE TABLE `sys_role_user`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `role_id` bigint(20) NULL DEFAULT NULL COMMENT '角色ID',
   `user_id` bigint(20) NULL DEFAULT NULL COMMENT '用户ID',
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `agency_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '租户',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_role_id`(`role_id`) USING BTREE,
   INDEX `idx_user_id`(`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关系' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色用户关系' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_role_user
+-- ----------------------------
+INSERT INTO `sys_role_user` VALUES (1, 17, 5, 1, '2022-03-11 06:39:37', 'superadmin');
+INSERT INTO `sys_role_user` VALUES (2, 17, 5, 1, '2022-04-09 09:15:45', 'superadmin');
+INSERT INTO `sys_role_user` VALUES (3, 18, 2, 1, '2022-04-09 09:17:46', 'superadmin');
+INSERT INTO `sys_role_user` VALUES (4, 19, 2, 1, '2022-04-09 09:23:08', 'superadmin');
 
 -- ----------------------------
 -- Table structure for sys_ureport_data
@@ -5095,7 +5300,7 @@ CREATE TABLE `sys_ureport_data`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`  (
-  `id` bigint(20) NOT NULL COMMENT 'id',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
   `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
   `real_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '姓名',
@@ -5107,7 +5312,7 @@ CREATE TABLE `sys_user`  (
   `super_admin` tinyint(3) UNSIGNED NULL DEFAULT NULL COMMENT '超级管理员   0：否   1：是',
   `status` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '状态  0：停用    1：正常',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `del_flag` tinyint(4) UNSIGNED NULL DEFAULT NULL COMMENT '删除标识  0：未删除    1：删除',
+  `del_flag` tinyint(4) UNSIGNED NULL DEFAULT 0 COMMENT '删除标识  0：未删除    1：删除',
   `creator` bigint(20) NULL DEFAULT NULL COMMENT '创建者',
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `updater` bigint(20) NULL DEFAULT NULL COMMENT '更新者',
@@ -5118,14 +5323,14 @@ CREATE TABLE `sys_user`  (
   UNIQUE INDEX `uk_username`(`username`) USING BTREE,
   INDEX `idx_del_flag`(`del_flag`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户管理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (325655082282651648, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1067246875800000001, '2022-01-17 15:17:02', NULL, NULL, 'PasswordQRCodeCheck', NULL);
-INSERT INTO `sys_user` VALUES (1067246875800000001, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', NULL, 1, 'root@renren.io', '13512345678', NULL, 1, 1, NULL, 0, NULL, '2022-01-01 19:46:06', NULL, '2022-01-01 19:46:06', 'PasswordQRCodeCheck', 'superadmin');
-INSERT INTO `sys_user` VALUES (1067246875800000002, 'lixingdong1', 'e10adc3949ba59abbe56e057f20f883e', '管理员', NULL, 1, 'root@renren.io', '13512345678', NULL, NULL, NULL, NULL, NULL, NULL, '2022-01-01 19:46:06', NULL, '2022-01-01 19:46:06', 'PasswordQRCodeCheck', 'superadmin');
+INSERT INTO `sys_user` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', NULL, 1, 'root@renren.io', '13512345678', NULL, 1, 1, NULL, 0, NULL, '2022-01-01 19:46:06', NULL, '2022-01-01 19:46:06', 'PasswordQRCodeCheck', 'superadmin');
+INSERT INTO `sys_user` VALUES (2, 'lixingdong1', 'e10adc3949ba59abbe56e057f20f883e', '管理员', NULL, 1, 'root@renren.io', '13512345678', NULL, 0, NULL, NULL, 0, NULL, '2022-01-01 19:46:06', NULL, '2022-01-01 19:46:06', 'PasswordQRCodeCheck', 'superadmin');
+INSERT INTO `sys_user` VALUES (5, 'ceshi', '14e1b600b1fd579f47433b88e8d85291', 'ceshi', NULL, 0, '348040933@qq.com', '18591992168', NULL, 0, 1, NULL, 0, 1, '2022-03-11 06:39:37', NULL, NULL, 'PasswordQRCodeCheck', 'superadmin');
 
 -- ----------------------------
 -- Table structure for sys_user_post
@@ -5260,8 +5465,4 @@ CREATE TABLE `tb_product_params`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品参数管理' ROW_FORMAT = Dynamic;
 
-
-INSERT INTO `asi_group`(`id`, `cate_id`, `name`, `info`, `group_code`, `agency_code`) VALUES (341134937002479616, 1, '测试分组', '用户测试使用', 'product', 'super_admin');
-
-INSERT INTO `asi_group_column`(`id`, `agency_code`, `product_code`, `group_code`, `column_code`, `column_name`, `data_type`, `example_value`, `max_length`, `is_required`, `display_order`, `default_value`, `display_length`, `is_display`) VALUES (341141075899060224, 'superadmin', 'text', 'product', 'name', '姓名', '1', '李兴栋', 100, 'Y', 1, '', 100, '2');
-INSERT INTO `asi_group_column`(`id`, `agency_code`, `product_code`, `group_code`, `column_code`, `column_name`, `data_type`, `example_value`, `max_length`, `is_required`, `display_order`, `default_value`, `display_length`, `is_display`) VALUES (341141075899060225, 'superadmin', 'text', 'product', 'age', '年龄', '1', '18', 100, 'Y', 1, '', 100, '1');
+SET FOREIGN_KEY_CHECKS = 1;
