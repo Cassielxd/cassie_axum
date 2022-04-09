@@ -1,7 +1,7 @@
 use crate::entity::log::{SysLogLogin, SysLogOperation};
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default, PartialEq)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysLogLoginDto {
     id: Option<i64>,
@@ -41,7 +41,7 @@ impl Into<SysLogLogin> for SysLogLoginDto {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default, PartialEq)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysLogOperationDto {
     id: Option<i64>,

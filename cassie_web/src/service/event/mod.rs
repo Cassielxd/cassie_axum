@@ -11,49 +11,14 @@ pub async fn consume(e: CassieEvent) {
     //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
     match e {
         //登录事件
-        CassieEvent::LogLogin {
-            operation,
-            user_agent,
-            ip,
-            creator_name,
-            creator,
-        } => {
-            let mut entity = SysLogLogin {
-                id: None,
-                operation,
-                user_agent,
-                ip,
-                creator_name,
-                creator,
-                create_date: None,
-            };
+        CassieEvent::LogLogin(dto) => {
+            let mut entity = dto.into();
             let log_login_service = APPLICATION_CONTEXT.get::<LogLoginService>();
             log_login_service.save(&mut entity).await;
         }
         //操作事件
-        CassieEvent::LogOperation {
-            operation,
-            request_uri,
-            ip,
-            creator_name,
-            request_params,
-            request_method,
-            request_time,
-            status,
-        } => {
-            let mut entity = SysLogOperation {
-                id: None,
-                operation,
-                request_uri,
-                request_params,
-                request_method,
-                request_time,
-                status,
-                ip,
-                creator_name,
-                creator: None,
-                create_date: None,
-            };
+        CassieEvent::LogOperation(dto) => {
+            let mut entity = dto.into();
             let log_operation_service = APPLICATION_CONTEXT.get::<LogOperationService>();
             log_operation_service.save(&mut entity).await;
         }

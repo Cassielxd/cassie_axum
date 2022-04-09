@@ -1,24 +1,11 @@
 use std::collections::HashMap;
 
+use cassie_domain::dto::sys_log::{SysLogLoginDto, SysLogOperationDto};
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum CassieEvent {
-    LogLogin {
-        operation: Option<String>,
-        user_agent: Option<String>,
-        ip: Option<String>,
-        creator_name: Option<String>,
-        creator: Option<i64>,
-    },
-    LogOperation {
-        operation: Option<String>,
-        request_uri: Option<String>,
-        ip: Option<String>,
-        creator_name: Option<String>,
-        request_params: Option<String>,
-        request_method: Option<String>,
-        request_time: Option<String>,
-        status: Option<i8>,
-    },
+    LogLogin(SysLogLoginDto),
+    LogOperation(SysLogOperationDto),
     Sms {
         sms_type: u8,
     },
