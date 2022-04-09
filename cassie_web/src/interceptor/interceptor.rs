@@ -52,8 +52,17 @@ impl SqlIntercept for AgencyInterceptor {
     }
 }
 //判断查询语句是不是需要租户化
-fn intercept_query(from: Vec<TableWithJoins>) -> bool {
+fn intercept_query(select: Select) -> bool {
+    let from = select.from;
+    //拿到where查询条件
+    if let Some(selection) = select.selection {
+        //如果租户列已经存在了就不需要再租户化了 查询条件里已经存在了
+        if deep_find(&selection) {
+            return true;
+        }
+    }
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    //获取到 from 表名 有可能存在 join
     for elem in from.iter() {
         let relation = &elem.relation;
         match relation {
@@ -63,8 +72,10 @@ fn intercept_query(from: Vec<TableWithJoins>) -> bool {
                 args,
                 with_hints,
             } => {
+                //获取到表名称
                 let ObjectName(table_info) = name.clone();
                 let tableinfo = table_info.get(0).unwrap();
+                //判断有表名称没有被忽略
                 for table in config.tenant.ignore_table.iter() {
                     if table.eq(&tableinfo.value) {
                         return false;
@@ -105,7 +116,7 @@ pub fn build(up_sql: String, agency_code: String) -> String {
         match data {
             Iquwey(q) => {
                 if let sqlparser::ast::SetExpr::Select(select) = &q.body {
-                    if intercept_query(select.clone().from) {
+                    if intercept_query(*select.clone()) {
                         return build_select(*select.clone(), agency_code);
                     }
                 }
@@ -172,7 +183,7 @@ fn build_insert(
         match &source.body {
             sqlparser::ast::SetExpr::Values(value) => {
                 let mut values = value.clone().0;
-                //组装value
+                //组装value 如果是 insert into table values (1,2,3),(4,5,6)  多values 的情况就需要循环处理 把租户字段添加进去
                 for elem in values.iter_mut() {
                     elem.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
                         agency_code.clone(),
@@ -225,9 +236,41 @@ fn build_select(select: Select, agency_code: String) -> String {
                 value: config.tenant.column.clone(),
                 quote_style: None,
             })),
-            op: BinaryOperator::Eq,
+            op: BinaryOperator::Eq, //这里是 =
             right: Box::new(Expr::Value(Text::SingleQuotedString(agency_code))),
         }),
     };
     return select1.to_string();
+}
+
+//递归查找 租户列是否存在 存在则返回true
+fn deep_find(selection: &Expr) -> bool {
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    let column = config.tenant.column.clone();
+    match selection {
+        //判断具体的某个查询条件是不是租户字段
+        sqlparser::ast::Expr::Identifier(e) => {
+            if e.value == column {
+                return true;
+            }
+        }
+        // 多个查询条件递归处理最终会走到 其他的两个分支
+        sqlparser::ast::Expr::BinaryOp { left, op, right } => {
+            //递归
+            if deep_find(&*left) || deep_find(&*right) {
+                return true;
+            }
+        }
+        //处理  t.agency_code = ? 的情况
+        sqlparser::ast::Expr::CompoundIdentifier(co) => {
+            for c in co {
+                if c.value == column {
+                    return true;
+                }
+            }
+        }
+        //忽略其他情况
+        _ => {}
+    }
+    return false;
 }

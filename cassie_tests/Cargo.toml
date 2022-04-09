@@ -7,5 +7,3 @@ edition = "2021"
 
 [dependencies]
 sqlparser = "0.15.0"
-oxide-auth = "0.5.1"
-axum = "0.4"
