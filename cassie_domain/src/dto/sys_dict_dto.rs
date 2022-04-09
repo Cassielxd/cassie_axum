@@ -10,7 +10,7 @@ use crate::entity::sys_entitys::{SysDictData, SysDictType};
 /**
  * 字典定义DTO
  */
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysDictTypeDTO {
     id: Option<i64>,
@@ -62,7 +62,7 @@ impl From<SysDictType> for SysDictTypeDTO {
  * 字典值DTO
  */
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysDictDataDTO {
     id: Option<i64>,

@@ -1,6 +1,6 @@
 use crate::entity::event::EventConfig;
 use serde::{Deserialize, Serialize};
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct EventConfigDTO {
     id: Option<i64>,

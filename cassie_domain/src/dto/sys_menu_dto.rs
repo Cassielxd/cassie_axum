@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::entity::sys_entitys::SysMenu;
 use crate::request::tree::TreeModel;
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysMenuDTO {
     id: Option<i64>,

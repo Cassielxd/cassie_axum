@@ -34,19 +34,9 @@ impl Default for SysRoleService {
 impl SysRoleService {
     //根据用户id获取角色
     pub async fn role_info(&self, uid_id: i64) -> Result<Vec<i64>> {
-        let params = SysRoleQuery {
-            id: None,
-            name: None,
-            dept_id: None,
-            role_id: None,
-            user_id: Some(uid_id),
-            menu_id: None,
-            page: None,
-            limit: None,
-            order: None,
-            order_field: None,
-        };
-        let user_role = self.sys_role_user_service.list(&params).await;
+        let mut query = SysRoleQuery::default();
+        query.set_user_id(Some(uid_id));
+        let user_role = self.sys_role_user_service.list(&query).await;
         if let Ok(list) = user_role {
             Ok(list
                 .iter()
@@ -85,8 +75,9 @@ impl SysRoleService {
 impl CrudService<SysRole, SysRoleDTO, SysRoleQuery> for SysRoleService {
     fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        rb.new_wrapper()
-            .do_if(!arg.name.is_empty(), |w| w.like(SysRole::name(), &arg.name))
+        rb.new_wrapper().do_if(!arg.name().is_empty(), |w| {
+            w.like(SysRole::name(), &arg.name())
+        })
     }
     fn set_save_common_fields(&self, common: CommonField, data: &mut SysRole) {
         data.id = common.id;

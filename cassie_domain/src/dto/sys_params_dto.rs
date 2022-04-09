@@ -6,7 +6,7 @@ use crate::entity::sys_entitys::SysParams;
 /**
  * 系统参数定义DTO
  */
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysParamsDTO {
     id: Option<i64>,

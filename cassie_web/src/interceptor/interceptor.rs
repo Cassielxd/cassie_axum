@@ -38,10 +38,11 @@ impl SqlIntercept for AgencyInterceptor {
     ) -> Result<(), Error> {
         //判断是否开启租户化
         if self.enable {
-            let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-            //修改租户化方式直接拼接 不可更该顺序
-            *sql = build(sql.clone(), request_model.agency_code.clone());
-            //添加租户化条件
+            if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>() {
+                //修改租户化方式直接拼接 不可更该顺序
+                *sql = build(sql.clone(), request_model.agency_code.clone());
+                //添加租户化条件
+            }
         }
         return Ok(());
     }
@@ -170,18 +171,20 @@ fn build_insert(
         c.push(agency_column);
         match &source.body {
             sqlparser::ast::SetExpr::Values(value) => {
+                let mut values = value.clone().0;
                 //组装value
-                let mut a1 = value.0.get(0).unwrap().clone();
-                a1.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
-                    agency_code,
-                )));
+                for elem in values.iter_mut() {
+                    elem.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
+                        agency_code.clone(),
+                    )));
+                }
                 let insert = Insert {
                     or: or.clone(),
                     table_name: table_name.clone(),
                     columns: c,
                     overwrite: overwrite.clone(),
                     source: Box::new(Query {
-                        body: SetExpr::Values(Values(vec![a1])),
+                        body: SetExpr::Values(Values(values)),
                         ..*source.clone()
                     }),
                     partitioned: partitioned.clone(),

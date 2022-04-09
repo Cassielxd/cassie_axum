@@ -54,11 +54,13 @@ impl OSSConfig {
 }
 
 ///服务启动配置
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
+#[derive(
+    Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters, MutGetters,
+)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ApplicationConfig {
     pub debug: bool,
     ///redis地址
-    #[getset(get_copy = "pub", set = "pub", get_mut = "pub")]
     pub redis_url: String,
     //mongodb_url地址
     pub mongodb_url: String,

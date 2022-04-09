@@ -3,7 +3,7 @@ use crate::request::tree::TreeModel;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 
-#[derive(Clone, Debug, Serialize, Validate, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Validate, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct AsiGroupDTO {
     id: Option<i64>,
@@ -66,7 +66,7 @@ impl From<AsiGroup> for AsiGroupDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct AsiGroupColumnDTO {
     id: Option<i64>,
@@ -142,7 +142,7 @@ impl From<AsiGroupColumn> for AsiGroupColumnDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct AsiGroupValuesDTO {
     id: Option<i64>,

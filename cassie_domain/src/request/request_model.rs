@@ -1,5 +1,3 @@
-use std::default;
-
 use serde::{Deserialize, Serialize};
 
 /**
@@ -25,17 +23,17 @@ pub struct SysUserQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysDictQuery {
-    pub id: Option<i64>,
-    pub dict_type_id: Option<i64>,
-    pub dict_type: Option<String>,
-    pub dict_name: Option<String>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    id: Option<i64>,
+    dict_type_id: Option<i64>,
+    dict_type: Option<String>,
+    dict_name: Option<String>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 /**
 *struct:SysParamsQuery
@@ -43,16 +41,16 @@ pub struct SysDictQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysParamsQuery {
-    pub id: Option<i64>,
-    pub param_code: Option<String>,
-    pub param_type: Option<u32>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    id: Option<i64>,
+    param_code: Option<String>,
+    param_type: Option<u32>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 /**
 *struct:SysRoleQuery
@@ -60,19 +58,19 @@ pub struct SysParamsQuery {
 *author:String
 *email:348040933@qq.com
 */
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleQuery {
-    pub id: Option<u64>,
-    pub name: Option<String>,
-    pub dept_id: Option<i64>,
-    pub role_id: Option<i64>,
-    pub user_id: Option<i64>,
-    pub menu_id: Option<i64>,
-    pub page: Option<u64>,
-    pub limit: Option<u64>,
-    pub order: Option<String>,
-    pub order_field: Option<String>,
+    id: Option<u64>,
+    name: Option<String>,
+    dept_id: Option<i64>,
+    role_id: Option<i64>,
+    user_id: Option<i64>,
+    menu_id: Option<i64>,
+    page: Option<u64>,
+    limit: Option<u64>,
+    order: Option<String>,
+    order_field: Option<String>,
 }
 /**
 *struct:SysMenuQuery
@@ -92,7 +90,7 @@ pub struct SysMenuQuery {
     order_field: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct AsiQuery {
     column_code: Option<String>,
@@ -104,10 +102,10 @@ pub struct AsiQuery {
     order_field: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct LogQuery {}
 
-#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct EventQuery {}

@@ -18,21 +18,12 @@ use rbatis::rbatis::Rbatis;
 */
 #[cached(name = "ALL_DICT_LIST", time = 180, result = true, size = 100)]
 pub async fn get_all_list() -> Result<Vec<SysDictTypeDTO>> {
-    let q = SysDictQuery {
-        id: None,
-        dict_type_id: None,
-        dict_type: None,
-        dict_name: None,
-        page: None,
-        limit: None,
-        order: None,
-        order_field: None,
-    };
+    let query = SysDictQuery::default();
     let sys_dict_type_service = APPLICATION_CONTEXT.get::<SysDictTypeService>();
     let sys_dict_value_service = APPLICATION_CONTEXT.get::<SysDictDataService>();
-    let mut dict = sys_dict_type_service.list(&q).await?;
-    let dict_value = sys_dict_value_service.list(&q).await?;
-    for mut d in &mut dict {
+    let mut dict = sys_dict_type_service.list(&query).await?;
+    let dict_value = sys_dict_value_service.list(&query).await?;
+    for d in &mut dict {
         let mut data = vec![];
         for dv in &dict_value {
             if d.id() == dv.dict_type_id() {
@@ -83,8 +74,8 @@ impl Default for SysDictDataService {
 impl CrudService<SysDictData, SysDictDataDTO, SysDictQuery> for SysDictDataService {
     fn get_wrapper(arg: &SysDictQuery) -> rbatis::wrapper::Wrapper {
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        rb.new_wrapper().do_if(arg.dict_type_id.is_some(), |w| {
-            w.eq(SysDictData::dict_type_id(), arg.dict_type_id)
+        rb.new_wrapper().do_if(arg.dict_type_id().is_some(), |w| {
+            w.eq(SysDictData::dict_type_id(), arg.dict_type_id())
         })
     }
 

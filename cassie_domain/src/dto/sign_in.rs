@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 /// 登陆
 use validator_derive::Validate;
 
-#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters)]
+#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SignInDTO {
     #[validate(required)]
@@ -21,7 +21,7 @@ pub struct SignInDTO {
 }
 
 /// 验证码
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 pub struct CatpchaDTO {
     pub uuid: Option<String>,
 }

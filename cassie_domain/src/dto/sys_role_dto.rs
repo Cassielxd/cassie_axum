@@ -6,7 +6,7 @@ use validator_derive::Validate;
 /**
  * 角色dto
  */
-#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleDTO {
     pub id: Option<i64>,
@@ -54,7 +54,7 @@ impl From<SysRole> for SysRoleDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleDataScopeDTO {
     pub id: Option<i64>,
@@ -88,7 +88,7 @@ impl From<SysRoleDataScope> for SysRoleDataScopeDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleMenuDTO {
     pub id: Option<i64>,
@@ -122,7 +122,7 @@ impl From<SysRoleMenu> for SysRoleMenuDTO {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters)]
+#[derive(Clone, Debug, Serialize, Deserialize, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleUserDTO {
     pub id: Option<i64>,
