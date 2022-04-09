@@ -50,19 +50,23 @@ where
             } else {
                 Some(0)
             };
-            //构建操作日志event对象
-            let event = CassieEvent::LogOperation {
-                operation: Some(action.clone()),
-                request_uri: Some(path.clone()),
-                ip: None,
-                creator_name,
-                request_params: None,
-                request_method: Some(action.clone()),
-                request_time: Some(start.elapsed().as_millis().to_string()),
-                status,
-            };
-            //发布事件
-            fire_event(event).await;
+            //只记录非GET请求的情况
+            if action != "GET" {
+                //构建操作日志event对象
+                let event = CassieEvent::LogOperation {
+                    operation: Some(action.clone()),
+                    request_uri: Some(path.clone()),
+                    ip: None,
+                    creator_name,
+                    request_params: None,
+                    request_method: Some(action.clone()),
+                    request_time: Some(start.elapsed().as_millis().to_string()),
+                    status,
+                };
+                //发布事件
+                fire_event(event).await;
+            }
+
             Ok(response)
         })
     }
