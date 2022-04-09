@@ -93,7 +93,7 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
 }
 pub fn init_router() -> Router {
     Router::new()
-        .route("/user", get(page).post(save))
+        .route("/user", get(page).post(save).put(save))
         .route("/user/info", get(info))
         .route("/user/list", get(list))
         .route("/user/:id", get(get_user_by_id).delete(delete))
