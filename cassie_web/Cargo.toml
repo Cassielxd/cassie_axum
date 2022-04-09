@@ -14,59 +14,57 @@ tower-http = { version = "0.2.0", features = ["full"] }
 #serde and json
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
-
 chrono = "0.4"
-
-
+#orm 类似于java的mybatis
 rbson = "2.0"
 rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
-
 async-std = "1.10"
-
-
 #redis
 redis = { version = "0.21.5", features = ["async-std-comp"] }
-
-#captcha
+#captcha 图片验证码
 captcha = "0.0.8"
 #http client,use rust-tls replace to native tls
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls","blocking"] }
-
 #async trait
 async-trait = "0.1"
 #map
 indexmap = "1.7.0"
-
-
-#futures
+#futures 异步实现包
 futures = "0.3"
-
+#rabc 的权限抽象实现
 casbin = { version = "2.0.9", default-features = false, features = ["runtime-async-std", "cached", "logging"] }
-
+#实体验证器 必填 长度 邮箱 手机号码
 validator = "0.14.0"
 validator_derive = "0.14.0"
 #jwt
 jsonwebtoken = "7"
-
 #log
 log = "0.4"
 fast_log = { version="1.4", features = ["lz4","zip", "gzip"]}
 percent-encoding = "2.1.0"
+#mongodb数据库
 mongodb = { version = "2.1.0", default-features = false, features = ["async-std-runtime"] }
-
+#对象存储
 state = { version = "0.5", features = ["tls"] }
+#缓存 支持redis 本地缓存
 cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
-
-#sqlparse
+#sqlparse sql解析器
 sqlparser = "0.15.0"
+#pharosv事件框架
 pharos = "0.5.3"
-#cassie
+#cassie 实体定义
 cassie_domain = { path = "../cassie_domain" }
+#cassie 公共实体util定义
 cassie_common = { path = "../cassie_common" }
+#cassie 配置类定义
 cassie_config = { path = "../cassie_config" }
+#cassie orm定义
 cassie_orm = { path = "../cassie_orm" }
+#cassie 上传相关 默认实现 aliyun oss
 cassie_upload = { path = "../cassie_upload" }
+#cassie 规则引擎
 cassie_rules = { path = "../cassie_rules" }
+#cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
 [profile.release]

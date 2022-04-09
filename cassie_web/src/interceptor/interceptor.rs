@@ -12,11 +12,11 @@ use sqlparser::ast::SqliteOnConflict;
 use sqlparser::ast::Statement::Insert;
 use sqlparser::ast::Statement::Query as Iquwey;
 use sqlparser::ast::{
-    BinaryOperator, Expr, Ident, ObjectName, Query, SetExpr, TableWithJoins, Value as Text, Values,
+    BinaryOperator, Expr, Ident, ObjectName, Query, SetExpr, Value as Text, Values,
 };
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
-//租户化拦截器
+//租户化拦截器 租户化核心实现
 #[derive(Debug)]
 pub struct AgencyInterceptor {
     //是否开始租户
@@ -39,9 +39,7 @@ impl SqlIntercept for AgencyInterceptor {
         //判断是否开启租户化
         if self.enable {
             if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>() {
-                //修改租户化方式直接拼接 不可更该顺序
                 *sql = build(sql.clone(), request_model.agency_code.clone());
-                //添加租户化条件
             }
         }
         return Ok(());

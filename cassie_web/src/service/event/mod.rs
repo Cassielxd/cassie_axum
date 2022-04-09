@@ -1,5 +1,4 @@
 pub mod event_service;
-use cassie_domain::entity::log::{SysLogLogin, SysLogOperation};
 use pharos::SharedPharos;
 
 use crate::{observe::event::CassieEvent, service::crud_service::CrudService, APPLICATION_CONTEXT};

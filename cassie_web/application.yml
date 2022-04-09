@@ -12,7 +12,7 @@ cache_type: "redis"
 redis_url: "redis://127.0.0.1:6379"
 mongodb_url: "mongodb://localhost:27017"
 #数据库地址
-database_url: "mysql://root:root@localhost:3306/rivet_admin"
+database_url: "mysql://root:123456@localhost:3306/rivet_admin"
 #逻辑删除字段
 logic_column: "del"
 logic_un_deleted: 0
@@ -35,7 +35,7 @@ sms_cache_send_key_prefix: "sms:send:"
 login_fail_retry: 3
 #登陆失败重试次数限制超过后提示的等待时间（秒）
 login_fail_retry_wait_sec: 30
-
+#nacos注册中心核心配置
 nacos:
   nacos_flag: false
   nacos_server: "http://127.0.0.1:8848/nacos"
@@ -63,11 +63,11 @@ oss:
   endpoint: "oss-cn-beijing.aliyuncs.com"
   bucket: "rivet"
   access_endpoint: "http://rivet.oss-cn-beijing.aliyuncs.com"
-
+#租户化配置    
 tenant:
-  enable: true
-  column: "agency_code"
-  ignore_table:
+  enable: true   #enable:true 开启租户化
+  column: "agency_code"   #column租户化字段
+  ignore_table:    #ignore_table 忽略的表
     - "sys_log_login"
     - "sys_log_operation"
     - "sys_user"
