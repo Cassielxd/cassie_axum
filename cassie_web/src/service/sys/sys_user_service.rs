@@ -72,7 +72,7 @@ impl SysUserService {
         if let Some(rid) = role_id {
             let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
             let mut lock = cached_enforcer.write().await;
-            
+
             lock.add_grouping_policy(vec![
                 uid.to_string(),
                 rid.to_string(),

@@ -37,21 +37,18 @@ impl CasbinService {
      *author:String
      *email:348040933@qq.com
      */
-    pub fn default() -> Self {
-        let cached_enforcer = async_std::task::block_on(async {
-            /*加载模型文件*/
-            let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
-                .await
-                .unwrap();
-            /*初始化适配器*/
-            let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-            let a = CICIAdapter::new(init_rbatis(config).await);
-            let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
-            /* 添加自定义验证方法 */
-            cached_enforcer.add_function("ciciMatch", cici_match);
-            cached_enforcer.load_policy().await;
-            cached_enforcer
-        });
+    pub async fn default() -> Self {
+        /*加载模型文件*/
+        let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
+            .await
+            .unwrap();
+        /*初始化适配器*/
+        let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+        let a = CICIAdapter::new(init_rbatis(config).await);
+        let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
+        /* 添加自定义验证方法 */
+        cached_enforcer.add_function("ciciMatch", cici_match);
+        println!("casbin init success");
         Self {
             enforcer: Arc::new(RwLock::new(cached_enforcer)),
         }
