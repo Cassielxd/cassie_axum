@@ -58,7 +58,7 @@ fn intercept_query(select: Select) -> bool {
     if let Some(selection) = select.selection {
         //如果租户列已经存在了就不需要再租户化了 查询条件里已经存在了
         if deep_find(&selection) {
-            return true;
+            return false;
         }
     }
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();

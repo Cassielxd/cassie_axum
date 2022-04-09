@@ -1,8 +1,7 @@
 use sqlparser::{ast::Expr, dialect::GenericDialect, parser::Parser};
 
 fn main() {
-    let sql = "select id,pid,url,name,menu_type,icon,permissions,sort,del_flag,creator,create_date,updater,update_date,method,path from sys_menu
-    where agency_code = ? AND menu_type = ?";
+    let sql = "SELECT t3.* FROM sys_role_user AS t1 LEFT JOIN sys_role_menu AS t2 ON t1.role_id = t2.role_id LEFT JOIN sys_menu AS t3 ON t2.menu_id = t3.id WHERE t1.user_id = ? AND t3.del_flag = 0 AND t3.agency_code = ? AND t3.menu_type = ? ";
     let dialect = GenericDialect {}; // or AnsiDialect, or your own dialect ...
                                      //解析sql
     let atc = Parser::parse_sql(&dialect, &sql).unwrap();

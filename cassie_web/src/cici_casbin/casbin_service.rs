@@ -49,6 +49,7 @@ impl CasbinService {
             let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
             /* 添加自定义验证方法 */
             cached_enforcer.add_function("ciciMatch", cici_match);
+            cached_enforcer.load_policy().await;
             cached_enforcer
         });
         Self {
