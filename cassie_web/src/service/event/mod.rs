@@ -22,9 +22,9 @@ pub async fn consume(e: CassieEvent) {
             log_operation_service.save(&mut entity).await;
         }
         //消息事件
-        CassieEvent::Sms { sms_type } => {}
+        CassieEvent::Sms { sms_type } => todo!("待开发"),
         //自定义事件
-        CassieEvent::Custom { event_type, data } => todo!(),
+        CassieEvent::Custom { event_type, data } => todo!("待开发"),
     }
 }
 //发布事件

@@ -100,7 +100,7 @@ fn intercept_insert(table_info: ObjectName) -> bool {
 }
 
 //租户化sql生成
-#[cached(time = 60, size = 100)]
+#[cached(time = 3600, size = 100)]
 pub fn build(up_sql: String, agency_code: String) -> String {
     //获取配置类
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
