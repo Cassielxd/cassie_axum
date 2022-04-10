@@ -31,7 +31,7 @@ async-trait = "0.1"
 indexmap = "1.7.0"
 #futures 异步实现包
 futures = "0.3"
-#rabc 的权限抽象实现
+#rbac 的权限抽象实现
 casbin = { version = "2.0.9", default-features = false, features = ["runtime-async-std", "cached", "logging"] }
 #实体验证器 必填 长度 邮箱 手机号码
 validator = "0.14.0"
