@@ -44,16 +44,15 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
 
 #### 使用说明
 
-```rust 
- rust开发环境省略
- 1:初始化DB，添加配置
-   导入db cassie_admin.sql
- 2:构建并启动项目
+ 1. 初始化DB，添加配置
+   导入db/cassie_admin.sql文件
+   配置application.yml
+ 2. 构建并启动项目
    cargo build
    cago run
- 3:postman 导入 axum.postman_collection.json
-   开始测试
-```
+ 3. 启动前端项目https://gitee.com/stringlxd/cassie_admin
+    默认端口 9999
+
 #### 目录结构
 ```
 cassie_axum
