@@ -88,6 +88,7 @@ async fn main() {
         .nest("/api", api::routers())
         .fallback(fallback.into_service())
         .layer(cors);
+
     // 启动服务
     Server::bind(&server.parse().unwrap())
         .serve(app.into_make_service())

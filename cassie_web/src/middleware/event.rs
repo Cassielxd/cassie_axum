@@ -50,19 +50,16 @@ where
             } else {
                 Some(0)
             };
-            //只记录非GET请求的情况
-            if action != "GET" {
-                //构建操作日志event对象
-                let mut operation = SysLogOperationDto::default();
-                operation.set_operation(Some(action.clone()));
-                operation.set_request_uri(Some(path.clone()));
-                operation.set_creator_name(creator_name);
-                operation.set_status(status);
-                operation.set_request_time(Some(start.elapsed().as_millis().to_string()));
-                operation.set_request_method(Some(action.clone()));
-                //发布事件
-                fire_event(CassieEvent::LogOperation(operation)).await;
-            }
+            //构建操作日志event对象
+            let mut operation = SysLogOperationDto::default();
+            operation.set_operation(Some(action.clone()));
+            operation.set_request_uri(Some(path.clone()));
+            operation.set_creator_name(creator_name);
+            operation.set_status(status);
+            operation.set_request_time(Some(start.elapsed().as_millis().to_string()));
+            operation.set_request_method(Some(action.clone()));
+            //发布事件
+            fire_event(CassieEvent::LogOperation(operation)).await;
 
             Ok(response)
         })

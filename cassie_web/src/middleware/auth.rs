@@ -33,7 +33,6 @@ where
         let action = req.method().clone().to_string();
         let path = req.uri().path().to_string();
 
-        println!("path:{}", path);
         /*获取token*/
         let value = HeaderValue::from_str("").unwrap();
         let headers = req.headers().unwrap();
@@ -71,7 +70,7 @@ where
                     /*获取验证的  casbin_service*/
                     let service = APPLICATION_CONTEXT.get::<CasbinService>();
                     /*casbin 验证有效性 处理返回结果集*/
-                
+
                     if service.call(path, action, vals).await {
                         return Ok(Self {});
                     } else {
@@ -79,7 +78,6 @@ where
                     }
                 }
                 Err(e) => {
-                    println!("{}",e.to_string());
                     //401 http状态码会强制前端退出当前登陆状态
                     return Err(Error::from(serde_json::json!(&resp).to_string()));
                 }

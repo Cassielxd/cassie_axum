@@ -87,7 +87,6 @@ impl CasbinService {
                 vec![uid, path, action]
             };
             let mut lock = cloned_enforcer.write().await;
-            println!("{:?}",vecs.clone());
             match lock.enforce_mut(vecs) {
                 Ok(true) => {
                     drop(lock);
