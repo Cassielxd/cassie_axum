@@ -54,56 +54,186 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
  3:postman 导入 axum.postman_collection.json
    开始测试
 ```
+#### 目录结构
+```
+cassie_axum
+├─ axum.postman_collection.json //postmain测试api
+├─ Cargo.lock
+├─ Cargo.toml                   //核心包配置
+├─ cassie_casbin_adapter        
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ action.rs      //casbin操作定义
+│     ├─ cici_adapter.rs//适配器
+│     ├─ lib.rs
+│     └─ models.rs      //casbin模型定义             
+├─ cassie_common                
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ error.rs
+│     ├─ lib.rs
+│     └─ utils
+│        ├─ bencher.rs
+│        ├─ mod.rs
+│        ├─ password_encoder.rs //密码加密解密
+│        └─ string.rs//字符串工具类
+├─ cassie_config
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ config.rs//核心配置类
+│     └─ lib.rs
+├─ cassie_domain
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ dto
+│     │  ├─ asi_dto.rs
+│     │  ├─ mod.rs
+│     │  ├─ sign_in.rs
+│     │  ├─ sys_auth_dto.rs
+│     │  ├─ sys_dict_dto.rs
+│     │  ├─ sys_event_dto.rs
+│     │  ├─ sys_log.rs
+│     │  ├─ sys_menu_dto.rs
+│     │  ├─ sys_params_dto.rs
+│     │  ├─ sys_role_dto.rs
+│     │  └─ sys_user_dto.rs
+│     ├─ entity
+│     │  ├─ asi_entitys.rs
+│     │  ├─ event.rs
+│     │  ├─ log.rs
+│     │  ├─ mod.rs
+│     │  ├─ pagedata.rs
+│     │  ├─ sms.rs
+│     │  └─ sys_entitys.rs
+│     ├─ lib.rs
+│     ├─ request
+│     │  ├─ mod.rs
+│     │  ├─ request_model.rs//thread_local 用户信息
+│     │  └─ tree.rs //TreeService 树节点生成
+│     └─ vo
+│        ├─ jwt.rs
+│        ├─ mod.rs
+│        └─ sign_in.rs
+├─ cassie_orm
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ dao
+│     │  ├─ mapper.rs//rbaits 核心实现
+│     │  └─ mod.rs
+│     ├─ lib.rs
+│     └─ mapper
+│        └─ menu_mapper.html//sql文件映射
+├─ cassie_rules
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ core
+│     │  ├─ mod.rs
+│     │  └─ rules.rs
+│     ├─ lib.rs
+│     └─ secript.rhai
+├─ cassie_tests
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ lib.rs
+│     └─ main.rs
+├─ cassie_upload
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ lib.rs
+│     └─ upload
+│        ├─ mod.rs
+│        ├─ oss_service.rs//oss上传核心实现
+│        └─ upload_service.rs
+├─ cassie_web
+│  ├─ application.yml
+│  ├─ auth_config
+│  │  └─ rbac_with_domains_model.conf
+│  ├─ Cargo.toml
+│  └─ src
+│     ├─ admin      //后台管理resource核心实现
+│     │  ├─ asi    //动态表单相关
+│     │  │  ├─ asi_group_column_resource.rs
+│     │  │  ├─ asi_group_resource.rs
+│     │  │  ├─ asi_group_values_resource.rs
+│     │  │  └─ mod.rs
+│     │  ├─ mod.rs
+│     │  └─ sys     //系统相关
+│     │     ├─ mod.rs
+│     │     ├─ sys_auth_resource.rs 
+│     │     ├─ sys_dict_type_resource.rs
+│     │     ├─ sys_dict_value_resource.rs
+│     │     ├─ sys_menu_resource.rs
+│     │     ├─ sys_params_resource.rs
+│     │     ├─ sys_role_resource.rs
+│     │     ├─ sys_upload_resource.rs
+│     │     └─ sys_user_resource.rs
+│     ├─ api
+│     │  └─ mod.rs
+│     ├─ cici_casbin  //casbin 实现
+│     │  ├─ casbin_service.rs
+│     │  └─ mod.rs
+│     ├─ config
+│     │  ├─ log.rs
+│     │  └─ mod.rs
+│     ├─ initialize   //系统启动初始化相关
+│     │  ├─ casbin.rs
+│     │  ├─ config.rs
+│     │  ├─ database.rs
+│     │  ├─ event.rs
+│     │  ├─ mod.rs
+│     │  ├─ rules.rs
+│     │  └─ service.rs
+│     ├─ interceptor
+│     │  ├─ interceptor.rs //租户拦截器
+│     │  └─ mod.rs
+│     ├─ lib.rs
+│     ├─ main.rs
+│     ├─ middleware      //中间件实现
+│     │  ├─ auth.rs      //权限拦截实现
+│     │  ├─ event.rs     //操作日志拦截器
+│     │  └─ mod.rs
+│     ├─ nacos
+│     │  └─ mod.rs
+│     ├─ observe         //event 核心实现
+│     │  ├─ consumer.rs
+│     │  ├─ event.rs
+│     │  └─ mod.rs
+│     ├─ routers  
+│     │  ├─ admin.rs     //管理端路由
+│     │  ├─ api.rs       //api路由
+│     │  └─ mod.rs
+│     └─ service         //service核心包
+│        ├─ asi
+│        │  ├─ asi_service.rs
+│        │  ├─ asi_validation.rs
+│        │  └─ mod.rs
+│        ├─ event
+│        │  ├─ event_service.rs
+│        │  └─ mod.rs
+│        ├─ log
+│        │  ├─ log_service.rs
+│        │  └─ mod.rs
+│        ├─ mod.rs
+│        └─ sys
+│           ├─ cache_service.rs
+│           ├─ crud_service.rs
+│           ├─ mod.rs
+│           ├─ redis_service.rs
+│           ├─ sys_auth_service.rs
+│           ├─ sys_dict_service.rs
+│           ├─ sys_menu_service.rs
+│           ├─ sys_params_service.rs
+│           ├─ sys_role_data_scope_service.rs
+│           ├─ sys_role_menu_service.rs
+│           ├─ sys_role_service.rs
+│           ├─ sys_role_user_service.rs
+│           └─ sys_user_service.rs
+├─ db
+│  ├─ cassie_admin.sql    //基础sql脚本  
+│  └─ cassie_admin_v1.sql
+├─ LICENSE
+└─ README.md
 
-```rust
-/*
-  
-  权限中间件使用:
-  Auth是权限认证验证的核心入口
-  中间件的添加方式：
-  route("/index", get(index)).layer(extractor_middleware::<Auth>())
-  访问/index的时候受权限影响
-*/
-
-#[tokio::main]
-async fn main() {
-    //初始化上环境下文
-    init_context().await;
-    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    init_log();
-    info!(
-        " - Local:   http://{}:{}",
-        cassie_config.server.host.replace("0.0.0.0", "127.0.0.1"),
-        cassie_config.server.port
-    );
-    //nacos 服务注册
-    register_service().await;
-    let server = format!(
-        "{}:{}",
-        cassie_config.server.host, cassie_config.server.port
-    );
-
-    let cors = CorsLayer::new()
-        .allow_methods(Any)
-        .allow_origin(Any)
-        .allow_headers(Any)
-        .max_age(Duration::from_secs(60) * 10);
-
-    //绑定端口 初始化 路由
-    let app = Router::new()
-        .route("/", get(index))
-        .nest(
-            "/admin",
-            admin::routers().layer(extractor_middleware::<Auth>()),
-        )
-        .nest("/api", api::routers())
-        .layer(cors);
-    // 启动服务
-    Server::bind(&server.parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
-}
 ```
 
 #### 框架说明
@@ -211,3 +341,5 @@ application_name: "cassie_admin"
   2:添加 resource/:id 资源验证方式
   3:部分代码重构
 ```
+
+
