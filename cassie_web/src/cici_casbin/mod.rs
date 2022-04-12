@@ -6,13 +6,10 @@ use casbin::function_map::key_match2;
 use casbin::rhai::ImmutableString;
 use cassie_config::config::ApplicationConfig;
 
-//需要登录但是不需要权限的路由比如获取用户 修改密码等
-pub fn match_base_url(url: &str) -> bool {
-    false
-}
+
 
 ///是否处在白名单接口中
-#[cached(name = "admin_white_list_api", time = 60, size = 100)]
+#[cached(name = "AFMIN_WHITE_LIST_API", time = 60, size = 100)]
 pub fn is_white_list_api(path: String) -> bool {
     if path.eq("/") {
         return true;
@@ -26,7 +23,7 @@ pub fn is_white_list_api(path: String) -> bool {
     }
     return false;
 }
-#[cached(name = "admin_auth_list_api", time = 60, size = 100)]
+#[cached(name = "ADMIN_AUTH_LIST_API", time = 60, size = 100)]
 pub fn is_auth_list_api(path: String) -> bool {
     if path.eq("/") {
         return true;

@@ -10,7 +10,7 @@ fn parse() {
             sqlparser::ast::Statement::Query(q) => {
                 if let sqlparser::ast::SetExpr::Select(select) = &q.body {
                     if let Some(selection) = &select.selection {
-                        let ok = deep(selection.clone());
+                        let ok = deep(&selection.clone());
                         print!("{}", ok);
                     }
                 }
@@ -27,9 +27,9 @@ fn deep(selection: &Expr) -> bool {
                 return true;
             }
         }
-        sqlparser::ast::Expr::BinaryOp { left, op, right } => {
+        sqlparser::ast::Expr::BinaryOp { left, op: _, right } => {
             println!("进来了1:{:?}", *left.clone());
-            if deep(*left) || deep(*right) {
+            if deep(&*left) || deep(&*right) {
                 return true;
             }
         }
