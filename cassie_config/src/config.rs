@@ -1,10 +1,9 @@
-use getset::{CopyGetters, Getters, Setters};
-
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct NacosConfig {
-    pub nacos_flag: bool,
-    pub nacos_server: String,
-    pub application_name: String,
+    nacos_flag: bool,
+    nacos_server: String,
+    application_name: String,
 }
 
 //add value to config
@@ -20,26 +19,29 @@ impl NacosConfig {
         }
     }
 }
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ServerConfig {
     ///当前服务地址
-    pub host: String,
-    pub port: String,
+    host: String,
+    port: String,
 }
 
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct TenantConfig {
-    pub enable: bool,
-    pub column: String,
-    pub ignore_table: Vec<String>,
+    enable: bool,
+    column: String,
+    ignore_table: Vec<String>,
 }
-#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct OSSConfig {
-    pub key_id: String,
-    pub key_secret: String,
-    pub endpoint: String,
-    pub bucket: String,
-    pub access_endpoint: String,
+    key_id: String,
+    key_secret: String,
+    endpoint: String,
+    bucket: String,
+    access_endpoint: String,
 }
 impl OSSConfig {
     pub fn validate(&self) {
@@ -59,50 +61,51 @@ impl OSSConfig {
 )]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ApplicationConfig {
-    pub debug: bool,
+    debug: bool,
     ///redis地址
-    pub redis_url: String,
+    redis_url: String,
     //mongodb_url地址
-    pub mongodb_url: String,
+    mongodb_url: String,
     /// 数据库地址
-    pub database_url: String,
+    database_url: String,
     /// 逻辑删除字段
-    pub logic_column: String,
-    pub logic_un_deleted: i64,
-    pub logic_deleted: i64,
+    logic_column: String,
+    logic_un_deleted: i64,
+    logic_deleted: i64,
     ///日志目录 "target/logs/"
-    pub log_dir: String,
+    log_dir: String,
     /// "100MB" 日志分割尺寸-单位KB,MB,GB
-    pub log_temp_size: String,
+    log_temp_size: String,
     /// 日志打包格式可选“”（空-不压缩）“gzip”（gz压缩包）“zip”（zip压缩包）“lz4”（lz4压缩包（非常快））
-    pub log_pack_compress: String,
+    log_pack_compress: String,
     ///日志滚动配置   保留全部:All,按时间保留:KeepTime(Duration),按版本保留:KeepNum(i64)
-    pub log_rolling_type: String,
+    log_rolling_type: String,
     ///日志等级
-    pub log_level: String,
+    log_level: String,
     ///短信缓存队列（mem/redis）
-    pub sms_cache_send_key_prefix: String,
+    sms_cache_send_key_prefix: String,
     ///jwt 秘钥
-    pub jwt_secret: String,
+    jwt_secret: String,
+    admin_auth_list_api: Option<Vec<String>>,
     ///白名单接口
-    pub admin_white_list_api: Vec<String>,
-    pub api_white_list_api: Vec<String>,
-    pub super_admin_ids: Vec<String>,
+    admin_white_list_api: Vec<String>,
+    api_white_list_api: Vec<String>,
+    super_admin_ids: Vec<String>,
     ///权限缓存类型
-    pub cache_type: String,
-    pub upload_type: String,
+    cache_type: String,
+    upload_type: String,
     ///重试
-    pub login_fail_retry: u64,
+    login_fail_retry: u64,
     ///重试等待时间
-    pub login_fail_retry_wait_sec: u64,
+    login_fail_retry_wait_sec: u64,
     //server 配置
-    pub server: ServerConfig,
+    server: ServerConfig,
     //nacos 配置
-    pub nacos: NacosConfig,
+    nacos: NacosConfig,
     //租户 配置
-    pub tenant: TenantConfig,
+    tenant: TenantConfig,
     //oss 配置
-    pub oss: OSSConfig,
+    oss: OSSConfig,
 }
 
 impl ApplicationConfig {

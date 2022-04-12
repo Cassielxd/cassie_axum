@@ -60,14 +60,18 @@ async fn main() {
     init_log();
     info!(
         " - Local:   http://{}:{}",
-        cassie_config.server.host.replace("0.0.0.0", "127.0.0.1"),
-        cassie_config.server.port
+        cassie_config
+            .server()
+            .host()
+            .replace("0.0.0.0", "127.0.0.1"),
+        cassie_config.server().port()
     );
     //nacos 服务注册
     register_service().await;
     let server = format!(
         "{}:{}",
-        cassie_config.server.host, cassie_config.server.port
+        cassie_config.server().host(),
+        cassie_config.server().port()
     );
 
     let cors = CorsLayer::new()

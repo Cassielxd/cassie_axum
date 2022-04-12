@@ -74,7 +74,7 @@ fn intercept_query(select: Select) -> bool {
                 let ObjectName(table_info) = name.clone();
                 let tableinfo = table_info.get(0).unwrap();
                 //判断有表名称没有被忽略
-                for table in config.tenant.ignore_table.iter() {
+                for table in config.tenant().ignore_table().iter() {
                     if table.eq(&tableinfo.value) {
                         return false;
                     }
@@ -91,7 +91,7 @@ fn intercept_insert(table_info: ObjectName) -> bool {
     let ObjectName(table_info) = table_info;
     let tableinfo = table_info.get(0).unwrap();
 
-    for table in config.tenant.ignore_table.iter() {
+    for table in config.tenant().ignore_table().iter() {
         if table.eq(&tableinfo.value) {
             return false;
         }
@@ -172,7 +172,7 @@ fn build_insert(
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let mut c = columns.clone();
     let agency_column = Ident {
-        value: config.tenant.column.clone(),
+        value: config.tenant().column().clone(),
         quote_style: None,
     };
     //判断columns是否为空已经包含了租户字段
@@ -221,7 +221,7 @@ fn build_select(select: Select, agency_code: String) -> String {
             op: BinaryOperator::And,
             right: Box::new(Expr::BinaryOp {
                 left: Box::new(Expr::Identifier(Ident {
-                    value: config.tenant.column.clone(),
+                    value: config.tenant().column().clone(),
                     quote_style: None,
                 })),
                 op: BinaryOperator::Eq,
@@ -231,7 +231,7 @@ fn build_select(select: Select, agency_code: String) -> String {
         //如果原始sql里没有查询条件 则直接加上租户化条件
         None => Some(Expr::BinaryOp {
             left: Box::new(Expr::Identifier(Ident {
-                value: config.tenant.column.clone(),
+                value: config.tenant().column().clone(),
                 quote_style: None,
             })),
             op: BinaryOperator::Eq, //这里是 =
@@ -244,7 +244,7 @@ fn build_select(select: Select, agency_code: String) -> String {
 //递归查找 租户列是否存在 存在则返回true
 fn deep_find(selection: &Expr) -> bool {
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    let column = config.tenant.column.clone();
+    let column = config.tenant().column().clone();
     match selection {
         //判断具体的某个查询条件是不是租户字段
         sqlparser::ast::Expr::Identifier(e) => {

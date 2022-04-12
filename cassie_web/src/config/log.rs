@@ -10,20 +10,17 @@ use cassie_config::config::ApplicationConfig;
 pub fn init_log() {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //create log dir
-    std::fs::create_dir_all(&cassie_config.log_dir);
+    std::fs::create_dir_all(&cassie_config.log_dir());
     //initialize fast log
     fast_log::init_split_log(
-        &cassie_config.log_dir,
-        str_to_temp_size(&cassie_config.log_temp_size),
-        str_to_rolling(&cassie_config.log_rolling_type),
-        str_to_log_level(&cassie_config.log_level),
+        &cassie_config.log_dir(),
+        str_to_temp_size(&cassie_config.log_temp_size()),
+        str_to_rolling(&cassie_config.log_rolling_type()),
+        str_to_log_level(&cassie_config.log_level()),
         None,
-        choose_packer(&cassie_config.log_pack_compress),
-        cassie_config.debug,
+        choose_packer(&cassie_config.log_pack_compress()),
+        cassie_config.debug().clone(),
     );
-    if cassie_config.debug == false {
-        println!("[cassie] release_mode is up! [file_log] open,[console_log] disabled!");
-    }
 }
 
 fn choose_packer(packer: &str) -> Box<dyn Packer> {

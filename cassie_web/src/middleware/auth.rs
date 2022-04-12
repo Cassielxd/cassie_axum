@@ -1,4 +1,5 @@
 use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
+use crate::cici_casbin::is_auth_list_api;
 use crate::{cici_casbin::is_white_list_api, APPLICATION_CONTEXT};
 use axum::http::HeaderValue;
 use axum::{
@@ -54,28 +55,31 @@ where
             /*验证token有效性*/
             match checked_token(token_value).await {
                 Ok(data) => {
-                    let data1 = data.clone();
-                    APPLICATION_CONTEXT.set_local::<RequestModel, _>(move || RequestModel {
-                        uid: data1.id().clone(),
-                        username: data1.username().clone(),
-                        agency_code: data1.agency_code().clone(),
-                        product_code: "".to_string(),
-                        super_admin: data1.super_admin().clone(),
-                    });
-                    // 获取用户名和租户编码 进入下一步资源认证
-                    let vals = CasbinVals {
-                        uid: data.id().to_string(),
-                        agency_code: Option::from(data.agency_code().clone()),
-                    };
-                    /*获取验证的  casbin_service*/
-                    let service = APPLICATION_CONTEXT.get::<CasbinService>();
-                    /*casbin 验证有效性 处理返回结果集*/
-
-                    if service.call(path, action, vals).await {
-                        return Ok(Self {});
-                    } else {
-                        return Err(Error::from(serde_json::json!(&resp).to_string()));
-                    }
+                    //登录了但是不需要权限
+                   
+                        let data1 = data.clone();
+                        APPLICATION_CONTEXT.set_local::<RequestModel, _>(move || RequestModel {
+                            uid: data1.id().clone(),
+                            username: data1.username().clone(),
+                            agency_code: data1.agency_code().clone(),
+                            product_code: "".to_string(),
+                            super_admin: data1.super_admin().clone(),
+                        });
+                        // 获取用户名和租户编码 进入下一步资源认证
+                        let vals = CasbinVals {
+                            uid: data.id().to_string(),
+                            agency_code: Option::from(data.agency_code().clone()),
+                        };
+                        /*获取验证的  casbin_service*/
+                        let service = APPLICATION_CONTEXT.get::<CasbinService>();
+                        /*casbin 验证有效性 处理返回结果集*/
+                        
+                        if  is_auth_list_api(path.clone()) || service.call(path, action, vals).await {
+                            return Ok(Self {});
+                        } else {
+                            return Err(Error::from(serde_json::json!(&resp).to_string()));
+                        }
+                   
                 }
                 Err(e) => {
                     //401 http状态码会强制前端退出当前登陆状态
@@ -97,6 +101,6 @@ where
 pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    let token = JWTToken::verify(&cassie_config.jwt_secret, token);
+    let token = JWTToken::verify(cassie_config.jwt_secret(), token);
     token
 }

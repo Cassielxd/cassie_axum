@@ -48,6 +48,7 @@ admin_white_list_api:
   - "/login"
   - "/captcha/:uuid"
 
+
 #api接口白名单（免登陆直接访问）
 api_white_list_api:
   - "/login"

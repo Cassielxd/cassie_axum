@@ -16,17 +16,20 @@ const FRAGMENT: &AsciiSet = &CONTROLS
 pub async fn register_service() {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //如果开启了nacos注册，则注册服务
-    if cassie_config.nacos.nacos_flag {
-        info!("register service: {:?}", cassie_config.nacos.nacos_server);
+    if cassie_config.nacos().nacos_flag().clone() {
+        info!(
+            "register service: {:?}",
+            cassie_config.nacos().nacos_server()
+        );
         let client = reqwest::Client::new();
         let body = client
             .post(
                 format!(
                     "{}/v1/ns/instance?serviceName={}&ip={}&port={}",
-                    cassie_config.nacos.nacos_server,
-                    cassie_config.nacos.application_name,
-                    cassie_config.server.host,
-                    cassie_config.server.port
+                    cassie_config.nacos().nacos_server(),
+                    cassie_config.nacos().application_name(),
+                    cassie_config.server().host(),
+                    cassie_config.server().port()
                 )
                 .as_str(),
             )
@@ -53,7 +56,9 @@ pub async fn ping() {
     //
     let beat = format!(
         "{{\"serviceName\":\"{}\",\"ip\":\"{}\",\"port\":\"{}\",\"weight\":1,\"metadata\":{{}}}}",
-        cassie_config.nacos.application_name, cassie_config.server.host, cassie_config.server.port
+        cassie_config.nacos().application_name(),
+        cassie_config.server().host(),
+        cassie_config.server().port()
     );
     let encode = utf8_percent_encode(&beat, FRAGMENT).to_string();
     let client = reqwest::Client::new();
@@ -61,7 +66,9 @@ pub async fn ping() {
         .put(
             format!(
                 "{}/v1/ns/instance/beat?serviceName={}&beat={}",
-                cassie_config.nacos.nacos_server, cassie_config.nacos.application_name, encode
+                cassie_config.nacos().nacos_server(),
+                cassie_config.nacos().application_name(),
+                encode
             )
             .as_str(),
         )

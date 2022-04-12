@@ -114,7 +114,7 @@ impl SysAuthService {
         jwt_token.set_username(user.username.clone().unwrap_or_default());
         jwt_token.set_agency_code(agency_code.clone().unwrap_or_default());
         jwt_token.set_exp(DateTimeNative::now().timestamp_millis() as usize);
-        sign_vo.set_access_token(jwt_token.create_token(&cassie_config.jwt_secret)?);
+        sign_vo.set_access_token(jwt_token.create_token(cassie_config.jwt_secret())?);
         return Ok(sign_vo);
     }
 }

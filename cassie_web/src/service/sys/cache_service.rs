@@ -11,12 +11,12 @@ pub struct CacheService {
 impl CacheService {
     pub fn new() -> Self {
         let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-        match cassie_config.cache_type.as_str() {
+        match cassie_config.cache_type().as_str() {
             "redis" => {
                 println!("cache_type: redis");
                 Self {
                     inner: Box::new(async_std::task::block_on(async {
-                        CassieRedisService::new(&cassie_config.redis_url).await
+                        CassieRedisService::new(&cassie_config.redis_url()).await
                     })),
                 }
             }
