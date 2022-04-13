@@ -67,8 +67,6 @@ impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
     }
 }
 
-//获取用户的菜单
-#[cached(name = "USER_MENU_LIST", time = 60, result = true, size = 100)]
 pub async fn get_user_menu_list(
     uid: String,
     super_admin: i32,
