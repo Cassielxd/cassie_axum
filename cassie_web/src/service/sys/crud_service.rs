@@ -12,6 +12,7 @@ use rbatis::DateTimeNative;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::convert::From;
+use crate::middleware::auth::get_local;
 
 /**
  *struct:CrudService
@@ -121,8 +122,8 @@ where
     async fn save(&self, data: &mut Entity) -> Result<i64> {
         /*设置创建人*/
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        let uid = if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>() {
-            request_model.uid
+        let uid = if let Some(request_model) = get_local() {
+            request_model.uid().clone()
         } else {
             0
         };

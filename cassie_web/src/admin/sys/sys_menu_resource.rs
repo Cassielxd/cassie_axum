@@ -11,6 +11,7 @@ use cassie_common::RespVO;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::{RequestModel, SysMenuQuery};
+use crate::middleware::auth::get_local;
 
 /**
  *method:/menu
@@ -42,11 +43,11 @@ pub async fn list() -> impl IntoResponse {
 
 pub async fn nav() -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
-    let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+    let request_model = get_local().unwrap();
     let vo = get_user_menu_list(
-        request_model.uid.clone().to_string(),
-        request_model.super_admin,
-        request_model.agency_code.clone(),
+        request_model.uid().clone().to_string(),
+        request_model.super_admin().clone(),
+        request_model.agency_code().clone(),
     )
     .await;
     RespVO::from_result(&vo).resp_json()

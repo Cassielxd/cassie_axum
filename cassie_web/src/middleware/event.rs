@@ -9,6 +9,8 @@ use crate::{
     cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event,
     APPLICATION_CONTEXT,
 };
+use crate::middleware::auth::get_local;
+
 //日志处理核心拦截类
 #[derive(Clone)]
 pub struct EventMiddleware<S> {
@@ -32,8 +34,8 @@ where
         let action = request.method().clone().to_string();
         let path = request.uri().clone().to_string();
         let creator_name = if !is_white_list_api(path.clone()) {
-            let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
-            Some(request_model.username.clone())
+            let request_model = get_local().unwrap();
+            Some(request_model.username().clone())
         } else {
             None
         };
@@ -60,7 +62,7 @@ where
             operation.set_request_method(Some(action.clone()));
             //发布事件
             fire_event(CassieEvent::LogOperation(operation)).await;
-
+            //APPLICATION_CONTEXT.set_local::<RequestModel>(|| None);
             Ok(response)
         })
     }

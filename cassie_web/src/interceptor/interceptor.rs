@@ -17,6 +17,8 @@ use rbson::Bson;
 use sqlparser::ast::Statement::{Delete, Insert, Query as Iquwey, Update};
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
+use crate::middleware::auth::get_local;
+
 //租户化拦截器 租户化核心实现
 #[derive(Debug)]
 pub struct AgencyInterceptor {
@@ -39,9 +41,8 @@ impl SqlIntercept for AgencyInterceptor {
     ) -> Result<(), Error> {
         //判断是否开启租户化
         if self.enable {
-            if let Some(request_model) = APPLICATION_CONTEXT.try_get_local::<RequestModel>() {
-                println!("{:?}", request_model);
-                *sql = build(sql.clone(), request_model.agency_code.clone());
+            if let Some(request_model) = get_local() {
+                *sql = build(sql.clone(), request_model.agency_code().clone());
             }
         }
         return Ok(());
@@ -108,9 +109,16 @@ pub fn build(up_sql: String, agency_code: String) -> String {
                 table,
                 assignments,
                 selection,
-            } => if intercept_update(table.clone(), selection.clone()) {
-                return build_update(agency_code, table.clone(), assignments.clone(),selection.clone());
-            },
+            } => {
+                if intercept_update(table.clone(), selection.clone()) {
+                    return build_update(
+                        agency_code,
+                        table.clone(),
+                        assignments.clone(),
+                        selection.clone(),
+                    );
+                }
+            }
             Delete {
                 table_name,
                 selection,

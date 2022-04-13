@@ -67,6 +67,7 @@ cassie_rules = { path = "../cassie_rules" }
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
+
 [profile.release]
 opt-level = 3
 debug = false

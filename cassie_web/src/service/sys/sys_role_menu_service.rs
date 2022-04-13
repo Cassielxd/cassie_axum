@@ -11,6 +11,7 @@ use cassie_domain::{
 use cassie_orm::dao::mapper::get_menu_list_by_ids;
 use rbatis::rbatis::Rbatis;
 use rbatis::{crud::CRUD, DateTimeNative};
+use crate::middleware::auth::get_local;
 
 /**
 *struct:SysRoleMenuService
@@ -50,7 +51,7 @@ impl SysRoleMenuService {
         /*添加到casbin权限表里*/
         let mut query = SysMenuQuery::default();
         query.set_pids(menu_id_list.clone());
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
         let rb = APPLICATION_CONTEXT.get::<Rbatis>();
         let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
         let r_list = get_menu_list_by_ids(&mut rb.as_executor(), &menu_id_list.clone().unwrap())
@@ -66,7 +67,7 @@ impl SysRoleMenuService {
                         id: None,
                         role_id: Some(role_id),
                         menu_id: menu.id.clone(),
-                        creator: Some(request_model.uid),
+                        creator: Some(request_model.uid().clone()),
                         create_date: Some(DateTimeNative::now()),
                     });
                 }
@@ -74,7 +75,7 @@ impl SysRoleMenuService {
             if menu.method.is_some() && !menu.method.clone().unwrap().is_empty() {
                 rules.push(vec![
                     role_id.to_string(),                            //角色编码
-                    request_model.agency_code.clone(),              //租户
+                    request_model.agency_code().clone(),            //租户
                     menu.path.unwrap_or_default(),                  //资源
                     menu.method.unwrap_or_default().to_uppercase(), //请求方式
                 ]);
@@ -90,14 +91,14 @@ impl SysRoleMenuService {
     }
     //删除角色与菜单的关系
     pub async fn delete_by_role_id(&self, role_id: i64) {
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
         self.del_by_column(SysRoleMenu::role_id(), &role_id.to_string())
             .await;
         let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
         let mut lock = cached_enforcer.write().await;
         lock.remove_named_policy(
             "p",
-            vec![role_id.to_string(), request_model.agency_code.clone()],
+            vec![role_id.to_string(), request_model.agency_code().clone()],
         )
         .await;
         drop(lock);

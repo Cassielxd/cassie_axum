@@ -31,8 +31,10 @@ use crate::initialize::event::init_event_bus;
 use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
+use cassie_domain::request::RequestModel;
 use observe::{consumer::init_consumer, event::CassieEvent};
-use state::Container;
+use state::{Container};
+use std::{ sync::Arc};
 /*
 整个项目上下文ApplicationContext
 包括：
@@ -42,6 +44,7 @@ Rbatis  mysql orm
 ServiceContext 服务上下文
 CasbinService 权限服务
 */
+
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 /*初始化环境上下文*/
 pub async fn init_context() {

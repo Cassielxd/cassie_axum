@@ -1,6 +1,5 @@
 use crate::service::crud_service::CrudService;
 use crate::APPLICATION_CONTEXT;
-use cached::proc_macro::cached;
 use cassie_common::error::Result;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::sys_entitys::{CommonField, SysMenu};

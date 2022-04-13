@@ -11,6 +11,7 @@ use cassie_domain::dto::sys_user_dto::SysUserDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::{RequestModel, SysUserQuery};
 use validator::Validate;
+use crate::middleware::auth::get_local;
 
 /**
  *method:/user/page
@@ -59,9 +60,9 @@ pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
 
 pub async fn info() -> impl IntoResponse {
     let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
-    let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+    let request_model = get_local().unwrap();
     let mut vo = sys_user_service
-        .get(request_model.uid.to_string())
+        .get(request_model.uid().clone().to_string())
         .await
         .unwrap();
     vo.set_password(None);

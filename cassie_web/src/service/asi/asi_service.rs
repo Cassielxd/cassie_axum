@@ -19,6 +19,8 @@ use mongodb::bson::{doc, Bson, Document, Uuid};
 use rbatis::crud::CRUD;
 use rbatis::wrapper::Wrapper;
 use rbatis::{Page, PageRequest};
+use crate::middleware::auth::get_local;
+
 /**
  *struct:AsiGroupService
  *desc:动态表单基础service
@@ -96,9 +98,9 @@ impl AsiGroupService {
                 "group_code已经存在".to_string(),
             ));
         }
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
         let mut entity: AsiGroup = group.into();
-        entity.agency_code = Some(request_model.agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code().clone());
         if entity.parent_group_code.is_empty() {
             entity.parent_group_code = Some("0".to_string())
         }
@@ -427,11 +429,11 @@ pub struct AsiGroupColumnService {}
 
 impl AsiGroupColumnService {
     pub async fn save_column(&self, group: AsiGroupDTO, column: AsiGroupColumnDTO) {
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
         let id = column.id().clone();
         let mut entity: AsiGroupColumn = column.into();
         entity.group_code = group.group_code().clone();
-        entity.agency_code = Some(request_model.agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code().clone());
         if let Some(i) = id {
             self.update_by_id(i.to_string(), &mut entity).await;
         } else {
@@ -453,13 +455,13 @@ impl AsiGroupColumnService {
         )
         .await;
         /*获取当前登录信息*/
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
         let mut entitys: Vec<AsiGroupColumn> = columns
             .iter()
             .map(|e| {
                 let mut e: AsiGroupColumn = e.clone().into();
                 e.group_code = group_code.clone();
-                e.agency_code = Some(request_model.agency_code.clone());
+                e.agency_code = Some(request_model.agency_code().clone());
                 e
             })
             .collect();

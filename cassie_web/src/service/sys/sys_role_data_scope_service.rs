@@ -9,6 +9,7 @@ use cassie_domain::{
 use rbatis::plugin::snowflake::new_snowflake_id;
 use rbatis::rbatis::Rbatis;
 use rbatis::DateTimeNative;
+use crate::middleware::auth::get_local;
 
 /**
 *struct:SysRoleDataScopeService
@@ -26,7 +27,7 @@ impl SysRoleDataScopeService {
     pub async fn save_or_update(&self, role_id: i64, dept_id_list: Option<Vec<i64>>) {
         //先删除角色数据权限关系
         self.delete_by_role_id(role_id).await;
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model =get_local().unwrap();
         //保存角色数据权限关系
         if let Some(list) = dept_id_list {
             let mut vec = Vec::new();
@@ -35,7 +36,7 @@ impl SysRoleDataScopeService {
                     id: Some(new_snowflake_id()),
                     role_id: Some(role_id),
                     dept_id: Some(x),
-                    creator: Option::from(request_model.uid),
+                    creator: Option::from(request_model.uid().clone()),
                     create_date: Some(DateTimeNative::now()),
                 });
             }

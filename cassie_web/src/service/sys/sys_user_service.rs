@@ -12,6 +12,7 @@ use crate::cici_casbin::casbin_service::CasbinService;
 use casbin::MgmtApi;
 use cassie_domain::entity::sys_entitys::{CommonField, SysRoleUser};
 use cassie_domain::request::RequestModel;
+use crate::middleware::auth::get_local;
 
 /**
  *struct:SysUserService
@@ -47,10 +48,10 @@ impl SysUserService {
         let password = PasswordEncoder::encode(&arg.password().clone().unwrap().as_str());
         let role_id = arg.role_id().clone();
         let mut entity: SysUser = arg.into();
-        let request_model = APPLICATION_CONTEXT.get_local::<RequestModel>();
+        let request_model = get_local().unwrap();
 
         entity.password = Some(password);
-        entity.agency_code = Some(request_model.agency_code.clone());
+        entity.agency_code = Some(request_model.agency_code().clone());
         entity.super_admin = Some(0);
         entity.del_flag = Some(0);
         /*保存到数据库*/
@@ -76,7 +77,7 @@ impl SysUserService {
             lock.add_grouping_policy(vec![
                 uid.to_string(),
                 rid.to_string(),
-                request_model.agency_code.clone(),
+                request_model.agency_code().clone(),
             ])
             .await;
             drop(lock);
