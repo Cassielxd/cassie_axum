@@ -1,3 +1,4 @@
+use crate::middleware::auth::get_local;
 use crate::service::crud_service::CrudService;
 use crate::service::sys_user_service::SysUserService;
 use crate::APPLICATION_CONTEXT;
@@ -9,9 +10,8 @@ use cassie_common::error::Error;
 use cassie_common::RespVO;
 use cassie_domain::dto::sys_user_dto::SysUserDTO;
 use cassie_domain::entity::PageData;
-use cassie_domain::request::{RequestModel, SysUserQuery};
+use cassie_domain::request::SysUserQuery;
 use validator::Validate;
-use crate::middleware::auth::get_local;
 
 /**
  *method:/user/page

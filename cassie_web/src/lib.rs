@@ -31,10 +31,8 @@ use crate::initialize::event::init_event_bus;
 use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
-use cassie_domain::request::RequestModel;
 use observe::{consumer::init_consumer, event::CassieEvent};
-use state::{Container};
-use std::{ sync::Arc};
+use state::Container;
 /*
 整个项目上下文ApplicationContext
 包括：

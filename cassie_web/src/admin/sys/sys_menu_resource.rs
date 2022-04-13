@@ -1,3 +1,4 @@
+use crate::middleware::auth::get_local;
 use crate::service::crud_service::CrudService;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
 use crate::APPLICATION_CONTEXT;
@@ -10,8 +11,7 @@ use axum::{
 use cassie_common::RespVO;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
-use cassie_domain::request::{RequestModel, SysMenuQuery};
-use crate::middleware::auth::get_local;
+use cassie_domain::request::SysMenuQuery;
 
 /**
  *method:/menu

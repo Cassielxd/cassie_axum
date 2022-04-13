@@ -99,14 +99,12 @@ pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
     token
 }
 
-pub fn get_local()->Option<RequestModel>{
+pub fn get_local() -> Option<RequestModel> {
     let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
     match request_model {
-        None => {
-            None
-        }
+        None => None,
         Some(e) => {
-            let  e = e.lock().unwrap();
+            let e = e.lock().unwrap();
             let mut model = RequestModel::default();
             model.set_uid(e.uid().clone());
             model.set_agency_code(e.agency_code().clone());

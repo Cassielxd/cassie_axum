@@ -9,10 +9,9 @@ use rbatis::wrapper::Wrapper;
 use super::crud_service::CrudService;
 use super::sys_role_user_service::SysRoleUserService;
 use crate::cici_casbin::casbin_service::CasbinService;
+use crate::middleware::auth::get_local;
 use casbin::MgmtApi;
 use cassie_domain::entity::sys_entitys::{CommonField, SysRoleUser};
-use cassie_domain::request::RequestModel;
-use crate::middleware::auth::get_local;
 
 /**
  *struct:SysUserService
