@@ -8,9 +8,9 @@ pub async fn init_config() {
         Some(e) => e,
         None => Vec::new(),
     };
-    /*添加需要登录但是不需要权限的路由  
+    /*添加需要登录但是不需要权限的路由
      * 如果有额外的可以在application.yml中添加
-     * admin_auth_list_api 
+     * admin_auth_list_api
      *  - XXXXXX
      *  - XXXXX
      * */

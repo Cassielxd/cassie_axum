@@ -6,8 +6,6 @@ use casbin::function_map::key_match2;
 use casbin::rhai::ImmutableString;
 use cassie_config::config::ApplicationConfig;
 
-
-
 ///是否处在白名单接口中
 #[cached(name = "AFMIN_WHITE_LIST_API", time = 60, size = 100)]
 pub fn is_white_list_api(path: String) -> bool {
