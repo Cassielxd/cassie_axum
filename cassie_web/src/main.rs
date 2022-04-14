@@ -15,29 +15,14 @@ use cassie_web::{
     routers::{admin, api},
     APPLICATION_CONTEXT,
 };
-use log::info;
+use log::{info, warn};
 use std::time::Duration;
 use tower::layer::layer_fn;
 use tower_http::cors::{Any, CorsLayer};
 
-pub async fn index() -> impl IntoResponse {
-    Html(
-        "<!DOCTYPE html>
-    <html lang='zh-Hans'>
-      <head>
-        <meta charset='UTF-8' />
-        <title>axum.rs</title>
-      </head>
-      <body>
-        <p>欢迎使用 cassie axum</p>
-        <p>这是一个学习性质的项目，又不懂的地方先看注释</p>
-        <p>有疑问请加QQ:348040933</p>
-      </body>
-    </html>",
-    )
-}
 async fn fallback(uri: Uri) -> impl IntoResponse {
     let msg = format!("资源不存在：{}", uri);
+    warn!("{}", msg.clone());
     RespVO::<String> {
         code: Some(-1),
         msg: Some(msg),
@@ -80,7 +65,6 @@ async fn main() {
 
     //绑定端口 初始化 路由
     let app = Router::new()
-        .route("/", get(index))
         .nest(
             "/admin",
             admin::routers()
@@ -88,8 +72,7 @@ async fn main() {
                 .layer(extractor_middleware::<Auth>()), //最先执行的
         )
         .nest("/api", api::routers())
-        .fallback(fallback.into_service())
-        .layer(cors);
+        .layer(cors).fallback(fallback.into_service());
 
     // 启动服务
     Server::bind(&server.parse().unwrap())
