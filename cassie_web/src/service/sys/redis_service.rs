@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use cassie_common::error::{Error, Result};
+use log::info;
 
 use super::cache_service::ICassieCacheService;
 use cached::{AsyncRedisCache, IOCachedAsync};
@@ -9,14 +10,14 @@ pub struct CassieRedisService {
 }
 impl CassieRedisService {
     pub async fn new(url: &str) -> Self {
-        println!("connect redis ({})...", url);
+        info!("connect redis ({})...", url);
         let client = AsyncRedisCache::<String, String>::new("_cassie_".to_string(), 360)
             .set_connection_string(url)
             .set_refresh(true)
             .build()
             .await
             .unwrap();
-        println!("connect redis success!");
+        info!("connect redis success!");
         Self { client }
     }
 }

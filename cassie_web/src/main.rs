@@ -9,7 +9,6 @@ use axum::{
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
-    config::log::init_log,
     init_context,
     middleware::{auth::Auth, event::EventMiddleware},
     nacos::register_service,
@@ -17,7 +16,6 @@ use cassie_web::{
     APPLICATION_CONTEXT,
 };
 use log::info;
-use tokio::runtime::Handle;
 use std::time::Duration;
 use tower::layer::layer_fn;
 use tower_http::cors::{Any, CorsLayer};
@@ -58,7 +56,6 @@ async fn main() {
     //初始化上环境下文
     init_context().await;
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    init_log();
     info!(
         " - Local:   http://{}:{}",
         cassie_config

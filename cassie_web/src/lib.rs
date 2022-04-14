@@ -23,7 +23,6 @@ pub mod initialize;
 pub mod interceptor;
 pub mod observe;
 
-use crate::cici_casbin::casbin_service::CasbinService;
 use crate::initialize::casbin::init_casbin;
 use crate::initialize::config::init_config;
 use crate::initialize::database::init_database;
@@ -31,6 +30,8 @@ use crate::initialize::event::init_event_bus;
 use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
+use crate::{cici_casbin::casbin_service::CasbinService, config::log::init_log};
+use log::info;
 use observe::{consumer::init_consumer, event::CassieEvent};
 use state::Container;
 /*
@@ -46,21 +47,21 @@ CasbinService 权限服务
 pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
-    println!("-------------------------------------CassieApplication正在启动--------------------------------------------------------");
     //第一步加载配置
     init_config().await;
-    println!("-------------------------------------ConfigContext配置完成-----------------------------------------------------");
+    init_log();
+    info!("ConfigContext init complete");
     //第二步初始化数据源
     init_database().await;
-    println!("---------------------------------------DataBase配置完成------------------------------------------------------");
+    info!("DataBase init complete");
     //第三步初始化所有的 服务类
     init_service().await;
-    println!("---------------------------------------ServiceContext配置完成--------------------------------------------");
+    info!("ServiceContext init complete");
     //第三步初始化casbinCContext
     init_casbin().await;
-    println!("---------------------------------------CasbinService配置完成----------------------------------------------");
+    info!("CasbinService init complete");
     init_rules();
-    println!("---------------------------------------RulesContext配置完成----------------------------------------------");
+    info!("RulesContext init complete");
     init_event_bus().await;
-    println!("---------------------------------------EventBus初始化完成------------------------------------------------");
+    info!("EventBus init complete");
 }

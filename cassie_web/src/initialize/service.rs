@@ -10,19 +10,32 @@ use crate::service::sys_user_service::SysUserService;
 use crate::APPLICATION_CONTEXT;
 use cassie_config::config::ApplicationConfig;
 use cassie_upload::upload::upload_service::UploadService;
+use log::info;
 
 pub async fn init_service() {
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     APPLICATION_CONTEXT.set::<CacheService>(CacheService::new());
+    info!("CacheService init success!");
     APPLICATION_CONTEXT.set::<SysAuthService>(SysAuthService::default());
+    info!("SysUserService init success!");
     APPLICATION_CONTEXT.set::<SysUserService>(SysUserService::default());
+    info!("SysRoleService init success!");
     APPLICATION_CONTEXT.set::<SysRoleService>(SysRoleService::default());
+    info!("SysMenuService init success!");
     APPLICATION_CONTEXT.set::<SysMenuService>(SysMenuService::default());
+    info!("SysMenuService init success!");
     APPLICATION_CONTEXT.set::<SysParamsService>(SysParamsService::default());
+    info!("SysParamsService init success!");
     APPLICATION_CONTEXT.set::<SysDictTypeService>(SysDictTypeService::default());
+    info!("SysDictTypeService init success!");
     APPLICATION_CONTEXT.set::<SysDictDataService>(SysDictDataService::default());
+    info!("SysDictDataService init success!");
     APPLICATION_CONTEXT.set::<AsiGroupService>(AsiGroupService::default());
+    info!("AsiGroupService init success!");
     APPLICATION_CONTEXT.set::<UploadService>(UploadService::new(config).unwrap());
+    info!("UploadService init success!");
     APPLICATION_CONTEXT.set::<LogLoginService>(LogLoginService::default());
+    info!("LogLoginService init success!");
     APPLICATION_CONTEXT.set::<LogOperationService>(LogOperationService::default());
+    info!("LogOperationService init success!");
 }

@@ -11,6 +11,7 @@ use casbin::{
 use cassie_casbin_adapter::cici_adapter::CICIAdapter;
 use cassie_config::config::ApplicationConfig;
 use cassie_orm::dao::init_rbatis;
+use log::info;
 
 #[derive(Clone)]
 pub struct CasbinVals {
@@ -42,13 +43,14 @@ impl CasbinService {
         let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
             .await
             .unwrap();
-        /*初始化适配器*/
+        info!("casbin模型文件加载完成!");
+
         let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
         let a = CICIAdapter::new(init_rbatis(config).await);
         let mut cached_enforcer = CachedEnforcer::new(m, a).await.unwrap();
         /* 添加自定义验证方法 */
         cached_enforcer.add_function("ciciMatch", cici_match);
-        println!("casbin init success");
+        info!("casbin init success");
         Self {
             enforcer: Arc::new(RwLock::new(cached_enforcer)),
         }
