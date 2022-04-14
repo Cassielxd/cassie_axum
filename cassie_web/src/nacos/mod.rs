@@ -40,10 +40,10 @@ pub async fn register_service() {
             .await;
         match body {
             Ok(s) => {
-                info!("nacos连接成功");
+                info!("link nacos success");
                 tokio::task::spawn(ping_schedule());
             }
-            Err(e) => info!("nacos连接失败"),
+            Err(e) => info!("link nacos  error: {:?}", e),
         }
     }
 }

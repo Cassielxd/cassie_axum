@@ -30,7 +30,9 @@ use crate::initialize::event::init_event_bus;
 use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
+use crate::nacos::register_service;
 use crate::{cici_casbin::casbin_service::CasbinService, config::log::init_log};
+use cassie_config::config::ApplicationConfig;
 use log::info;
 use observe::{consumer::init_consumer, event::CassieEvent};
 use state::Container;
@@ -64,4 +66,16 @@ pub async fn init_context() {
     info!("RulesContext init complete");
     init_event_bus().await;
     info!("EventBus init complete");
+
+    //nacos 服务注册
+    register_service().await;
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    info!(
+        " - Local:   http://{}:{}",
+        cassie_config
+            .server()
+            .host()
+            .replace("0.0.0.0", "127.0.0.1"),
+        cassie_config.server().port()
+    );
 }
