@@ -18,7 +18,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[non_exhaustive]
 pub enum Error {
     /// Default Error
-    E(String),
+    E(String)
 }
 
 impl<T> std::convert::From<PoisonError<T>> for Error {
@@ -32,7 +32,7 @@ impl Display for Error {
     // noinspection RsMatchCheck
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::E(error) => write!(f, "{}", error),
+            Error::E(error) => write!(f, "{}", error)
         }
     }
 }
@@ -139,7 +139,7 @@ impl<'de> Deserialize<'de> for Error {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            Error::E(error) => (StatusCode::UNAUTHORIZED, error).into_response(),
+            Error::E(error) => (StatusCode::OK, error).into_response(),
         }
     }
 }

@@ -53,7 +53,7 @@ where
             if token_value.is_empty() {
                 return Err(Error::E(serde_json::json!(&resp).to_string()));
             }
-            resp.msg = Some(format!("没有权限"));
+            resp.msg = Some(format!("权限不足"));
             /*验证token有效性*/
             match checked_token(token_value).await {
                 Ok(data) => {

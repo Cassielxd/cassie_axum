@@ -17,6 +17,7 @@ use cassie_web::{
     APPLICATION_CONTEXT,
 };
 use log::info;
+use tokio::runtime::Handle;
 use std::time::Duration;
 use tower::layer::layer_fn;
 use tower_http::cors::{Any, CorsLayer};
