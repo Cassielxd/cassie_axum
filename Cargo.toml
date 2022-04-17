@@ -1,10 +1,12 @@
 [workspace]
 members = [
     "cassie_common",
+    "cassie_cache",
     "cassie_config",
     "cassie_domain",
     "cassie_orm",
-    "cassie_rules",
+    "cassie_engine",
+    "cassie_ops",
     "cassie_upload",
     "cassie_web",
     "cassie_casbin_adapter",

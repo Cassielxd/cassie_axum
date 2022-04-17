@@ -63,7 +63,7 @@ cassie_orm = { path = "../cassie_orm" }
 #cassie 上传相关 默认实现 aliyun oss
 cassie_upload = { path = "../cassie_upload" }
 #cassie 规则引擎
-cassie_rules = { path = "../cassie_rules" }
+cassie_engine = { path = "../cassie_engine" }
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
 
