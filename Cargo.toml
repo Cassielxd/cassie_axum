@@ -7,7 +7,7 @@ members = [
     "cassie_orm",
     "cassie_engine",
     "cassie_ops",
-    "cassie_upload",
+    "cassie_storage",
     "cassie_web",
     "cassie_casbin_adapter",
     "cassie_tests"

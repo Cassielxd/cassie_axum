@@ -61,7 +61,7 @@ cassie_config = { path = "../cassie_config" }
 #cassie orm定义
 cassie_orm = { path = "../cassie_orm" }
 #cassie 上传相关 默认实现 aliyun oss
-cassie_upload = { path = "../cassie_upload" }
+cassie_storage = { path = "../cassie_storage" }
 #cassie 规则引擎
 cassie_engine = { path = "../cassie_engine" }
 #cassie casbin mysql数据库orm层的适配器

@@ -1,5 +1,5 @@
 [package]
-name = "cassie_upload"
+name = "cassie_storage"
 version = "0.1.0"
 edition = "2021"
 

@@ -2,7 +2,7 @@
 name = "cassie_engine"
 version = "0.1.0"
 edition = "2021"
-
+author = "String<348040933@qq.com>"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 anyhow = "1.0.55"
@@ -19,7 +19,6 @@ serde_json = {version = "1.0.66",features = ["preserve_order"]}
 serde_v8 = "0.40.0"
 url = {version = "2.2.2",features = ["serde"]}
 v8 = "0.41.0"
-deno_ast = {version="0.14.0",features = ["transpiling"]}
 tokio={version = "1.17",features = ["full"]}
 
 
