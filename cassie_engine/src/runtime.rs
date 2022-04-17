@@ -182,7 +182,7 @@ impl Drop for JsRuntime {
         }
     }
 }
-
+///初始化 v8_platform 并设置 v8_platform 的线程池大小
 fn v8_init(v8_platform: Option<v8::SharedRef<v8::Platform>>) {
     // Include 10MB ICU data file.
     #[repr(C, align(16))]
@@ -260,13 +260,14 @@ pub struct RuntimeOptions {
 }
 
 impl JsRuntime {
-    /// Only constructor, configuration is done through `options`.
+
+    /// JsRuntime 构造函数，通过 `options` 配置
     pub fn new(mut options: RuntimeOptions) -> Self {
         let v8_platform = options.v8_platform.take();
-
+        //初始化 v8_platform 只能初始化一次
         static CASSIE_INIT: Once = Once::new();
         CASSIE_INIT.call_once(move || v8_init(v8_platform));
-
+        ///是否有脚本快照
         let has_startup_snapshot = options.startup_snapshot.is_some();
 
         let js_error_create_fn = options
@@ -274,6 +275,7 @@ impl JsRuntime {
             .unwrap_or_else(|| Rc::new(JsError::create));
 
         // Add builtins extension
+        ///添加内置拓展 自定义方法
         options
             .extensions
             .insert(0, crate::ops_builtin::init_builtins());
@@ -298,6 +300,7 @@ impl JsRuntime {
             .into_boxed_slice();
 
         let global_context;
+        //快照读取
         let (mut isolate, maybe_snapshot_creator) = if options.will_snapshot {
             // TODO(ry) Support loading snapshots before snapshotting.
             assert!(options.startup_snapshot.is_none());
@@ -312,6 +315,7 @@ impl JsRuntime {
             }
             (isolate, Some(creator))
         } else {
+            //如果不是快照，则创建一个新的 isolate
             let mut params = options
                 .create_params
                 .take()
