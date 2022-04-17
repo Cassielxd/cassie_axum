@@ -9,7 +9,7 @@ use crate::service::sys_role_service::SysRoleService;
 use crate::service::sys_user_service::SysUserService;
 use crate::APPLICATION_CONTEXT;
 use cassie_config::config::ApplicationConfig;
-use cassie_upload::upload::upload_service::UploadService;
+use cassie_storage::upload::upload_service::UploadService;
 use log::info;
 
 pub async fn init_service() {

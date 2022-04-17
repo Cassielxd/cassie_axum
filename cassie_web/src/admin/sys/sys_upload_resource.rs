@@ -6,7 +6,7 @@ use cassie_common::RespVO;
 use crate::APPLICATION_CONTEXT;
 use axum::response::IntoResponse;
 use cassie_common::error::Error;
-use cassie_upload::upload::upload_service::UploadService;
+use cassie_storage::upload::upload_service::UploadService;
 
 pub const CONTENT_TYPE: &str = "content-type";
 
