@@ -76,6 +76,8 @@ cassie_axum
 │        ├─ mod.rs
 │        ├─ password_encoder.rs //密码加密解密
 │        └─ string.rs//字符串工具类
+├─ cassie_engine //规则引擎
+├─ cassie_ops   //操作 宏定义
 ├─ cassie_config
 │  ├─ Cargo.toml
 │  └─ src
@@ -241,6 +243,7 @@ cassie_axum
 1. https://casbin.org/docs/zh-CN/overview
 2. https://rbatis.github.io/rbatis.io/#/
 3. https://axum.rs/
+4. https://github.com/denoland/rusty_v8
 
 #### 参与贡献
 
@@ -252,6 +255,14 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+2022.4.17
+规则引擎
+````````````````````````````````````````````````````````````````
+//js动态脚本解析 添加自定义v8引擎
+//添加模块 cassie_engine
+//添加模块 cassie_ops           
+````````````````````````````````````````````````````````````````
+
 2022.4.6
 ````````````````````````````````````````````````````````````````
 //添加登录日志功能
