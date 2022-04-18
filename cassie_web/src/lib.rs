@@ -1,6 +1,9 @@
 #![allow(unused_variables)] //允许未使用的变量
 #![allow(dead_code)] //允许未使用的代码
 #![allow(unused_must_use)]
+
+#[macro_use]
+extern crate lazy_static;
 #[macro_use]
 extern crate cached;
 //配置
@@ -22,7 +25,6 @@ pub mod api;
 pub mod initialize;
 pub mod interceptor;
 pub mod observe;
-
 use crate::initialize::casbin::init_casbin;
 use crate::initialize::config::init_config;
 use crate::initialize::database::init_database;
@@ -33,6 +35,7 @@ use crate::interceptor::interceptor::AgencyInterceptor;
 use crate::nacos::register_service;
 use crate::{cici_casbin::casbin_service::CasbinService, config::log::init_log};
 use cassie_config::config::ApplicationConfig;
+pub use deno_runtime::deno_core;
 use log::info;
 use observe::{consumer::init_consumer, event::CassieEvent};
 use state::Container;

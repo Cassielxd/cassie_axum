@@ -1,3 +1,4 @@
+use fast_log::config::Config;
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::{Packer, RollingType};
 use fast_log::plugin::packer::{GZipPacker, LZ4Packer, LogPacker, ZipPacker};
@@ -12,15 +13,13 @@ pub fn init_log() {
     //create log dir
     std::fs::create_dir_all(&cassie_config.log_dir());
     //initialize fast log
-    fast_log::init_split_log(
-        &cassie_config.log_dir(),
-        str_to_temp_size(&cassie_config.log_temp_size()),
-        str_to_rolling(&cassie_config.log_rolling_type()),
-        str_to_log_level(&cassie_config.log_level()),
-        None,
-        choose_packer(&cassie_config.log_pack_compress()),
-        cassie_config.debug().clone(),
-    );
+    fast_log::init(Config::new().console().file_split(
+        "target/logs/",
+        LogSize::MB(100),
+        RollingType::All,
+        LogPacker {},
+    ))
+    .unwrap();
 }
 
 fn choose_packer(packer: &str) -> Box<dyn Packer> {

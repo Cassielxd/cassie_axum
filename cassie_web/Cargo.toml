@@ -3,7 +3,6 @@ name = "cassie_web"
 version = "0.1.0"
 edition = "2021"
 author = "String<348040933@qq.com>"
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -40,7 +39,7 @@ validator_derive = "0.14.0"
 jsonwebtoken = "7"
 #log
 log = "0.4"
-fast_log = { version="1.4", features = ["lz4","zip", "gzip"]}
+fast_log = { version="1.5.1", features = ["lz4","zip", "gzip"]}
 percent-encoding = "2.1.0"
 #mongodb数据库
 mongodb = { version = "2.1.0", default-features = false, features = ["async-std-runtime"] }
@@ -52,6 +51,8 @@ cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
 sqlparser = "0.15.0"
 #pharosv事件框架
 pharos = "0.5.3"
+lazy_static ="1"
+
 #cassie 实体定义
 cassie_domain = { path = "../cassie_domain" }
 #cassie 公共实体util定义
@@ -62,10 +63,14 @@ cassie_config = { path = "../cassie_config" }
 cassie_orm = { path = "../cassie_orm" }
 #cassie 上传相关 默认实现 aliyun oss
 cassie_storage = { path = "../cassie_storage" }
+
 #cassie 规则引擎
-cassie_engine = { path = "../cassie_engine" }
+deno_core = "0.129.0"
+deno_runtime = "0.55.0"
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
+mime ="0.3.16"
+
 
 
 [profile.release]

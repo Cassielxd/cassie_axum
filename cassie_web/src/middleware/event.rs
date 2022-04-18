@@ -1,12 +1,13 @@
+use crate::middleware::auth::get_local;
+use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event};
+use axum::body::Bytes;
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::dto::sys_log::SysLogOperationDto;
 use futures::future::BoxFuture;
+use log::info;
 use std::task::{Context, Poll};
 use tokio::time::Instant;
 use tower::Service;
-
-use crate::middleware::auth::get_local;
-use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event};
 
 //日志处理核心拦截类
 #[derive(Clone)]
@@ -25,7 +26,6 @@ where
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.inner.poll_ready(cx)
     }
-
     fn call(&mut self, request: Request<Body>) -> Self::Future {
         /*获取method path */
         let action = request.method().clone().to_string();

@@ -1,12 +1,11 @@
 [workspace]
+resolver = "2"
 members = [
     "cassie_common",
     "cassie_cache",
     "cassie_config",
     "cassie_domain",
     "cassie_orm",
-    "cassie_engine",
-    "cassie_ops",
     "cassie_storage",
     "cassie_web",
     "cassie_casbin_adapter",

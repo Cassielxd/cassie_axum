@@ -24,7 +24,7 @@ pub async fn consume(e: CassieEvent) {
         //消息事件
         CassieEvent::Sms { sms_type } => todo!("待开发"),
         //自定义事件
-        CassieEvent::Custom { event_type, data } => todo!("待开发"),
+        CassieEvent::Custom(custom) => {}
     }
 }
 //发布事件

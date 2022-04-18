@@ -59,7 +59,7 @@ where
                 Ok(data) => {
                     //登录了但是不需要权限
                     let data1 = data.clone();
-                    set_local(data1);
+                    set_local(data1, path.clone());
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {
                         uid: data.id().to_string(),
@@ -110,12 +110,13 @@ pub fn get_local() -> Option<RequestModel> {
             model.set_agency_code(e.agency_code().clone());
             model.set_super_admin(e.super_admin().clone());
             model.set_username(e.username().clone());
+            model.set_path(e.path().clone());
             Some(model)
         }
     }
 }
 
-pub fn set_local(data: JWTToken) {
+pub fn set_local(data: JWTToken, path: String) {
     let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
     match request_model {
         Some(d) => {
@@ -125,6 +126,7 @@ pub fn set_local(data: JWTToken) {
             model.set_agency_code(data.agency_code().clone());
             model.set_super_admin(data.super_admin().clone());
             model.set_username(data.username().clone());
+            model.set_path(path);
         }
         None => {
             APPLICATION_CONTEXT.set_local(move || {
@@ -133,6 +135,7 @@ pub fn set_local(data: JWTToken) {
                 model.set_agency_code(data.agency_code().clone());
                 model.set_super_admin(data.super_admin().clone());
                 model.set_username(data.username().clone());
+                model.set_path(path.clone());
                 let mutex = Arc::new(Mutex::new(model));
                 return mutex;
             });
