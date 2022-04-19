@@ -19,8 +19,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 //初始话规则引擎
-pub fn init_rules() {
-    test1()
+pub async  fn init_rules() {
+    //test().await
 }
 
 fn get_workers()->Arc<Mutex<MainWorker>>{
@@ -32,7 +32,7 @@ fn get_workers()->Arc<Mutex<MainWorker>>{
         }).clone()
     }
 }
-//默认使用 最小化的模式 直接使用JsRuntime
+//默认使用 最小化的模式 基础 deno_core 直接使用JsRuntime
 fn test1(){
     let ext = Extension::builder()
     .ops(vec![
@@ -53,21 +53,23 @@ fn test1(){
      }    
     "#;
     runtime.execute_script("script_name", code).unwrap();
+    
 }
 
-//规则引擎测试类 默认使用全量的模式 MainWorker
-fn test(){
+//规则引擎测试类 默认使用全量的模式 包含http localstorage 等 MainWorker
+async fn test(){
     let start = Instant::now();
     let mut workers = init();
     info!("instance workers time {} 毫秒",start.elapsed().as_millis().to_string());
     let code = r#"
-    console.log(this);
-   let value =  Deno.core.opSync('all_dict');
+    console.log(Deno.args);
+    let value =  Deno.core.opSync('all_dict');
      for(let i = 0;i<value.length;i++){
         console.log(value[i]);
      }    
     "#;
     workers.execute_script("script_name", code);
+    workers.run_event_loop(false).await;
 }
 #[op]
 fn all_dict() -> Result<Vec<SysDictTypeDTO>, deno_core::error::AnyError> {
@@ -88,19 +90,7 @@ pub fn init() -> MainWorker {
     });
     let e = Extension::builder().ops(vec![all_dict::decl()]).build();
     let options = WorkerOptions {
-        bootstrap: BootstrapOptions {
-            args: vec![],
-            apply_source_maps: false,
-            cpu_count: 1,
-            debug_flag: false,
-            enable_testing_features: false,
-            location: None,
-            no_color: false,
-            is_tty: false,
-            runtime_version: "x".to_string(),
-            ts_version: "x".to_string(),
-            unstable: false,
-        },
+        bootstrap: get_test_option(),
         extensions:vec![e],
         unsafely_ignore_certificate_errors: None,
         root_cert_store: None,
@@ -124,4 +114,20 @@ pub fn init() -> MainWorker {
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
     let permissions = Permissions::allow_all();
     MainWorker::bootstrap_from_options(main_module.clone(), permissions, options)
+}
+
+fn get_test_option()->BootstrapOptions{
+    BootstrapOptions {
+        args: vec!["cassie".to_string().to_string()],
+        apply_source_maps: false,
+        cpu_count: 1,
+        debug_flag: false,
+        enable_testing_features: false,
+        location: None,
+        no_color: false,
+        is_tty: false,
+        runtime_version: "x".to_string(),
+        ts_version: "x".to_string(),
+        unstable: false,
+    }
 }

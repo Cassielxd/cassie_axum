@@ -65,7 +65,7 @@ pub async fn init_context() {
     //第三步初始化casbinCContext
     init_casbin().await;
     info!("CasbinService init complete");
-    init_rules();
+    init_rules().await;
     info!("RulesContext init complete");
     init_event_bus().await;
     info!("EventBus init complete");
