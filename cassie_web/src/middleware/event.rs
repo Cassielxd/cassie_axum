@@ -1,10 +1,8 @@
 use crate::middleware::auth::get_local;
 use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event};
-use axum::body::Bytes;
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::dto::sys_log::SysLogOperationDto;
 use futures::future::BoxFuture;
-use log::info;
 use std::task::{Context, Poll};
 use tokio::time::Instant;
 use tower::Service;

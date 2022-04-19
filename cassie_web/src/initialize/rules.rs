@@ -53,6 +53,7 @@ fn test1(){
 async fn test(){
     let start = Instant::now();
     let mut workers = init();
+    
     info!("instance workers time {} 毫秒",start.elapsed().as_millis().to_string());
     let code = r#"
     let value =  Deno.core.opSync('op_config');
