@@ -1,6 +1,7 @@
-use crate::APPLICATION_CONTEXT;
 use crate::service::sys_dict_service::get_all_list;
 use cassie_domain::dto::sys_dict_dto::SysDictTypeDTO;
+use deno_core::JsRuntime;
+use deno_core::RuntimeOptions;
 use deno_runtime::deno_broadcast_channel::InMemoryBroadcastChannel;
 use deno_runtime::deno_core::error::AnyError;
 use deno_runtime::deno_core::op;
@@ -10,7 +11,7 @@ use deno_runtime::deno_web::BlobStore;
 use deno_runtime::permissions::Permissions;
 use deno_runtime::worker::MainWorker;
 use deno_runtime::worker::WorkerOptions;
-use deno_runtime::{deno_core, BootstrapOptions};
+use deno_runtime::{deno_core, BootstrapOptions,js::deno_isolate_init};
 use log::info;
 use tokio::time::Instant;
 use std::path::Path;
@@ -19,7 +20,7 @@ use std::sync::Arc;
 use std::sync::Mutex;
 //初始话规则引擎
 pub fn init_rules() {
-    //test()
+    test1()
 }
 
 fn get_workers()->Arc<Mutex<MainWorker>>{
@@ -31,12 +32,36 @@ fn get_workers()->Arc<Mutex<MainWorker>>{
         }).clone()
     }
 }
-//规则引擎测试类
+//默认使用 最小化的模式 直接使用JsRuntime
+fn test1(){
+    let ext = Extension::builder()
+    .ops(vec![
+      all_dict::decl(),
+    ])
+    .build();
+  // Initialize a runtime instance
+  let mut runtime = JsRuntime::new(RuntimeOptions {
+    extensions: vec![ext],
+    startup_snapshot: Some(deno_isolate_init()),
+    ..Default::default()
+  });
+    let code = r#"
+    Deno.core.print("hello world");
+   let value =  Deno.core.opSync('all_dict');
+     for(let i = 0;i<value.length;i++){
+        Deno.core.print(value[i].dict_name+"\n");
+     }    
+    "#;
+    runtime.execute_script("script_name", code).unwrap();
+}
+
+//规则引擎测试类 默认使用全量的模式 MainWorker
 fn test(){
     let start = Instant::now();
     let mut workers = init();
     info!("instance workers time {} 毫秒",start.elapsed().as_millis().to_string());
     let code = r#"
+    console.log(this);
    let value =  Deno.core.opSync('all_dict');
      for(let i = 0;i<value.length;i++){
         console.log(value[i]);
