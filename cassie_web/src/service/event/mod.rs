@@ -1,4 +1,5 @@
 pub mod event_service;
+pub mod ops;
 use pharos::SharedPharos;
 
 use crate::{observe::event::CassieEvent, service::crud_service::CrudService, APPLICATION_CONTEXT};
@@ -24,7 +25,9 @@ pub async fn consume(e: CassieEvent) {
         //消息事件
         CassieEvent::Sms { sms_type } => todo!("待开发"),
         //自定义事件
-        CassieEvent::Custom(custom) => {}
+        CassieEvent::Custom(custom) => {
+
+        }
     }
 }
 //发布事件

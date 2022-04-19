@@ -1,11 +1,8 @@
-use crate::service::sys_dict_service::get_all_list;
-use cassie_domain::dto::sys_dict_dto::SysDictTypeDTO;
+use crate::service::ops::init_sys_ops;
 use deno_core::JsRuntime;
 use deno_core::RuntimeOptions;
 use deno_runtime::deno_broadcast_channel::InMemoryBroadcastChannel;
 use deno_runtime::deno_core::error::AnyError;
-use deno_runtime::deno_core::op;
-use deno_runtime::deno_core::Extension;
 use deno_runtime::deno_core::FsModuleLoader;
 use deno_runtime::deno_web::BlobStore;
 use deno_runtime::permissions::Permissions;
@@ -20,13 +17,13 @@ use std::sync::Arc;
 use std::sync::Mutex;
 //初始话规则引擎
 pub async  fn init_rules() {
-    //test().await
+    test().await
 }
 
 fn get_workers()->Arc<Mutex<MainWorker>>{
-    static mut POINT: Option<Arc<Mutex<MainWorker>>> = None;
+    static mut MAIN_WORKER: Option<Arc<Mutex<MainWorker>>> = None;
     unsafe {// Rust中使用可变静态变量都是unsafe的
-        POINT.get_or_insert_with(|| {
+        MAIN_WORKER.get_or_insert_with(|| {
             // 初始化单例对象的代码
             Arc::new(Mutex::new(init()))
         }).clone()
@@ -34,20 +31,16 @@ fn get_workers()->Arc<Mutex<MainWorker>>{
 }
 //默认使用 最小化的模式 基础 deno_core 直接使用JsRuntime
 fn test1(){
-    let ext = Extension::builder()
-    .ops(vec![
-      all_dict::decl(),
-    ])
-    .build();
+
   // Initialize a runtime instance
   let mut runtime = JsRuntime::new(RuntimeOptions {
-    extensions: vec![ext],
+    extensions: vec![init_sys_ops()],
     startup_snapshot: Some(deno_isolate_init()),
     ..Default::default()
   });
     let code = r#"
     Deno.core.print("hello world");
-   let value =  Deno.core.opSync('all_dict');
+   let value =  Deno.core.opSync('op_all_dict');
      for(let i = 0;i<value.length;i++){
         Deno.core.print(value[i].dict_name+"\n");
      }    
@@ -62,20 +55,13 @@ async fn test(){
     let mut workers = init();
     info!("instance workers time {} 毫秒",start.elapsed().as_millis().to_string());
     let code = r#"
-    console.log(Deno.args);
-    let value =  Deno.core.opSync('all_dict');
-     for(let i = 0;i<value.length;i++){
-        console.log(value[i]);
-     }    
+    let value =  Deno.core.opSync('op_config');
+        console.log(value);
     "#;
     workers.execute_script("script_name", code);
     workers.run_event_loop(false).await;
 }
-#[op]
-fn all_dict() -> Result<Vec<SysDictTypeDTO>, deno_core::error::AnyError> {
-    let vo = async_std::task::block_on(async { get_all_list().await });
-    Ok(vo.unwrap())
-}
+
 fn get_error_class_name(e: &AnyError) -> &'static str {
     deno_runtime::errors::get_error_class_name(e).unwrap_or("Error")
 }
@@ -88,10 +74,10 @@ pub fn init() -> MainWorker {
     let web_worker_preload_module_cb = Arc::new(|_| {
         todo!("Web workers are not supported in the example");
     });
-    let e = Extension::builder().ops(vec![all_dict::decl()]).build();
+    
     let options = WorkerOptions {
         bootstrap: get_test_option(),
-        extensions:vec![e],
+        extensions:vec![init_sys_ops()],
         unsafely_ignore_certificate_errors: None,
         root_cert_store: None,
         user_agent: "cassie_engine".to_string(),
