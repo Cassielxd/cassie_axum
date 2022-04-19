@@ -31,6 +31,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
 6. 动态表单实现
 7. 微信小程序工具集开发
 8. 租户化实现
+9. javascript动态脚本集成
 
 #### 已完成
 
@@ -41,6 +42,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
 5. 完成nacos注册和心跳集成
 6. 动态表单实现
 7. 租户化实现
+8. javascript动态脚本集成
 
 #### 使用说明
 
@@ -244,6 +246,7 @@ cassie_axum
 2. https://rbatis.github.io/rbatis.io/#/
 3. https://axum.rs/
 4. https://github.com/denoland/rusty_v8
+5. https://github.com/denoland/deno
 
 #### 参与贡献
 

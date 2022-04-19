@@ -31,7 +31,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
         .remove_string(&format!("_captch:uuid_{}", &sign.uuid().clone().unwrap()))
         .await;
     let vo = sys_auth_service.sign_in(&sign).await;
-
+   
     return RespVO::from_result(&vo).resp_json();
 }
 

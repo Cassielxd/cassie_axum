@@ -17,7 +17,7 @@ use std::sync::Arc;
 use std::sync::Mutex;
 //初始话规则引擎
 pub async  fn init_rules() {
-    test().await
+    test().await;
 }
 
 fn get_workers()->Arc<Mutex<MainWorker>>{
