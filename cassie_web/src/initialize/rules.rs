@@ -1,6 +1,6 @@
 use crate::service::ops::init_sys_ops;
-use deno_core::JsRuntime;
-use deno_core::RuntimeOptions;
+use crate::APPLICATION_CONTEXT;
+use cassie_config::config::ApplicationConfig;
 use deno_runtime::deno_broadcast_channel::InMemoryBroadcastChannel;
 use deno_runtime::deno_core::error::AnyError;
 use deno_runtime::deno_core::FsModuleLoader;
@@ -8,57 +8,36 @@ use deno_runtime::deno_web::BlobStore;
 use deno_runtime::permissions::Permissions;
 use deno_runtime::worker::MainWorker;
 use deno_runtime::worker::WorkerOptions;
-use deno_runtime::{deno_core, BootstrapOptions,js::deno_isolate_init};
+use deno_runtime::{deno_core, BootstrapOptions};
 use log::info;
-use tokio::time::Instant;
+use serde_json::json;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::sync::Mutex;
+use tokio::time::Instant;
 //初始话规则引擎
-pub async  fn init_rules() {
-    test().await;
-}
-
-fn get_workers()->Arc<Mutex<MainWorker>>{
-    static mut MAIN_WORKER: Option<Arc<Mutex<MainWorker>>> = None;
-    unsafe {// Rust中使用可变静态变量都是unsafe的
-        MAIN_WORKER.get_or_insert_with(|| {
-            // 初始化单例对象的代码
-            Arc::new(Mutex::new(init()))
-        }).clone()
-    }
-}
-//默认使用 最小化的模式 基础 deno_core 直接使用JsRuntime
-fn test1(){
-
-  // Initialize a runtime instance
-  let mut runtime = JsRuntime::new(RuntimeOptions {
-    extensions: vec![init_sys_ops()],
-    startup_snapshot: Some(deno_isolate_init()),
-    ..Default::default()
-  });
-    let code = r#"
-    Deno.core.print("hello world");
-   let value =  Deno.core.opSync('op_all_dict');
-     for(let i = 0;i<value.length;i++){
-        Deno.core.print(value[i].dict_name+"\n");
-     }    
-    "#;
-    runtime.execute_script("script_name", code).unwrap();
-    
+pub async fn init_rules() {
+    //规则引擎测试使用 test().await;
 }
 
 //规则引擎测试类 默认使用全量的模式 包含http localstorage 等 MainWorker
-async fn test(){
+async fn test() {
     let start = Instant::now();
-    let mut workers = init();
-    
-    info!("instance workers time {} 毫秒",start.elapsed().as_millis().to_string());
-    let code = r#"
-    let value =  Deno.core.opSync('op_config');
-        console.log(value);
-    "#;
+    let mut workers = init(None);
+    info!(
+        "instance workers time {} 毫秒",
+        start.elapsed().as_millis().to_string()
+    );
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    let payload = json!(config);
+    let init = format!(
+        r#" var request_context=JSON.parse({});
+       console.log(request_context.redis_url);
+    "#,
+        serde_json::to_string_pretty(&serde_json::to_string_pretty(&payload).unwrap()).unwrap()
+    );
+    workers.execute_script("script_name", &init);
+    let code = r#" console.log(request_context);"#;
     workers.execute_script("script_name", code);
     workers.run_event_loop(false).await;
 }
@@ -67,7 +46,7 @@ fn get_error_class_name(e: &AnyError) -> &'static str {
     deno_runtime::errors::get_error_class_name(e).unwrap_or("Error")
 }
 
-pub fn init() -> MainWorker {
+pub fn init(args: Option<Vec<String>>) -> MainWorker {
     let module_loader = Rc::new(FsModuleLoader);
     let create_web_worker_cb = Arc::new(|_| {
         todo!("Web workers are not supported in the example");
@@ -75,10 +54,10 @@ pub fn init() -> MainWorker {
     let web_worker_preload_module_cb = Arc::new(|_| {
         todo!("Web workers are not supported in the example");
     });
-    
+
     let options = WorkerOptions {
-        bootstrap: get_test_option(),
-        extensions:vec![init_sys_ops()],
+        bootstrap: get_option(args),
+        extensions: vec![init_sys_ops()],
         unsafely_ignore_certificate_errors: None,
         root_cert_store: None,
         user_agent: "cassie_engine".to_string(),
@@ -103,9 +82,13 @@ pub fn init() -> MainWorker {
     MainWorker::bootstrap_from_options(main_module.clone(), permissions, options)
 }
 
-fn get_test_option()->BootstrapOptions{
+fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
+    let arg = match args {
+        Some(a) => a,
+        None => vec![],
+    };
     BootstrapOptions {
-        args: vec!["cassie".to_string().to_string()],
+        args: arg,
         apply_source_maps: false,
         cpu_count: 1,
         debug_flag: false,

@@ -1,5 +1,7 @@
 use crate::middleware::auth::get_local;
+use crate::observe::event::{CassieEvent, CustomEvent};
 use crate::service::crud_service::CrudService;
+use crate::service::fire_event;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
 use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
@@ -50,7 +52,25 @@ pub async fn nav() -> impl IntoResponse {
         request_model.agency_code().clone(),
     )
     .await;
+    //事件测试代码
+    //fire_custom_event().await;
     RespVO::from_result(&vo).resp_json()
+}
+async fn fire_custom_event() {
+    let request = get_local();
+    match request {
+        Some(data) => {
+            let cus = CustomEvent {
+                path: data.path().clone(),
+                params_values: None,
+                return_values: None,
+                request_model: Some(data),
+            };
+            let event = CassieEvent::Custom(cus);
+            fire_event(event).await;
+        }
+        None => {}
+    }
 }
 
 /**
