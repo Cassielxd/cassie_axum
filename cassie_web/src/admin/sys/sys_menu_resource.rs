@@ -53,7 +53,7 @@ pub async fn nav() -> impl IntoResponse {
     )
     .await;
     //事件测试代码
-    //fire_custom_event().await;
+    fire_custom_event().await;
     RespVO::from_result(&vo).resp_json()
 }
 async fn fire_custom_event() {
