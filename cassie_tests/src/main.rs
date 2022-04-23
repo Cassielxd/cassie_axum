@@ -1,14 +1,32 @@
+use rbatis::crud::CRUD;
 use rbatis::rbatis::Rbatis;
+#[macro_use]
+extern crate rbatis;
+
+#[crud_table(table_name:information_schema.tables)]
+#[derive(Clone, Debug)]
+pub struct Tables {
+    pub table_comment: Option<String>,
+    pub table_name: Option<String>,
+
+}
+
+#[crud_table(table_name:information_schema.COLUMNS)]
+#[derive(Clone, Debug)]
+pub struct TableColums {
+    pub column_name: Option<String>,
+    pub column_comment: Option<String>,
+    pub data_type: Option<String>,
+}
 
 #[tokio::main]
 async fn main() {
     let rbatis = Rbatis::new();
-
     rbatis
         .link("mysql://root:123456@localhost:3306/rivet_admin")
         .await
         .expect("rbatis link database fail!");
-      let result =   rbatis.exec("SHOW TABLES", Vec::new()).await.unwrap();
+      let result =   rbatis.fetch_list::<Tables>().await.unwrap();
 
       println!("{:#?}", result);
 }

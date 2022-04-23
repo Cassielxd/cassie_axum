@@ -5,6 +5,7 @@ members = [
     "cassie_cache",
     "cassie_config",
     "cassie_domain",
+    "cassie_devtools",
     "cassie_orm",
     "cassie_storage",
     "cassie_web",

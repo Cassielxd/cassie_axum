@@ -1,0 +1,12 @@
+#[crud_table(table_name:{{table_name}})]
+#[derive(Clone, Debug)]
+pub struct {{model_name}} {
+    {{#each columns as |column| }}
+        pub {{column.field_name}}: Option<{{column.field_type}}>,
+    {{/each}}
+}
+impl_field_name_method!({{model_name}} {
+    {{#each columns as |column| }}
+        {{column.field_name}}
+    {{/each}}
+});

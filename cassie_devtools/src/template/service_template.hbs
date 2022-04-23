@@ -1,0 +1,26 @@
+use rbatis::rbatis::Rbatis;
+
+use crate::APPLICATION_CONTEXT;
+use cassie_domain::entity::sys_entitys::CommonField;
+use cassie_domain::{
+dto::{{model}}_dto::{{model_name}}DTO, entity::{{model_name}}_entitys::{{model_name}}, request::{{model_name}}Query,
+};
+
+use super::crud_service::CrudService;
+
+
+pub struct {{model_name}}Service {}
+impl Default for {{model_name}}Service {
+    fn default() -> Self {
+        {{model_name}}Service {}
+    }
+}
+impl CrudService<{{model_name}}, {{model_name}}DTO, {{model_name}}Query> for {{model_name}}Service {
+    fn get_wrapper(arg: &{{model_name}}Query) -> rbatis::wrapper::Wrapper {
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+        rb.new_wrapper()
+    }
+    fn set_save_common_fields(&self, common: CommonField, data: &mut {{model_name}}) {
+
+    }
+}

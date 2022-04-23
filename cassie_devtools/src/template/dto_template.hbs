@@ -1,0 +1,30 @@
+use serde::{Deserialize, Serialize};
+use validator_derive::Validate;
+#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
+pub struct {{model_name}}DTO {
+    {{#each columns as |column| }}
+        {{column.field_name}}:: Option<{{column.field_type}}>,
+    {{/each}}
+}
+
+impl Into<{{model_name}}> for {{model_name}}DTO {
+    fn into(self) -> {{model_name}} {
+     {{model_name}} {
+        {{#each columns as |column| }}
+            {{column.field_name}}: self.{{column.field_name}},
+        {{/each}}
+
+        }
+    }
+}
+
+impl From<{{model_name}}> for {{model_name}}DTO {
+    fn from(arg: {{model_name}}) -> Self {
+    Self {
+        {{#each columns as |column| }}
+            {{column.field_name}}: arg.{{column.field_name}},
+        {{/each}}
+        }
+    }
+}
