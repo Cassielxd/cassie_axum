@@ -47,6 +47,7 @@ fn get_error_class_name(e: &AnyError) -> &'static str {
 }
 
 pub fn init(args: Option<Vec<String>>) -> MainWorker {
+    let start = Instant::now();
     let module_loader = Rc::new(FsModuleLoader);
     let create_web_worker_cb = Arc::new(|_| {
         todo!("Web workers are not supported in the example");
@@ -74,12 +75,18 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
         broadcast_channel: InMemoryBroadcastChannel::default(),
         shared_array_buffer_store: None,
         compiled_wasm_module_store: None,
+        source_map_getter: None,
     };
 
     let js_path = Path::new(env!("CARGO_MANIFEST_DIR"));
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
     let permissions = Permissions::allow_all();
-    MainWorker::bootstrap_from_options(main_module.clone(), permissions, options)
+    let main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
+    info!(
+        "instance workers time {} 毫秒",
+        start.elapsed().as_millis().to_string()
+    );
+    main_worker
 }
 
 fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
@@ -89,8 +96,9 @@ fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
     };
     BootstrapOptions {
         args: arg,
-        apply_source_maps: false,
-        cpu_count: 1,
+        cpu_count: std::thread::available_parallelism()
+        .map(|p| p.get())
+        .unwrap_or(1),
         debug_flag: false,
         enable_testing_features: false,
         location: None,

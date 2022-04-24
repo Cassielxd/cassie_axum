@@ -9,7 +9,7 @@ pub struct Tables {
 
 #[crud_table(table_name:information_schema.COLUMNS)]
 #[derive(Clone, Debug)]
-pub struct TableColums {
+pub struct TableColumns {
     pub column_name: Option<String>,
     pub column_comment: Option<String>,
     pub data_type: Option<String>,

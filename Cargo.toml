@@ -9,6 +9,7 @@ members = [
     "cassie_orm",
     "cassie_storage",
     "cassie_web",
+    "cassie_wx",
     "cassie_casbin_adapter",
     "cassie_tests"
 ]
