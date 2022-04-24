@@ -1,3 +1,4 @@
+use crate::service::api::user_service::{UserService, WechatUserService};
 use crate::service::asi::asi_service::AsiGroupService;
 use crate::service::cache_service::CacheService;
 use crate::service::event_service::EventConfigService;
@@ -41,4 +42,9 @@ pub async fn init_service() {
     info!("LogOperationService init success!");
     APPLICATION_CONTEXT.set::<EventConfigService>(EventConfigService {});
     info!("EventConfigService init success!");
+
+    APPLICATION_CONTEXT.set::<UserService>(UserService {});
+    info!("UserService init success!");
+    APPLICATION_CONTEXT.set::<WechatUserService>(WechatUserService {});
+    info!("WechatUserService init success!");
 }

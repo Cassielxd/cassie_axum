@@ -109,3 +109,10 @@ pub struct LogQuery {}
 #[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct EventQuery {}
+
+#[derive(Serialize, Deserialize, Clone, Debug, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
+pub struct UserQuery {
+    unionid: Option<String>,
+    routine_openid: Option<String>,
+}

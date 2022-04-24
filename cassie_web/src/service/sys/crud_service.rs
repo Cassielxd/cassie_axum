@@ -76,6 +76,14 @@ where
         Ok(result)
     }
 
+    async fn fetch_count_by_wrapper(&self, arg: &Params) -> Result<u64> {
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+        let wrapper = Self::get_wrapper(arg);
+        //执行查询
+        let count = rb.fetch_count_by_wrapper::<Entity>(wrapper).await?;
+        Ok(count)
+    }
+
     /**
      * 公共列表查询方法
      */

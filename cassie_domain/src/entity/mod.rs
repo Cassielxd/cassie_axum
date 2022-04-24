@@ -4,5 +4,6 @@ pub mod log;
 pub mod pagedata;
 pub mod sms;
 pub mod sys_entitys;
+pub mod user_entity;
 pub use pagedata::*;
 pub use sms::*;

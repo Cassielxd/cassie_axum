@@ -8,6 +8,7 @@ pub mod sys_menu_dto;
 pub mod sys_params_dto;
 pub mod sys_role_dto;
 pub mod sys_user_dto;
+pub mod user_dto;
 
 use serde::{Deserialize, Serialize};
 
