@@ -11,7 +11,7 @@ fn get_cloumn_map() -> HashMap<String, String> {
     map.insert("float".to_string(), "f32".to_string());
     map.insert("double".to_string(), "f64".to_string());
     map.insert("decimal".to_string(), "f64".to_string());
-    map.insert("bit".to_string(), "i32".to_string());
+    map.insert("bit".to_string(), "Vec<u8>".to_string());
     map.insert("char".to_string(), "String".to_string());
     map.insert("varchar".to_string(), "String".to_string());
     map.insert("tinytext".to_string(), "String".to_string());

@@ -1,7 +1,8 @@
 use crate::json_decode;
 use crate::sdk::client::Client;
+use crate::sdk::constant::API_DOMAIN;
 
-use super::API_DOMAIN;
+
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 /// 获取session_key

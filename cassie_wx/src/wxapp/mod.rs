@@ -3,7 +3,7 @@ use cassie_common::error::Result;
 use serde::{Deserialize, Serialize};
 pub mod auth;
 
-pub(crate) const API_DOMAIN: &'static str = "https://api.weixin.qq.com";
+
 
 pub fn resolve_data(session_key: String, iv: String, encrypted_data: String) -> Result<WxUserInfo> {
     let key = base64::decode(&session_key).unwrap();

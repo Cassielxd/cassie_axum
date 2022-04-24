@@ -891,6 +891,7 @@ dependencies = [
  "serde_json",
  "sqlparser 0.15.0",
  "state",
+ "thread_local",
  "tokio",
  "tower",
  "tower-http",

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use axum::{response::IntoResponse, Json};
+use axum::{response::IntoResponse, Json, Router, routing::post};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
@@ -16,7 +16,7 @@ use crate::{
 //小程序授权登录
 pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResponse {
     let cache_service = APPLICATION_CONTEXT.get::<CacheService>();
-
+    //获取 session_key 如果已经授权了  直接拿到session_key
     let mut session_key = if sign.contains_key("cache_key") {
         match cache_service
             .get_string(&format!(
@@ -31,6 +31,7 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     } else {
         "".to_string()
     };
+    //如果授权code 和session_key 都不存在 则参数异常
     if !sign.contains_key("code") && session_key.is_empty() {
         return RespVO::<()>::from_error(&Error::from("授权失败,参数有误!")).resp_json();
     }
@@ -41,6 +42,7 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     let mut wechat_user = WechatUserDTO::default();
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //新登录用户
+    //如果code存在 session_key不存在 则需要根据code拿到session_key
     if sign.contains_key("code") && !session_key.is_empty() {
         match get_session_key(
             config.wxapp().appid(),
@@ -74,17 +76,14 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
             }
         };
     }
-    //解密获取 用户信息
+    //openid为空则授权异常
     if openid.is_empty() {
-        return RespVO::<()>::from_error(&Error::from(
-            "openid获取失败",
-        ))
-        .resp_json();
+        return RespVO::<()>::from_error(&Error::from("openid获取失败")).resp_json();
     }
     wechat_user.set_routine_openid(Some(openid));
     wechat_user.set_unionid(Some(unionid));
     wechat_user.set_session_key(Some(session_key.clone()));
-
+    //解密获取 用户信息 组装数据
     let iv = sign.get("iv").unwrap();
     let encrypted_data = sign.get("encryptedData").unwrap();
     if let Ok(wx_info) = resolve_data(session_key.clone(), iv.clone(), encrypted_data.clone()) {
@@ -99,11 +98,20 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     } else {
         return RespVO::<()>::from_error(&Error::from("获取会话密匙失败")).resp_json();
     }
-
+    //新增或更新用户
     save_or_update_user(wechat_user);
+    //根据用户信息 生成token
 
     RespVO::from(&"".to_string()).resp_json()
 }
 
 //小程序支付回调
-pub async fn notify() {}
+pub async fn notify() {
+    todo!("待开发")
+}
+
+
+pub fn init_router() -> Router {
+    Router::new()
+        .route("/wechat/mp_auth", post(mp_auth))
+}

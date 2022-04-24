@@ -45,7 +45,7 @@ impl CrudService<WechatUser, WechatUserDTO, UserQuery> for WechatUserService {
     ) {
     }
 }
-
+//新增或更新用户
 pub async fn save_or_update_user(user: WechatUserDTO) {
     let user_service = APPLICATION_CONTEXT.get::<UserService>();
     let wechat_user_service = APPLICATION_CONTEXT.get::<WechatUserService>();

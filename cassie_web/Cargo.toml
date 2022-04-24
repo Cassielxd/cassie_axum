@@ -52,7 +52,7 @@ sqlparser = "0.15.0"
 #pharosv事件框架
 pharos = "0.5.3"
 lazy_static ="1"
-
+thread_local="1.1.4"
 #cassie 实体定义
 cassie_domain = { path = "../cassie_domain" }
 #cassie 公共实体util定义
