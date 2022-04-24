@@ -63,6 +63,6 @@ pub async fn save_or_update_user(user: WechatUserDTO) {
             false
         }
     } {
-      //执行更新逻辑
+        //执行更新逻辑
     }
 }
