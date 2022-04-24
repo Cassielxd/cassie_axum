@@ -19,7 +19,18 @@ lazy_static = "1.4.0"
 sxd-document = "0.3.2"
 sxd-xpath = "0.4.2"
 # reqwest
-bytes = { version = "1.1.0", optional = true }
-reqwest = { version = "0.11", features = ["blocking", "json"], optional = true }
-tokio = { version = "1.17.0", features = ["full"], optional = true }
-indicatif = { version = "0.16.2", optional = true }
+bytes = { version = "1.1.0" }
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls","blocking"] }
+tokio = { version = "1.17.0", features = ["full"]}
+indicatif = { version = "0.16.2" }
+
+
+
+#缓存 支持redis 本地缓存
+cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
+
+
+#cassie 公共实体util定义
+cassie_common = { path = "../cassie_common" }
+#cassie 配置类定义
+cassie_config = { path = "../cassie_config" }

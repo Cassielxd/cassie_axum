@@ -66,14 +66,14 @@ fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
     let mut workers = init(None);
     workers.execute_script("init_request_context", &init_code);
     for event in data {
-       match workers.js_runtime.execute_script(
+        match workers.js_runtime.execute_script(
             event.event_name().clone().unwrap().as_str(),
             event.event_script().clone().unwrap().as_str(),
-        ){
-            Ok(data) => {},
+        ) {
+            Ok(data) => {}
             Err(e) => {
-                info!("error info {:#?}",e.to_string());
-            },
+                info!("error info {:#?}", e.to_string());
+            }
         }
     }
 }

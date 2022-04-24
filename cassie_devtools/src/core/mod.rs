@@ -4,7 +4,6 @@ pub mod mapping;
 pub struct Tables {
     pub table_comment: Option<String>,
     pub table_name: Option<String>,
-
 }
 
 #[crud_table(table_name:information_schema.COLUMNS)]

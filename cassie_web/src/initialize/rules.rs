@@ -97,8 +97,8 @@ fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
     BootstrapOptions {
         args: arg,
         cpu_count: std::thread::available_parallelism()
-        .map(|p| p.get())
-        .unwrap_or(1),
+            .map(|p| p.get())
+            .unwrap_or(1),
         debug_flag: false,
         enable_testing_features: false,
         location: None,
