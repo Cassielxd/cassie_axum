@@ -42,8 +42,8 @@ nacos:
   application_name: "cassie_admin"
 
 wxapp:
-  appid: ""
-  secret: ""
+  appid: "wx726d55ff001bf506"
+  secret: "407659215044413ef53fcf67b0690ac0"
 
 #管理端接口白名单（免登陆直接访问）
 admin_white_list_api:
