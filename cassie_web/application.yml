@@ -41,7 +41,9 @@ nacos:
   nacos_server: "http://127.0.0.1:8848/nacos"
   application_name: "cassie_admin"
 
-
+wxapp:
+  appid: ""
+  secret: ""
 
 #管理端接口白名单（免登陆直接访问）
 admin_white_list_api:

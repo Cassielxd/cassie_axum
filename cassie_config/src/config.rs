@@ -5,6 +5,12 @@ pub struct NacosConfig {
     nacos_server: String,
     application_name: String,
 }
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
+#[getset(get_mut = "pub", get = "pub", set = "pub")]
+pub struct Wxapp {
+    appid: String,
+    secret: String,
+}
 
 //add value to config
 impl NacosConfig {
@@ -106,6 +112,7 @@ pub struct ApplicationConfig {
     tenant: TenantConfig,
     //oss 配置
     oss: OSSConfig,
+    wxapp: Wxapp,
 }
 
 impl ApplicationConfig {

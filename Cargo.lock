@@ -755,10 +755,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cassie_cache"
-version = "0.1.0"
-
-[[package]]
 name = "cassie_casbin_adapter"
 version = "0.1.0"
 dependencies = [
@@ -873,6 +869,7 @@ dependencies = [
  "cassie_domain",
  "cassie_orm",
  "cassie_storage",
+ "cassie_wx",
  "chrono",
  "deno_core",
  "deno_runtime",
