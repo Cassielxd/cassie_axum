@@ -20,11 +20,10 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
     let mut uid = if let Some(unionid) = user.unionid() {
         let list = wechat_user_service
             .fetch_list_by_column(WechatUser::unionid(), &vec![unionid.clone()])
-            .await;
-        match list {
-            Ok(e) => {
-                if e.len() > 0 {
-                    let uid = e.get(0).unwrap().id().clone().unwrap();
+            .await.unwrap();
+      
+                if list.len() > 0 {
+                    let uid = list.get(0).unwrap().id().clone().unwrap();
                 //执行更新逻辑
                 wechat_user_service
                     .update_by_id(uid.to_string(), &mut user.clone().into())
@@ -36,10 +35,8 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
                 } else {
                     0
                 }
-               
-            }
-            Err(_) => 0,
-        }
+           
+        
     } else {
         0
     };
@@ -48,11 +45,9 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
         uid = if let Some(routine_openid) = user.routine_openid() {
             let list = wechat_user_service
                 .fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()])
-                .await;
-            match list {
-                Ok(e) => {
-                    if e.len()>0{
-                        let uid = e.get(0).unwrap().id().clone().unwrap();
+                .await.unwrap();
+                    if list.len()>0{
+                        let uid = list.get(0).unwrap().id().clone().unwrap();
                         //执行更新逻辑
                         wechat_user_service
                             .update_by_id(uid.to_string(), &mut user.clone().into())
@@ -63,9 +58,7 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
                        return uid;
                     }
                     0
-                }
-                Err(_) => 0,
-            }
+          
         } else {
             0
         };
