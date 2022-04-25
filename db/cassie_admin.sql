@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 09/04/2022 18:09:10
+ Date: 25/04/2022 11:19:06
 */
 
 SET NAMES utf8mb4;
@@ -1003,7 +1003,7 @@ CREATE TABLE `sys_log_login`  (
   `create_date` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '登录日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '登录日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_log_login
@@ -1028,6 +1028,8 @@ INSERT INTO `sys_log_login` VALUES (17, '0', 'admin', NULL, 'admin', 1, '2022-04
 INSERT INTO `sys_log_login` VALUES (18, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 09:24:35');
 INSERT INTO `sys_log_login` VALUES (19, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 09:59:53');
 INSERT INTO `sys_log_login` VALUES (20, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-09 10:03:37');
+INSERT INTO `sys_log_login` VALUES (21, '0', 'admin', NULL, 'admin', 1, '2022-04-14 06:51:14');
+INSERT INTO `sys_log_login` VALUES (22, '0', 'admin', NULL, 'lixingdong1', 2, '2022-04-14 06:51:50');
 
 -- ----------------------------
 -- Table structure for sys_log_operation
@@ -1050,7 +1052,7 @@ CREATE TABLE `sys_log_operation`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_module`(`module`) USING BTREE,
   INDEX `idx_create_date`(`create_date`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 170 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 245 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_log_operation
@@ -1224,6 +1226,81 @@ INSERT INTO `sys_log_operation` VALUES (166, NULL, 'POST', '/login', 'POST', NUL
 INSERT INTO `sys_log_operation` VALUES (167, NULL, 'POST', '/login', 'POST', NULL, 10, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:24:35');
 INSERT INTO `sys_log_operation` VALUES (168, NULL, 'POST', '/login', 'POST', NULL, 4, NULL, NULL, 1, NULL, NULL, '2022-04-09 09:59:53');
 INSERT INTO `sys_log_operation` VALUES (169, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-09 10:03:37');
+INSERT INTO `sys_log_operation` VALUES (170, NULL, 'GET', '/dict/type/all', 'GET', NULL, 56, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:39');
+INSERT INTO `sys_log_operation` VALUES (171, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:52');
+INSERT INTO `sys_log_operation` VALUES (172, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:53');
+INSERT INTO `sys_log_operation` VALUES (173, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:53');
+INSERT INTO `sys_log_operation` VALUES (174, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:54');
+INSERT INTO `sys_log_operation` VALUES (175, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:54');
+INSERT INTO `sys_log_operation` VALUES (176, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:55');
+INSERT INTO `sys_log_operation` VALUES (177, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:55');
+INSERT INTO `sys_log_operation` VALUES (178, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:56');
+INSERT INTO `sys_log_operation` VALUES (179, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:56');
+INSERT INTO `sys_log_operation` VALUES (180, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:56');
+INSERT INTO `sys_log_operation` VALUES (181, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:57');
+INSERT INTO `sys_log_operation` VALUES (182, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:57');
+INSERT INTO `sys_log_operation` VALUES (183, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:58');
+INSERT INTO `sys_log_operation` VALUES (184, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:58');
+INSERT INTO `sys_log_operation` VALUES (185, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:58');
+INSERT INTO `sys_log_operation` VALUES (186, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:59');
+INSERT INTO `sys_log_operation` VALUES (187, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:48:59');
+INSERT INTO `sys_log_operation` VALUES (188, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:49:00');
+INSERT INTO `sys_log_operation` VALUES (189, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:49:00');
+INSERT INTO `sys_log_operation` VALUES (190, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:49:01');
+INSERT INTO `sys_log_operation` VALUES (191, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:49:01');
+INSERT INTO `sys_log_operation` VALUES (192, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:49:01');
+INSERT INTO `sys_log_operation` VALUES (193, NULL, 'GET', '/captcha/123456', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:49:09');
+INSERT INTO `sys_log_operation` VALUES (194, NULL, 'GET', '/captcha/123456', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:49:48');
+INSERT INTO `sys_log_operation` VALUES (195, NULL, 'GET', '/captcha/12a45b66-dd66-4221-86fe-6669e7f874ec', 'GET', NULL, 111, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:50:49');
+INSERT INTO `sys_log_operation` VALUES (196, NULL, 'POST', '/login', 'POST', NULL, 3, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:51:14');
+INSERT INTO `sys_log_operation` VALUES (197, NULL, 'GET', '/dict/type/all?_t=1649919073688', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:14');
+INSERT INTO `sys_log_operation` VALUES (198, NULL, 'GET', '/menu/nav?_t=1649919073688', 'GET', NULL, 38, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:14');
+INSERT INTO `sys_log_operation` VALUES (199, NULL, 'GET', '/user/info?_t=1649919073754', 'GET', NULL, 9, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:14');
+INSERT INTO `sys_log_operation` VALUES (200, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649919077475', 'GET', NULL, 58, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:18');
+INSERT INTO `sys_log_operation` VALUES (201, NULL, 'GET', '/role?order=&order_field=&page=1&limit=10&name=&_t=1649919078123', 'GET', NULL, 4, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:18');
+INSERT INTO `sys_log_operation` VALUES (202, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649919079459', 'GET', NULL, 16, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:19');
+INSERT INTO `sys_log_operation` VALUES (203, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649919080008', 'GET', NULL, 30, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:20');
+INSERT INTO `sys_log_operation` VALUES (204, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649919080799', 'GET', NULL, 8, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:21');
+INSERT INTO `sys_log_operation` VALUES (205, NULL, 'GET', '/asi/group/list?_t=1649919081980', 'GET', NULL, 2, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:22');
+INSERT INTO `sys_log_operation` VALUES (206, NULL, 'GET', '/asi/group?order=&order_field=&page=1&limit=10&id=0&group_name=&group_code=&_t=1649919082283', 'GET', NULL, 17, NULL, NULL, 1, 'admin', NULL, '2022-04-14 06:51:22');
+INSERT INTO `sys_log_operation` VALUES (207, NULL, 'GET', '/captcha/3854579c-61d8-4707-8507-44b9448cdd4d', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:51:25');
+INSERT INTO `sys_log_operation` VALUES (208, NULL, 'POST', '/login', 'POST', NULL, 0, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:51:44');
+INSERT INTO `sys_log_operation` VALUES (209, NULL, 'GET', '/captcha/55dcc5c1-caa8-4c62-863c-d5c37c10b815', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:51:44');
+INSERT INTO `sys_log_operation` VALUES (210, NULL, 'POST', '/login', 'POST', NULL, 7, NULL, NULL, 1, NULL, NULL, '2022-04-14 06:51:50');
+INSERT INTO `sys_log_operation` VALUES (211, NULL, 'GET', '/menu/nav?_t=1649919109603', 'GET', NULL, 27, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:51:50');
+INSERT INTO `sys_log_operation` VALUES (212, NULL, 'GET', '/dict/type/all?_t=1649919109603', 'GET', NULL, 30, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:51:50');
+INSERT INTO `sys_log_operation` VALUES (213, NULL, 'GET', '/user/info?_t=1649919109644', 'GET', NULL, 20, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:51:50');
+INSERT INTO `sys_log_operation` VALUES (214, NULL, 'GET', '/menu/list?order=&order_field=&page=&limit=&_t=1649919118078', 'GET', NULL, 29, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:51:58');
+INSERT INTO `sys_log_operation` VALUES (215, NULL, 'GET', '/params?order=&order_field=&page=1&limit=10&param_code=&_t=1649919125176', 'GET', NULL, 7, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:52:05');
+INSERT INTO `sys_log_operation` VALUES (216, NULL, 'GET', '/dict/type?order=&order_field=&page=1&limit=10&id=0&dict_name=&dict_type=&_t=1649919126546', 'GET', NULL, 18, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:52:07');
+INSERT INTO `sys_log_operation` VALUES (217, NULL, 'GET', '/user?order=&order_field=&page=1&limit=10&username=&deptId=&postId=&gender=&_t=1649919136235', 'GET', NULL, 35, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:52:16');
+INSERT INTO `sys_log_operation` VALUES (218, NULL, 'GET', '/dict/type/all?_t=1649919254383', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:14');
+INSERT INTO `sys_log_operation` VALUES (219, NULL, 'GET', '/menu/nav?_t=1649919254383', 'GET', NULL, 20, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:14');
+INSERT INTO `sys_log_operation` VALUES (220, NULL, 'GET', '/user/info?_t=1649919254477', 'GET', NULL, 3, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:14');
+INSERT INTO `sys_log_operation` VALUES (221, NULL, 'GET', '/dict/type/all?_t=1649919269833', 'GET', NULL, 0, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:30');
+INSERT INTO `sys_log_operation` VALUES (222, NULL, 'GET', '/menu/nav?_t=1649919269834', 'GET', NULL, 14, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:30');
+INSERT INTO `sys_log_operation` VALUES (223, NULL, 'GET', '/user/info?_t=1649919286015', 'GET', NULL, 28, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:54:46');
+INSERT INTO `sys_log_operation` VALUES (224, NULL, 'GET', '/dict/type/all?_t=1649919311412', 'GET', NULL, 5, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:55:11');
+INSERT INTO `sys_log_operation` VALUES (225, NULL, 'GET', '/menu/nav?_t=1649919311413', 'GET', NULL, 12, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:55:11');
+INSERT INTO `sys_log_operation` VALUES (226, NULL, 'GET', '/user/info?_t=1649919311562', 'GET', NULL, 1, NULL, NULL, 1, 'lixingdong1', NULL, '2022-04-14 06:55:12');
+INSERT INTO `sys_log_operation` VALUES (227, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:21');
+INSERT INTO `sys_log_operation` VALUES (228, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:25');
+INSERT INTO `sys_log_operation` VALUES (229, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 111, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:26');
+INSERT INTO `sys_log_operation` VALUES (230, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 112, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:27');
+INSERT INTO `sys_log_operation` VALUES (231, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 111, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:28');
+INSERT INTO `sys_log_operation` VALUES (232, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 111, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:44:29');
+INSERT INTO `sys_log_operation` VALUES (233, NULL, 'GET', '/dict/type/all', 'GET', NULL, 81, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:28');
+INSERT INTO `sys_log_operation` VALUES (234, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:30');
+INSERT INTO `sys_log_operation` VALUES (235, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:30');
+INSERT INTO `sys_log_operation` VALUES (236, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:31');
+INSERT INTO `sys_log_operation` VALUES (237, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:32');
+INSERT INTO `sys_log_operation` VALUES (238, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:32');
+INSERT INTO `sys_log_operation` VALUES (239, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:33');
+INSERT INTO `sys_log_operation` VALUES (240, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:33');
+INSERT INTO `sys_log_operation` VALUES (241, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:34');
+INSERT INTO `sys_log_operation` VALUES (242, NULL, 'GET', '/dict/type/all', 'GET', NULL, 0, NULL, NULL, 1, 'admin', NULL, '2022-04-14 07:45:34');
+INSERT INTO `sys_log_operation` VALUES (243, NULL, 'GET', '/captcha/12456789', 'GET', NULL, 114, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:46:47');
+INSERT INTO `sys_log_operation` VALUES (244, NULL, 'GET', '/captcha/1245', 'GET', NULL, 113, NULL, NULL, 1, NULL, NULL, '2022-04-14 07:46:55');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -5464,5 +5541,71 @@ CREATE TABLE `tb_product_params`  (
   `update_date` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品参数管理' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户id',
+  `account` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户账号',
+  `pwd` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户密码',
+  `real_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '真实姓名',
+  `birthday` int(11) NOT NULL DEFAULT 0 COMMENT '生日',
+  `card_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `mark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户备注',
+  `group_id` int(11) NOT NULL DEFAULT 0 COMMENT '用户分组id',
+  `nickname` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户昵称',
+  `avatar` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户头像',
+  `phone` char(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号码',
+  `add_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `add_ip` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '添加ip',
+  `last_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后一次登录时间',
+  `last_ip` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '最后一次登录ip',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1为正常，0为禁止',
+  `level` tinyint(2) UNSIGNED NOT NULL DEFAULT 0 COMMENT '等级',
+  `user_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户类型',
+  `pay_count` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '用户购买次数',
+  `addres` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '详细地址',
+  `login_type` varchar(36) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户登陆类型，h5,wechat,routine',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `account`(`account`) USING BTREE,
+  INDEX `level`(`level`) USING BTREE,
+  INDEX `status`(`status`) USING BTREE,
+  INDEX `is_promoter`(`is_promoter`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for wechat_user
+-- ----------------------------
+DROP TABLE IF EXISTS `wechat_user`;
+CREATE TABLE `wechat_user`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '微信用户id',
+  `unionid` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段',
+  `openid` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户的标识，对当前公众号唯一',
+  `routine_openid` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '小程序唯一身份ID',
+  `nickname` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户的昵称',
+  `headimgurl` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户头像',
+  `sex` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户的性别，值为1时是男性，值为2时是女性，值为0时是未知',
+  `city` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户所在城市',
+  `language` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户的语言，简体中文为zh_CN',
+  `province` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户所在省份',
+  `country` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户所在国家',
+  `remark` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '公众号运营者对粉丝的备注，公众号运营者可在微信公众平台用户管理界面对粉丝添加备注',
+  `groupid` smallint(5) UNSIGNED NULL DEFAULT 0 COMMENT '用户所在的分组ID（兼容旧的用户分组接口）',
+  `tagid_list` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户被打上的标签ID列表',
+  `subscribe` tinyint(3) UNSIGNED NULL DEFAULT 1 COMMENT '用户是否订阅该公众号标识',
+  `subscribe_time` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '关注公众号时间',
+  `add_time` int(10) UNSIGNED NULL DEFAULT NULL COMMENT '添加时间',
+  `session_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '小程序用户会话密匙',
+  `user_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'wechat' COMMENT '用户类型',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `groupid`(`groupid`) USING BTREE,
+  INDEX `subscribe_time`(`subscribe_time`) USING BTREE,
+  INDEX `add_time`(`add_time`) USING BTREE,
+  INDEX `subscribe`(`subscribe`) USING BTREE,
+  INDEX `unionid`(`unionid`) USING BTREE,
+  INDEX `openid`(`openid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '微信用户表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
