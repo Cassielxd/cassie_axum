@@ -1,12 +1,12 @@
-use std::time::Duration;
-use cassie_common::error::{Error, Result};
-use crate::service::redis_service::{RedisService};
+use crate::service::redis_service::RedisService;
 use crate::APPLICATION_CONTEXT;
 use async_trait::async_trait;
+use cassie_common::error::{Error, Result};
 use cassie_config::config::ApplicationConfig;
 use log::info;
-use serde::Serialize;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
+use std::time::Duration;
 //缓存服务接口
 
 #[async_trait]
@@ -30,8 +30,8 @@ impl CacheService {
         match config.cache_type().as_str() {
             "redis" => {
                 info!("cache_type: redis");
-                Ok(Self{
-                    inner:Box::new(RedisService::new(&config.redis_url()))
+                Ok(Self {
+                    inner: Box::new(RedisService::new(&config.redis_url())),
                 })
             }
             e => {

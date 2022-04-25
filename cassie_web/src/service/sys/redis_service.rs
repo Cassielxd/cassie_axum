@@ -3,8 +3,8 @@ use std::time::Duration;
 use async_trait::async_trait;
 use cassie_common::error::{Error, Result};
 use log::{error, info};
-use redis::RedisResult;
 use redis::aio::Connection;
+use redis::RedisResult;
 
 use super::cache_service::ICacheService;
 ///Redis缓存服务
@@ -14,7 +14,7 @@ pub struct RedisService {
 
 impl RedisService {
     pub fn new(url: &str) -> Self {
-        info!("conncect redis ({})...",url);
+        info!("conncect redis ({})...", url);
         let client = redis::Client::open(url).unwrap();
         info!("conncect redis success!");
         Self { client }
@@ -42,17 +42,13 @@ impl ICacheService for RedisService {
         let result: RedisResult<Option<String>> =
             redis::cmd("GET").arg(&[k]).query_async(&mut conn).await;
         return match result {
-            Ok(v) => {
-                Ok(v.unwrap_or_default())
-            }
-            Err(e) => {
-                Err(Error::from(format!(
-                    "RedisService get_string({}) fail:{}",
-                    k,
-                    e.to_string()
-                )))
-            }
-        }
+            Ok(v) => Ok(v.unwrap_or_default()),
+            Err(e) => Err(Error::from(format!(
+                "RedisService get_string({}) fail:{}",
+                k,
+                e.to_string()
+            ))),
+        };
     }
 
     ///set_string 自动过期
@@ -78,7 +74,7 @@ impl ICacheService for RedisService {
                     e.to_string()
                 ))),
             }
-        }
+        };
     }
 
     ///set_string 自动过期
