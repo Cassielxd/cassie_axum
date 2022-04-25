@@ -53,7 +53,7 @@ admin_white_list_api:
 
 #api接口白名单（免登陆直接访问）
 api_white_list_api:
-  - "/login"
+  - "/wechat/mp_auth"
 
 #api超级管理员id直接跳过api权限
 super_admin_ids:

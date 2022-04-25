@@ -6,7 +6,23 @@ use casbin::function_map::key_match2;
 use casbin::rhai::ImmutableString;
 use cassie_config::config::ApplicationConfig;
 
-///是否处在白名单接口中
+///api是否处在白名单接口中
+#[cached(name = "FRONT_WHITE_LIST_API", time = 60, size = 100)]
+pub fn is_white_api_list_api(path: String) -> bool {
+    if path.eq("/") {
+        return true;
+    }
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    for x in cassie_config.api_white_list_api() {
+        //匹配 user/:id 模式
+        if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+///admin是否处在白名单接口中
 #[cached(name = "AFMIN_WHITE_LIST_API", time = 60, size = 100)]
 pub fn is_white_list_api(path: String) -> bool {
     if path.eq("/") {
@@ -21,6 +37,7 @@ pub fn is_white_list_api(path: String) -> bool {
     }
     return false;
 }
+
 #[cached(name = "ADMIN_AUTH_LIST_API", time = 60, size = 100)]
 pub fn is_auth_list_api(path: String) -> bool {
     if path.eq("/") {

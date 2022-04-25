@@ -1,7 +1,5 @@
-
-
 use crate::cici_casbin::casbin_service::{CasbinService, CasbinVals};
-use crate::cici_casbin::is_auth_list_api;
+use crate::cici_casbin::{is_auth_list_api, is_white_api_list_api};
 use crate::{cici_casbin::is_white_list_api, APPLICATION_CONTEXT};
 use axum::http::HeaderValue;
 use axum::{
@@ -13,7 +11,6 @@ use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 
 use super::{checked_token, set_local};
-
 
 /**
  *struct:Auth
@@ -41,41 +38,26 @@ where
         let value = HeaderValue::from_str("").unwrap();
         let headers = req.headers().unwrap();
         let token = headers.get("access_token").unwrap_or(&value);
-        let mut resp: RespVO<String> = RespVO {
+        let resp: RespVO<String> = RespVO {
             code: Some(-1),
             msg: Some(format!("请登录")),
             data: None,
         };
 
         /*判断是否在白名单里 如果不在进行验证*/
-        if !is_white_list_api(path.clone()) {
+        if !is_white_api_list_api(path.clone()) {
             let token_value = token.to_str().unwrap_or("");
             /*token为空提示登录*/
             if token_value.is_empty() {
                 return Err(Error::E(serde_json::json!(&resp).to_string()));
             }
-            resp.msg = Some(format!("权限不足"));
             /*验证token有效性*/
             match checked_token(token_value).await {
                 Ok(data) => {
                     //登录了但是不需要权限
                     let data1 = data.clone();
-    
                     set_local(data1, path.clone());
-                    // 获取用户名和租户编码 进入下一步资源认证
-                    let vals = CasbinVals {
-                        uid: data.id().to_string(),
-                        agency_code: Option::from(data.agency_code().clone()),
-                    };
-                    /*获取验证的  casbin_service*/
-                    let service = APPLICATION_CONTEXT.get::<CasbinService>();
-                    /*casbin 验证有效性 处理返回结果集*/
-
-                    if is_auth_list_api(path.clone()) || service.call(path, action, vals).await {
-                        return Ok(Self {});
-                    } else {
-                        return Err(Error::from(serde_json::json!(&resp).to_string()));
-                    }
+                    return Ok(Self {});
                 }
                 Err(e) => {
                     //401 http状态码会强制前端退出当前登陆状态

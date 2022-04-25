@@ -1,8 +1,8 @@
 use super::crud_service::CrudService;
 use super::sys_menu_service::SysMenuService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::APPLICATION_CONTEXT;
 use crate::middleware::get_local;
+use crate::APPLICATION_CONTEXT;
 use casbin::MgmtApi;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::request::SysMenuQuery;

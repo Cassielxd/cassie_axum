@@ -1,4 +1,4 @@
-use crate::{APPLICATION_CONTEXT, middleware::get_local};
+use crate::{middleware::get_local, APPLICATION_CONTEXT};
 use cassie_common::utils::password_encoder::PasswordEncoder;
 use cassie_domain::{
     dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery,

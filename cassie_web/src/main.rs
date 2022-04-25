@@ -6,7 +6,7 @@ use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
     init_context,
-    middleware::{auth::Auth, event::EventMiddleware},
+    middleware::{auth_admin, auth_api, event::EventMiddleware},
     routers::{admin, api},
     APPLICATION_CONTEXT,
 };
@@ -52,9 +52,12 @@ async fn main() {
             "/admin",
             admin::routers()
                 .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
-                .layer(extractor_middleware::<Auth>()), //最先执行的
+                .layer(extractor_middleware::<auth_admin::Auth>()), //最先执行的
         )
-        .nest("/api", api::routers())
+        .nest(
+            "/api",
+            api::routers().layer(extractor_middleware::<auth_api::Auth>()),
+        )
         .layer(cors)
         .fallback(fallback.into_service());
     // 启动服务

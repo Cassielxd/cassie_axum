@@ -1,4 +1,3 @@
-
 use crate::middleware::get_local;
 use crate::observe::event::{CassieEvent, CustomEvent};
 use crate::service::crud_service::CrudService;
