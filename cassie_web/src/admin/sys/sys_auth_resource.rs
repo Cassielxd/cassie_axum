@@ -27,9 +27,6 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
             return RespVO::<()>::from_error(&Error::E("验证码错误".to_string())).resp_json();
         }
     }
-    cache_service
-        .remove_string(&format!("_captch:uuid_{}", &sign.uuid().clone().unwrap()))
-        .await;
     let vo = sys_auth_service.sign_in(&sign).await;
 
     return RespVO::from_result(&vo).resp_json();
@@ -52,9 +49,10 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
     let captcha_str = captcha.chars_as_string().to_lowercase();
     async_std::task::block_on(async {
         let res = cache_service
-            .set_string(
+            .set_string_ex(
                 &format!("_captch:uuid_{}", uuid.clone()),
                 captcha_str.as_str(),
+                Some(std::time::Duration::from_secs(60 * 5)),
             )
             .await;
         println!("{:?}", res);
