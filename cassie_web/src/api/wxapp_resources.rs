@@ -1,5 +1,7 @@
 
 
+use std::time::Duration;
+
 use axum::{response::IntoResponse, routing::post, Json, Router};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
@@ -69,9 +71,10 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
                 //生成新的缓存key
                 cache_key = Uuid::new().to_string();
                 cache_service
-                    .set_string(
+                    .set_string_ex(
                         &format!("cassie_api_code_{}", cache_key.clone()),
                         &session_key,
+                        Some(Duration::from_secs(data.expires_in as u64)),
                     )
                     .await;
             }
