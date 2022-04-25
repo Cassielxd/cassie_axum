@@ -87,29 +87,35 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
 
     wechat_user.set_session_key(Some(session_key.clone()));
     //解密获取 用户信息 组装数据
-    let iv = sign.iv().clone().unwrap();
-    let encrypted_data = sign.encryptedData().clone().unwrap();
-    if let Ok(wx_info) = resolve_data(session_key.clone(), iv.clone(), encrypted_data.clone()) {
-        openid = wx_info.openId.clone();
-        wechat_user.set_nickname(Some(wx_info.nickName)); //昵称
-        wechat_user.set_routine_openid(Some(wx_info.openId)); //设置openid
-        wechat_user.set_headimgurl(Some(wx_info.avatarUrl)); //头像
-        wechat_user.set_sex(Some(wx_info.gender)); //性别
-        wechat_user.set_city(Some(wx_info.city)); //市
-        wechat_user.set_country(Some(wx_info.country));
-        wechat_user.set_province(Some(wx_info.province)); //省
-        wechat_user.set_language(Some(wx_info.language)); //语言
-    } else {
-        return RespVO::<()>::from_error(&Error::from("获取会话密匙失败")).resp_json();
+    match resolve_data(
+        session_key.clone(),
+        sign.iv().clone().unwrap(),
+        sign.encryptedData().clone().unwrap(),
+    ) {
+        Ok(wx_info) => {
+            openid = wx_info.openId.clone();
+            wechat_user.set_nickname(Some(wx_info.nickName)); //昵称
+            wechat_user.set_headimgurl(Some(wx_info.avatarUrl)); //头像
+            wechat_user.set_sex(Some(wx_info.gender)); //性别
+            wechat_user.set_city(Some(wx_info.city)); //市
+            wechat_user.set_country(Some(wx_info.country));
+            wechat_user.set_province(Some(wx_info.province)); //省
+            wechat_user.set_language(Some(wx_info.language)); //语言
+        }
+        Err(e) => {
+            return RespVO::<()>::from_error(&Error::from(format!(
+                "获取会话密匙失败{}",
+                e.to_string()
+            )))
+            .resp_json();
+        }
     }
-
     //openid为空则授权异常
     if openid.is_empty() {
         return RespVO::<()>::from_error(&Error::from("openid获取失败")).resp_json();
     }
-    if unionid.is_empty() {
-        wechat_user.set_unionid(None);
-    }
+    wechat_user.set_routine_openid(Some(openid)); //设置openid
+    wechat_user.set_unionid(Some(unionid));
     //新增或更新用户
     let uid = save_or_update_user(wechat_user).await;
     //根据用户信息 生成token
@@ -122,9 +128,8 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
     jwt_token.set_agency_code("".to_string());
     jwt_token.set_from("wxapp".to_string());
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    let token_info = jwt_token.create_token(cassie_config.jwt_secret());
-
-    match token_info {
+    //创建token
+    match jwt_token.create_token(cassie_config.jwt_secret()) {
         Ok(token) => {
             let mut result = ApiSignInVO::default();
             result.set_cache_key(cache_key);
