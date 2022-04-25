@@ -118,6 +118,7 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     jwt_token.set_super_admin(0);
     jwt_token.set_username(user.account().clone().unwrap_or_default());
     jwt_token.set_agency_code("".to_string());
+    jwt_token.set_from("wxapp".to_string());
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let token_info = jwt_token.create_token(cassie_config.jwt_secret());
 

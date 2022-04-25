@@ -18,6 +18,7 @@ pub struct JWTToken {
     super_admin: i32,
     //账号
     username: String,
+    from: String,
     //租户编码
     agency_code: String,
     //过期时间

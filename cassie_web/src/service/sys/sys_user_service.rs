@@ -1,4 +1,4 @@
-use crate::APPLICATION_CONTEXT;
+use crate::{APPLICATION_CONTEXT, middleware::get_local};
 use cassie_common::utils::password_encoder::PasswordEncoder;
 use cassie_domain::{
     dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery,
@@ -9,7 +9,6 @@ use rbatis::wrapper::Wrapper;
 use super::crud_service::CrudService;
 use super::sys_role_user_service::SysRoleUserService;
 use crate::cici_casbin::casbin_service::CasbinService;
-use crate::middleware::auth::get_local;
 use casbin::MgmtApi;
 use cassie_domain::entity::sys_entitys::{CommonField, SysRoleUser};
 

@@ -14,4 +14,5 @@ pub struct RequestModel {
     agency_code: String,
     product_code: String,
     path: String,
+    from: String,
 }

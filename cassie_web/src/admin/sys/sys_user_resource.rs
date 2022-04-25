@@ -1,4 +1,4 @@
-use crate::middleware::auth::get_local;
+use crate::middleware::get_local;
 use crate::service::crud_service::CrudService;
 use crate::service::sys_user_service::SysUserService;
 use crate::APPLICATION_CONTEXT;
@@ -81,7 +81,6 @@ pub async fn save(Json(arg): Json<SysUserDTO>) -> impl IntoResponse {
     if let Err(e) = user.validate() {
         return RespVO::<()>::from_error(&Error::E(e.to_string())).resp_json();
     }
-
     sys_user_service.save_info(user).await;
 
     return RespVO::from(&"保存成功".to_string()).resp_json();

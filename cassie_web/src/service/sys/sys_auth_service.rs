@@ -111,6 +111,7 @@ impl SysAuthService {
         let mut jwt_token = JWTToken::default();
         jwt_token.set_id(user_id);
         jwt_token.set_super_admin(user.super_admin.clone().unwrap_or_default());
+        jwt_token.set_from("admin".to_string());
         jwt_token.set_username(user.username.clone().unwrap_or_default());
         jwt_token.set_agency_code(agency_code.clone().unwrap_or_default());
         jwt_token.set_exp(DateTimeNative::now().timestamp_millis() as usize);

@@ -1,6 +1,6 @@
 use super::crud_service::CrudService;
-use crate::middleware::auth::get_local;
 use crate::APPLICATION_CONTEXT;
+use crate::middleware::get_local;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::{
     dto::sys_role_dto::SysRoleDataScopeDTO, entity::sys_entitys::SysRoleDataScope,

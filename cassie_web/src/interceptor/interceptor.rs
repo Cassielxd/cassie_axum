@@ -6,8 +6,8 @@ use super::core::has_table;
 use super::core::intercept_delete;
 use super::core::intercept_query;
 use super::core::intercept_update;
-use crate::middleware::auth::get_local;
 use crate::APPLICATION_CONTEXT;
+use crate::middleware::get_local;
 use cached::proc_macro::cached;
 use cassie_config::config::ApplicationConfig;
 use rbatis::plugin::intercept::SqlIntercept;
@@ -41,7 +41,11 @@ impl SqlIntercept for AgencyInterceptor {
         //判断是否开启租户化
         if self.enable {
             if let Some(request_model) = get_local() {
-                *sql = build(sql.clone(), request_model.agency_code().clone());
+                //只对管理端进行租户化
+                if request_model.from() == "admin" {
+                    *sql = build(sql.clone(), request_model.agency_code().clone());
+                }
+                
             }
         }
         return Ok(());
