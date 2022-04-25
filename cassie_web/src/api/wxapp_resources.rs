@@ -49,7 +49,7 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //新登录用户
     //如果code存在 session_key不存在 则需要根据code拿到session_key
-    if sign.contains_key("code") && !session_key.is_empty() {
+    if sign.contains_key("code") && session_key.is_empty() {
         match get_session_key(
             config.wxapp().appid(),
             config.wxapp().secret(),
