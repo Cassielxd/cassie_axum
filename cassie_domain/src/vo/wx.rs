@@ -6,5 +6,7 @@ pub struct WxSignInVo {
     cache_key: Option<String>,
     login_type: Option<String>,
     iv: Option<String>,
-    encrypted_data: Option<String>,
+    encryptedData: Option<String>,
+    signature: Option<String>,
+    rawData: Option<String>,
 }

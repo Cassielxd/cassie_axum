@@ -23,6 +23,7 @@ pub async fn get_session_key(appid: &str, secret: &str, code: &str) -> Result<se
     let res = api.get(&url).await?;
     match json_decode(&res) {
         Ok(data) => {
+            println!("{:?}", data.clone());
             if data.get("errcode").is_some() {
                 Err(Error::E(format!(
                     "auth error: {}",

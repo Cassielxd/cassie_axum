@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+
 
 use axum::{response::IntoResponse, routing::post, Json, Router};
 use cassie_common::error::Error;
@@ -6,9 +6,9 @@ use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::{
     dto::user_dto::WechatUserDTO,
-    vo::{jwt::JWTToken, sign_in::ApiSignInVO},
+    vo::{jwt::JWTToken, sign_in::ApiSignInVO, wx::WxSignInVo},
 };
-use cassie_wx::wxapp::{auth::get_session_key, resolve_data};
+use cassie_wx::wxapp::{auth::get_session_key, resolve_data,WxappSessionKey};
 use rbatis::Uuid;
 
 use crate::{
@@ -20,14 +20,14 @@ use crate::{
 };
 
 //小程序授权登录
-pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResponse {
+pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
     let  cache_service = APPLICATION_CONTEXT.get::<CacheService>();
     //获取 session_key 如果已经授权了  直接拿到session_key
-    let mut session_key = if sign.contains_key("cache_key") {
+    let mut session_key = if sign.cache_key().is_some() {
         match cache_service
             .get_string(&format!(
                 "cassie_api_code_{}",
-                sign.get("cache_key").clone().unwrap()
+                sign.cache_key().clone().unwrap()
             ))
             .await
         {
@@ -38,7 +38,7 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
         "".to_string()
     };
     //如果授权code 和session_key 都不存在 则参数异常
-    if !sign.contains_key("code") && session_key.is_empty() {
+    if sign.code().is_none() && session_key.is_empty() {
         return RespVO::<()>::from_error(&Error::from("授权失败,参数有误!")).resp_json();
     }
 
@@ -49,19 +49,20 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     //新登录用户
     //如果code存在 session_key不存在 则需要根据code拿到session_key
-    if sign.contains_key("code") && session_key.is_empty() {
+    if sign.code().is_some() && session_key.is_empty() {
         match get_session_key(
             config.wxapp().appid(),
             config.wxapp().secret(),
-            &sign.get("code").clone().unwrap(),
+            &sign.code().clone().unwrap(),
         )
         .await
         {
             Ok(data) => {
-                session_key = data.get("session_key").unwrap().to_string();
-                openid = data.get("openid").unwrap().to_string();
-                unionid = if data.get("unionid").is_some() {
-                    data.get("unionid").unwrap().to_string()
+                let data:WxappSessionKey = serde_json::from_value(data).unwrap();
+                session_key = data.session_key.clone();
+                openid = data.openid.clone();
+                unionid = if data.unionid.is_some() {
+                    data.unionid.clone().unwrap()
                 } else {
                     "".to_string()
                 };
@@ -85,8 +86,8 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
 
     wechat_user.set_session_key(Some(session_key.clone()));
     //解密获取 用户信息 组装数据
-    let iv = sign.get("iv").unwrap();
-    let encrypted_data = sign.get("encryptedData").unwrap();
+    let iv = sign.iv().clone().unwrap();
+    let encrypted_data = sign.encryptedData().clone().unwrap();
     if let Ok(wx_info) = resolve_data(session_key.clone(), iv.clone(), encrypted_data.clone()) {
         openid = wx_info.openId.clone();
         wechat_user.set_nickname(Some(wx_info.nickName)); //昵称

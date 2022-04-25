@@ -23,7 +23,8 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
             .await;
         match list {
             Ok(e) => {
-                let uid = e.get(0).unwrap().id().clone().unwrap();
+                if e.len() > 0 {
+                    let uid = e.get(0).unwrap().id().clone().unwrap();
                 //执行更新逻辑
                 wechat_user_service
                     .update_by_id(uid.to_string(), &mut user.clone().into())
@@ -32,6 +33,10 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
                     .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
                     .await;
                 uid
+                } else {
+                    0
+                }
+               
             }
             Err(_) => 0,
         }
@@ -46,15 +51,18 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
                 .await;
             match list {
                 Ok(e) => {
-                    let uid = e.get(0).unwrap().id().clone().unwrap();
-                    //执行更新逻辑
-                    wechat_user_service
-                        .update_by_id(uid.to_string(), &mut user.clone().into())
-                        .await;
-                    user_service
-                        .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
-                        .await;
-                    uid
+                    if e.len()>0{
+                        let uid = e.get(0).unwrap().id().clone().unwrap();
+                        //执行更新逻辑
+                        wechat_user_service
+                            .update_by_id(uid.to_string(), &mut user.clone().into())
+                            .await;
+                        user_service
+                            .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
+                            .await;
+                       return uid;
+                    }
+                    0
                 }
                 Err(_) => 0,
             }
@@ -63,7 +71,7 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
         };
         if uid == 0 {
             //执行新增逻辑
-            insert_user(user);
+            uid = insert_user(user).await;
         }
     }
     uid
@@ -76,17 +84,18 @@ fn build_user_info(user: &WechatUserDTO) -> UserDTO {
     user_info
 }
 
-pub async fn insert_user(mut user: WechatUserDTO) {
+pub async fn insert_user(mut user: WechatUserDTO) ->i64{
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     let user_dto = build_user_info(&user);
     //插入用户
     let result = rb.save::<User>(&mut user_dto.into(), &[]).await;
     match result {
         Ok(d) => {
-            user.set_id(d.last_insert_id);
+            user.set_id(d.last_insert_id.clone());
             //插入微信用户
             rb.save::<WechatUser>(&mut user.into(), &[]).await;
+            d.last_insert_id.unwrap()
         }
-        Err(_) => todo!(),
+        Err(_) => 0,
     }
 }
