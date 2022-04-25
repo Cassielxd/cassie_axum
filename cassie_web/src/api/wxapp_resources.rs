@@ -1,15 +1,21 @@
 use std::collections::HashMap;
 
-use axum::{response::IntoResponse, Json, Router, routing::post};
+use axum::{response::IntoResponse, routing::post, Json, Router};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
-use cassie_domain::dto::user_dto::WechatUserDTO;
+use cassie_domain::{
+    dto::user_dto::WechatUserDTO,
+    vo::{jwt::JWTToken, sign_in::ApiSignInVO},
+};
 use cassie_wx::wxapp::{auth::get_session_key, resolve_data};
 use rbatis::Uuid;
 
 use crate::{
-    service::{api::user_service::save_or_update_user, cache_service::CacheService},
+    service::{
+        api::user_service::UserService, cache_service::CacheService, crud_service::CrudService,
+        wechat::wxapp_service::save_or_update_user,
+    },
     APPLICATION_CONTEXT,
 };
 
@@ -76,17 +82,13 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
             }
         };
     }
-    //openid为空则授权异常
-    if openid.is_empty() {
-        return RespVO::<()>::from_error(&Error::from("openid获取失败")).resp_json();
-    }
-    wechat_user.set_routine_openid(Some(openid));
-    wechat_user.set_unionid(Some(unionid));
+
     wechat_user.set_session_key(Some(session_key.clone()));
     //解密获取 用户信息 组装数据
     let iv = sign.get("iv").unwrap();
     let encrypted_data = sign.get("encryptedData").unwrap();
     if let Ok(wx_info) = resolve_data(session_key.clone(), iv.clone(), encrypted_data.clone()) {
+        openid = wx_info.openId.clone();
         wechat_user.set_nickname(Some(wx_info.nickName)); //昵称
         wechat_user.set_routine_openid(Some(wx_info.openId)); //设置openid
         wechat_user.set_headimgurl(Some(wx_info.avatarUrl)); //头像
@@ -98,11 +100,39 @@ pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResp
     } else {
         return RespVO::<()>::from_error(&Error::from("获取会话密匙失败")).resp_json();
     }
-    //新增或更新用户
-    save_or_update_user(wechat_user);
-    //根据用户信息 生成token
 
-    RespVO::from(&"".to_string()).resp_json()
+    //openid为空则授权异常
+    if openid.is_empty() {
+        return RespVO::<()>::from_error(&Error::from("openid获取失败")).resp_json();
+    }
+    if unionid.is_empty() {
+        wechat_user.set_unionid(None);
+    }
+    //新增或更新用户
+    let uid = save_or_update_user(wechat_user).await;
+    //根据用户信息 生成token
+    let user_service = APPLICATION_CONTEXT.get::<UserService>();
+    let user = user_service.get(uid.to_string()).await.unwrap();
+    let mut jwt_token = JWTToken::default();
+    jwt_token.set_id(uid);
+    jwt_token.set_super_admin(0);
+    jwt_token.set_username(user.account().clone().unwrap_or_default());
+    jwt_token.set_agency_code("".to_string());
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    let token_info = jwt_token.create_token(cassie_config.jwt_secret());
+
+    match token_info {
+        Ok(token) => {
+            let mut result = ApiSignInVO::default();
+            result.set_cache_key(cache_key);
+            result.set_user(Some(user));
+            result.set_access_token(token);
+            return RespVO::from(&result).resp_json();
+        }
+        Err(_) => {
+            return RespVO::<()>::from_error(&Error::from("获取用户访问token失败")).resp_json();
+        }
+    }
 }
 
 //小程序支付回调
@@ -110,8 +140,6 @@ pub async fn notify() {
     todo!("待开发")
 }
 
-
 pub fn init_router() -> Router {
-    Router::new()
-        .route("/wechat/mp_auth", post(mp_auth))
+    Router::new().route("/wechat/mp_auth", post(mp_auth))
 }

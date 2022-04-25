@@ -42,7 +42,7 @@ pub async fn init_service() {
     info!("LogOperationService init success!");
     APPLICATION_CONTEXT.set::<EventConfigService>(EventConfigService {});
     info!("EventConfigService init success!");
-
+    //apis  用户服务
     APPLICATION_CONTEXT.set::<UserService>(UserService {});
     info!("UserService init success!");
     APPLICATION_CONTEXT.set::<WechatUserService>(WechatUserService {});

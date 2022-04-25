@@ -14,7 +14,6 @@ use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use cassie_domain::vo::jwt::JWTToken;
 
-
 /**
  *struct:Auth
  *desc:权限验证中间件 初始化 REQUEST_CONTEXT

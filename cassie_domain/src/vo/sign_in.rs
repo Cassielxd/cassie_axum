@@ -1,4 +1,5 @@
 use crate::dto::sys_user_dto::SysUserDTO;
+use crate::dto::user_dto::UserDTO;
 use serde::{Deserialize, Serialize};
 
 /**
@@ -15,6 +16,20 @@ pub struct SignInVO {
 }
 
 impl ToString for SignInVO {
+    fn to_string(&self) -> String {
+        serde_json::json!(self).to_string()
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Getters, Setters, Default)]
+#[getset(get = "pub", set = "pub")]
+pub struct ApiSignInVO {
+    user: Option<UserDTO>,
+    access_token: String,
+    cache_key: String,
+}
+
+impl ToString for ApiSignInVO {
     fn to_string(&self) -> String {
         serde_json::json!(self).to_string()
     }
