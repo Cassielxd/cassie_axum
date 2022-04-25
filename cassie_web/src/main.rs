@@ -30,6 +30,7 @@ async fn fallback(uri: Uri) -> impl IntoResponse {
  *desc:程序主入口方法 admin 管理端api api:小程序,h5,app使用
  *author:String
  *email:348040933QQ.com
+*[tokio::main(worker_threads = 10)]
  */
 #[tokio::main]
 async fn main() {

@@ -3,7 +3,7 @@ use cassie_domain::{
     entity::user_entity::{User, WechatUser},
     request::UserQuery,
 };
-use rbatis::{crud::CRUD, rbatis::Rbatis};
+use rbatis::{rbatis::Rbatis};
 
 use crate::{service::crud_service::CrudService, APPLICATION_CONTEXT};
 

@@ -21,7 +21,7 @@ use crate::{
 
 //小程序授权登录
 pub async fn mp_auth(Json(sign): Json<HashMap<String, String>>) -> impl IntoResponse {
-    let mut cache_service = APPLICATION_CONTEXT.get::<CacheService>();
+    let  cache_service = APPLICATION_CONTEXT.get::<CacheService>();
     //获取 session_key 如果已经授权了  直接拿到session_key
     let mut session_key = if sign.contains_key("cache_key") {
         match cache_service

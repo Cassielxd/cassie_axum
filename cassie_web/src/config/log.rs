@@ -14,21 +14,12 @@ pub fn init_log() {
     std::fs::create_dir_all(&cassie_config.log_dir());
     //initialize fast log
     fast_log::init(Config::new().console().file_split(
-        "target/logs/",
-        LogSize::MB(100),
-        RollingType::All,
-        LogPacker {},
+        &cassie_config.log_dir(),
+        str_to_temp_size(&cassie_config.log_temp_size()),
+        str_to_rolling(&cassie_config.log_rolling_type()),
+        ZipPacker {},
     ))
     .unwrap();
-}
-
-fn choose_packer(packer: &str) -> Box<dyn Packer> {
-    match packer {
-        "lz4" => Box::new(LZ4Packer {}),
-        "zip" => Box::new(ZipPacker {}),
-        "gzip" => Box::new(GZipPacker {}),
-        _ => Box::new(LogPacker {}),
-    }
 }
 
 fn str_to_temp_size(arg: &str) -> LogSize {
