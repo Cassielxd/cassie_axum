@@ -20,23 +20,22 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
     let mut uid = if let Some(unionid) = user.unionid() {
         let list = wechat_user_service
             .fetch_list_by_column(WechatUser::unionid(), &vec![unionid.clone()])
-            .await.unwrap();
-      
-                if list.len() > 0 {
-                    let uid = list.get(0).unwrap().id().clone().unwrap();
-                //执行更新逻辑
-                wechat_user_service
-                    .update_by_id(uid.to_string(), &mut user.clone().into())
-                    .await;
-                user_service
-                    .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
-                    .await;
-                uid
-                } else {
-                    0
-                }
-           
-        
+            .await
+            .unwrap();
+
+        if list.len() > 0 {
+            let uid = list.get(0).unwrap().id().clone().unwrap();
+            //执行更新逻辑
+            wechat_user_service
+                .update_by_id(uid.to_string(), &mut user.clone().into())
+                .await;
+            user_service
+                .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
+                .await;
+            uid
+        } else {
+            0
+        }
     } else {
         0
     };
@@ -45,20 +44,20 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
         uid = if let Some(routine_openid) = user.routine_openid() {
             let list = wechat_user_service
                 .fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()])
-                .await.unwrap();
-                    if list.len()>0{
-                        let uid = list.get(0).unwrap().id().clone().unwrap();
-                        //执行更新逻辑
-                        wechat_user_service
-                            .update_by_id(uid.to_string(), &mut user.clone().into())
-                            .await;
-                        user_service
-                            .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
-                            .await;
-                       return uid;
-                    }
-                    0
-          
+                .await
+                .unwrap();
+            if list.len() > 0 {
+                let uid = list.get(0).unwrap().id().clone().unwrap();
+                //执行更新逻辑
+                wechat_user_service
+                    .update_by_id(uid.to_string(), &mut user.clone().into())
+                    .await;
+                user_service
+                    .update_by_id(uid.to_string(), &mut build_user_info(&user).into())
+                    .await;
+                return uid;
+            }
+            0
         } else {
             0
         };
@@ -77,7 +76,7 @@ fn build_user_info(user: &WechatUserDTO) -> UserDTO {
     user_info
 }
 
-pub async fn insert_user(mut user: WechatUserDTO) ->i64{
+pub async fn insert_user(mut user: WechatUserDTO) -> i64 {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     let user_dto = build_user_info(&user);
     //插入用户

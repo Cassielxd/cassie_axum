@@ -6,7 +6,7 @@ server_name: "cassieWeb"
 server:
   host: "0.0.0.0"
   port: "9999"
-#缓存介质类型,单选("mem","redis")
+#缓存介质类型,"redis"
 cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)
 redis_url: "redis://127.0.0.1:6379"
@@ -41,6 +41,7 @@ nacos:
   nacos_server: "http://127.0.0.1:8848/nacos"
   application_name: "cassie_admin"
 
+#小程序配置
 wxapp:
   appid: "wx726d55ff001bf506"
   secret: "407659215044413ef53fcf67b0690ac0"

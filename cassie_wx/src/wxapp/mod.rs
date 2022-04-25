@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub mod auth;
 
 pub fn resolve_data(session_key: String, iv: String, encrypted_data: String) -> Result<WxUserInfo> {
-    let key =base64::decode(session_key).unwrap();
+    let key = base64::decode(session_key).unwrap();
     let iv = base64::decode(iv).unwrap();
     let aes = AesCrypt::new(key, iv);
     let data = aes.decrypt(encrypted_data);
@@ -23,9 +23,9 @@ pub struct WxUserInfo {
     pub avatarUrl: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct WxappSessionKey{
-    pub session_key:String, 
-    pub expires_in:i64,
-    pub openid:String,
-    pub unionid:Option<String>,
+pub struct WxappSessionKey {
+    pub session_key: String,
+    pub expires_in: i64,
+    pub openid: String,
+    pub unionid: Option<String>,
 }

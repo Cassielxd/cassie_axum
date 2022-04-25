@@ -1,5 +1,3 @@
-
-
 use std::time::Duration;
 
 use axum::{response::IntoResponse, routing::post, Json, Router};
@@ -10,7 +8,7 @@ use cassie_domain::{
     dto::user_dto::WechatUserDTO,
     vo::{jwt::JWTToken, sign_in::ApiSignInVO, wx::WxSignInVo},
 };
-use cassie_wx::wxapp::{auth::get_session_key, resolve_data,WxappSessionKey};
+use cassie_wx::wxapp::{auth::get_session_key, resolve_data, WxappSessionKey};
 use rbatis::Uuid;
 
 use crate::{
@@ -23,7 +21,7 @@ use crate::{
 
 //小程序授权登录
 pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
-    let  cache_service = APPLICATION_CONTEXT.get::<CacheService>();
+    let cache_service = APPLICATION_CONTEXT.get::<CacheService>();
     //获取 session_key 如果已经授权了  直接拿到session_key
     let mut session_key = if sign.cache_key().is_some() {
         match cache_service
@@ -60,7 +58,7 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
         .await
         {
             Ok(data) => {
-                let data:WxappSessionKey = serde_json::from_value(data).unwrap();
+                let data: WxappSessionKey = serde_json::from_value(data).unwrap();
                 session_key = data.session_key.clone();
                 openid = data.openid.clone();
                 unionid = if data.unionid.is_some() {
