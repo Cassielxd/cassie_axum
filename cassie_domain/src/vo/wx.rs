@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 #[getset(get = "pub", set = "pub")]
 pub struct WxSignInVo {
     code: Option<String>,
-    cache_key: Option<String>,
     login_type: Option<String>,
     iv: Option<String>,
     encryptedData: Option<String>,

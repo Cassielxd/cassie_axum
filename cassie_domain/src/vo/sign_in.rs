@@ -26,7 +26,6 @@ impl ToString for SignInVO {
 pub struct ApiSignInVO {
     user: Option<UserDTO>,
     access_token: String,
-    cache_key: String,
 }
 
 impl ToString for ApiSignInVO {

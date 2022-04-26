@@ -11,16 +11,17 @@ pub fn resolve_data(session_key: String, iv: String, encrypted_data: String) -> 
     let info: WxUserInfo = serde_json::from_str(&data).unwrap();
     Ok(info)
 }
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WxUserInfo {
-    pub openId: String,
-    pub nickName: String,
-    pub gender: u8,
-    pub language: String,
-    pub city: String,
-    pub province: String,
-    pub country: String,
-    pub avatarUrl: String,
+    pub openid: Option<String>,
+    pub nickName: Option<String>,
+    pub gender: Option<u8>,
+    pub language: Option<String>,
+    pub city: Option<String>,
+    pub province: Option<String>,
+    pub country: Option<String>,
+    pub avatarUrl: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WxappSessionKey {
