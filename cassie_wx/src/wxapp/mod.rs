@@ -1,4 +1,4 @@
-use crate::sdk::aes_crypt::AesCrypt;
+use crate::sdk::aes_crypt::{AesCrypt, aes128_cbc_decrypt};
 use cassie_common::error::Result;
 use serde::{Deserialize, Serialize};
 pub mod auth;
@@ -11,6 +11,8 @@ pub fn resolve_data(session_key: String, iv: String, encrypted_data: String) -> 
     let info: WxUserInfo = serde_json::from_str(&data).unwrap();
     Ok(info)
 }
+
+
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WxUserInfo {

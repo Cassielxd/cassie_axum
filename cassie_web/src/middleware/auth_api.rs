@@ -59,6 +59,7 @@ where
                     return Ok(Self {});
                 }
                 Err(e) => {
+                    println!("error:{}", e);
                     //401 http状态码会强制前端退出当前登陆状态
                     return Err(Error::from(serde_json::json!(&resp).to_string()));
                 }
