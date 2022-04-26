@@ -3,3 +3,5 @@ pub const DEFAULT_USER_AGENT: &'static str = "Mozilla/5.0 (X11; Linux x86_64) Ap
 
 /// 微信接口域名
 pub const API_DOMAIN: &'static str = "https://api.weixin.qq.com";
+
+pub const WECHAT_OPEN_URI: &'static str = "https://open.weixin.qq.com";

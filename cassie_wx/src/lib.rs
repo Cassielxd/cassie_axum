@@ -1,5 +1,6 @@
 pub mod sdk;
 pub mod wxapp;
+pub mod mp;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 ///
