@@ -9,6 +9,7 @@ use cassie_domain::{
 use cassie_wx::wxapp::{auth::get_session_key, resolve_data, WxappSessionKey};
 
 use crate::{
+    middleware::get_local,
     service::{
         api::user_service::{UserService, WechatUserService},
         cache_service::CacheService,
@@ -19,7 +20,6 @@ use crate::{
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 use rbatis::{crud::CRUD, rbatis::Rbatis};
-use rbson::Uuid;
 
 //新增或更新用户
 pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
@@ -101,64 +101,12 @@ pub async fn insert_user(mut user: WechatUserDTO) -> i64 {
     }
 }
 
-pub async fn silence_auth_no_login(code: String) -> Result<(i64, String)> {
-    let mut session_key = "".to_string();
-    let mut cache_key = "".to_string();
-    let mut unionid = "".to_string();
-    let mut openid = "".to_string();
-    let mut wechat_user = WechatUserDTO::default();
-    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-    let cache_service = APPLICATION_CONTEXT.get::<CacheService>();
-    match get_session_key(config.wxapp().appid(), config.wxapp().secret(), &code).await {
-        Ok(data) => {
-            let data: WxappSessionKey = serde_json::from_value(data).unwrap();
-            session_key = data.session_key.clone();
-            openid = data.openid.clone();
-            unionid = if data.unionid.is_some() {
-                data.unionid.clone().unwrap()
-            } else {
-                "".to_string()
-            };
-            //生成新的缓存key
-            cache_key = Uuid::new().to_string();
-            cache_service
-                .set_string_ex(
-                    &format!("cassie_api_code_{}", cache_key.clone()),
-                    &session_key,
-                    Some(Duration::from_secs(data.expires_in as u64)),
-                )
-                .await;
-        }
-        Err(e) => {
-            return Err(Error::E(
-                "获取session_key失败，请检查您的配置！".to_string(),
-            ));
-        }
-    };
-
-    //openid为空则授权异常
-    if openid.is_empty() {
-        return Err(Error::E("静默授权失败".to_string()));
-    }
-    wechat_user.set_nickname(Some("微信用户".to_string())); //昵称
-    wechat_user.set_headimgurl(Some("".to_string())); //头像
-    wechat_user.set_sex(Some(0)); //性别
-    wechat_user.set_city(Some("".to_string())); //市
-    wechat_user.set_country(Some("".to_string()));
-    wechat_user.set_province(Some("".to_string())); //省
-    wechat_user.set_language(Some("".to_string())); //语言
-    wechat_user.set_routine_openid(Some(openid)); //设置openid
-    wechat_user.set_unionid(Some(unionid));
-    //新增或更新用户
-    return Ok((save_or_update_user(wechat_user).await, cache_key));
-}
-
 pub async fn wxapp_auth(sign: WxSignInVo) -> Result<i64> {
     let cache_service = APPLICATION_CONTEXT.get::<CacheService>();
     //获取 session_key 如果已经授权了  直接拿到session_key
-    
+
     //如果授权code 和session_key 都不存在 则参数异常
-    if sign.code().is_none()  {
+    if sign.code().is_none() {
         return Err(Error::E("授权失败,参数有误!".to_string()));
     }
     let mut session_key = "".to_string();
@@ -222,4 +170,53 @@ pub async fn wxapp_auth(sign: WxSignInVo) -> Result<i64> {
     wechat_user.set_unionid(Some(unionid));
     //新增或更新用户
     return Ok(save_or_update_user(wechat_user).await);
+}
+
+pub async fn binding_phone(sign: WxSignInVo) -> Result<String> {
+    let request_model = get_local().unwrap();
+    let mut session_key = "".to_string();
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    match get_session_key(
+        config.wxapp().appid(),
+        config.wxapp().secret(),
+        &sign.code().clone().unwrap(),
+    )
+    .await
+    {
+        Ok(data) => {
+            let data: WxappSessionKey = serde_json::from_value(data).unwrap();
+            session_key = data.session_key.clone();
+        }
+        Err(e) => {
+            return Err(Error::E(
+                "获取session_key失败，请检查您的配置！".to_string(),
+            ));
+        }
+    };
+    //解析用户信息
+    match resolve_data(
+        session_key,
+        sign.iv().clone().unwrap(),
+        sign.encryptedData().clone().unwrap(),
+    ) {
+        Ok(wx_info) => {
+            if wx_info.purePhoneNumber.is_none() {
+                return Err(Error::E("手机号获取失败".to_string()));
+            }
+            //执行更新逻辑
+            let user_service = APPLICATION_CONTEXT.get::<UserService>();
+            let mut user = user_service
+                .get(request_model.uid().to_string())
+                .await
+                .unwrap();
+            user.set_phone(wx_info.purePhoneNumber.clone());
+            user_service
+                .update_by_id(request_model.uid().to_string(), &mut user.into())
+                .await;
+            Ok(wx_info.purePhoneNumber.clone().unwrap())
+        }
+        Err(e) => {
+            return Err(Error::E(format!("获取会话密匙失败{}", e.to_string())));
+        }
+    }
 }

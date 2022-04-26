@@ -22,6 +22,7 @@ pub struct WxUserInfo {
     pub province: Option<String>,
     pub country: Option<String>,
     pub avatarUrl: Option<String>,
+    pub purePhoneNumber: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WxappSessionKey {

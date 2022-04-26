@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use axum::{extract::Query, response::IntoResponse, routing::post, Json, Router};
+use axum::{response::IntoResponse, routing::post, Json, Router};
 use cassie_common::error::Error;
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
@@ -8,8 +6,9 @@ use cassie_domain::vo::{jwt::JWTToken, sign_in::ApiSignInVO, wx::WxSignInVo};
 
 use crate::{
     service::{
-        api::user_service::UserService, crud_service::CrudService,
-        wechat::wxapp_service::{wxapp_auth, silence_auth_no_login},
+        api::user_service::UserService,
+        crud_service::CrudService,
+        wechat::wxapp_service::{binding_phone, wxapp_auth},
     },
     APPLICATION_CONTEXT,
 };
@@ -47,13 +46,13 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
         }
     }
 }
-//静默授权 不登录
-pub async fn silence_auth(arg: Query<HashMap<String, String>>) {
-    let params = arg.0;
-    let code = params.get("code").unwrap();
-    match silence_auth_no_login(code.clone()).await{
-        Ok(_) => todo!(),
-        Err(_) => todo!(),
+//授权获取小程序用户手机号 直接绑定
+pub async fn auth_binding_phone(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
+    match binding_phone(sign).await {
+        Ok(s) => {
+            return RespVO::from(&s).resp_json();
+        }
+        Err(e) => return RespVO::<()>::from_error(&e).resp_json(),
     }
 }
 
@@ -63,5 +62,7 @@ pub async fn notify() {
 }
 
 pub fn init_router() -> Router {
-    Router::new().route("/wechat/mp_auth", post(mp_auth))
+    Router::new()
+        .route("/wechat/mp_auth", post(mp_auth))
+        .route("/wechat/auth_bindind_phone", post(auth_binding_phone))
 }
