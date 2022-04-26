@@ -200,7 +200,7 @@ pub async fn binding_phone(sign: WxSignInVo) -> Result<String> {
         sign.encryptedData().clone().unwrap(),
     ) {
         Ok(wx_info) => {
-            if wx_info.purePhoneNumber.is_none() {
+            if wx_info.purePhoneNumber.is_none() || wx_info.purePhoneNumber.clone().unwrap().is_empty() {
                 return Err(Error::E("手机号获取失败".to_string()));
             }
             //执行更新逻辑
