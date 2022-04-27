@@ -40,9 +40,8 @@ impl CasbinService {
      */
     pub async fn default() -> Self {
         /*加载模型文件*/
-        let m = DefaultModel::from_file("cassie_web/auth_config/rbac_with_domains_model.conf")
-            .await
-            .unwrap();
+
+        let m = DefaultModel::from_str(model_auth).await.unwrap();
         info!("casbin模型文件加载完成!");
 
         let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
@@ -108,3 +107,20 @@ impl CasbinService {
         }
     }
 }
+
+const model_auth: &str = r#"
+         [request_definition]
+r = sub, dom, obj, act
+
+[policy_definition]
+p = sub, dom, obj, act
+
+[role_definition]
+g = _, _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = ciciMatch(r.sub,r.obj) || (g(r.sub, p.sub, r.dom) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && r.act == p.act)
+"#;

@@ -19,7 +19,7 @@ rbson = "2.0"
 rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
 async-std = "1.10"
 #redis
-redis = { version = "0.21.5", features = ["async-std-comp"] }
+redis = { version = "0.21.5", features = ["tokio"] }
 #captcha 图片验证码
 captcha = "0.0.8"
 #http client,use rust-tls replace to native tls

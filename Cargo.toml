@@ -27,7 +27,93 @@ rpath = false
 
 
 
-[profile.release]
+[profile.release.cassie_common]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+[profile.release.cassie_config]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+[profile.release.cassie_domain]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+
+[profile.release.cassie_orm]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+[profile.release.cassie_storage]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+
+[profile.release.cassie_web]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+[profile.release.cassie_wx]
+opt-level = 3
+debug = false
+split-debuginfo = '...'  # Platform-specific.
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
+
+[profile.release.cassie_casbin_adapter]
 opt-level = 3
 debug = false
 split-debuginfo = '...'  # Platform-specific.
