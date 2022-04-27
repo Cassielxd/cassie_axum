@@ -27,100 +27,28 @@ rpath = false
 
 
 
-[profile.release.cassie_common]
+[profile.release.package.cassie_common]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
-[profile.release.cassie_config]
+[profile.release.package.cassie_config]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
-[profile.release.cassie_domain]
+[profile.release.package.cassie_domain]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
 
-[profile.release.cassie_orm]
+[profile.release.package.cassie_orm]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
-[profile.release.cassie_storage]
+[profile.release.package.cassie_storage]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
 
-[profile.release.cassie_web]
+[profile.release.package.cassie_web]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
-[profile.release.cassie_wx]
+[profile.release.package.cassie_wx]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
 
-[profile.release.cassie_casbin_adapter]
+[profile.release.package.cassie_casbin_adapter]
 opt-level = 3
-debug = false
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = false
-overflow-checks = false
-lto = false
-panic = 'unwind'
-incremental = false
-codegen-units = 16
-rpath = false
