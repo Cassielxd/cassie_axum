@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::{
     dto::user_dto::{UserDTO, WechatUserDTO},

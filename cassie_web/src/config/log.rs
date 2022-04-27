@@ -1,7 +1,7 @@
 use fast_log::config::Config;
 use fast_log::consts::LogSize;
-use fast_log::plugin::file_split::{Packer, RollingType};
-use fast_log::plugin::packer::{GZipPacker, LZ4Packer, LogPacker, ZipPacker};
+use fast_log::plugin::file_split::{RollingType};
+use fast_log::plugin::packer::{ ZipPacker};
 use std::time::Duration;
 
 use crate::APPLICATION_CONTEXT;

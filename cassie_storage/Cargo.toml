@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
+[lib]
+path = "src/lib.rs"
 [dependencies]
 oss-rust-sdk = "0.3.1"
 axum ={version="0.4.8",features = ["multipart"] }

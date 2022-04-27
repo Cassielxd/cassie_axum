@@ -1,3 +1,4 @@
+
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, Clone, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
