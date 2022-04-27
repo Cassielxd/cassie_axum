@@ -13,17 +13,11 @@ members = [
     "cassie_tests"
 ]
 
-[profile.dev]
-opt-level = 0
-debug = true
-split-debuginfo = '...'  # Platform-specific.
-debug-assertions = true
-overflow-checks = true
-lto = false
-panic = 'unwind'
+[profile.release]
+codegen-units = 1
 incremental = true
-codegen-units = 256
-rpath = false
+lto = true
+opt-level = 'z' # Optimize for size
 
 
 
@@ -51,4 +45,13 @@ opt-level = 3
 opt-level = 3
 
 [profile.release.package.cassie_casbin_adapter]
+opt-level = 3
+
+[profile.release.package.v8]
+opt-level = 3
+
+[profile.release.package.serde_v8]
+opt-level = 3
+
+[profile.release.package.serde]
 opt-level = 3
