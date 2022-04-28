@@ -7,7 +7,7 @@ author = "String<348040933@qq.com>"
 
 [dependencies]
 axum ={version="0.4.8",features = ["multipart"] }
-tokio = { version = "1", features = ["full", "fs", "io-util", "sync"] }
+tokio = { version = "1"}
 tower ={version="0.4.0",features = ["full"] }
 tower-http = { version = "0.2.0", features = ["full"] }
 #serde and json
@@ -71,7 +71,6 @@ deno_core = "0.131.0"
 deno_runtime = "0.57.0"
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
-mime ="0.3.16"
 
 
 

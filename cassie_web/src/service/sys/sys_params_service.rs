@@ -3,7 +3,8 @@ use rbatis::rbatis::Rbatis;
 use crate::APPLICATION_CONTEXT;
 use cassie_domain::entity::sys_entitys::CommonField;
 use cassie_domain::{
-    dto::sys_params_dto::SysParamsDTO, entity::sys_entitys::SysParams, request::SysParamsQuery,
+  dto::sys_params_dto::SysParamsDTO, entity::sys_entitys::SysParams,
+  request::SysParamsQuery,
 };
 
 use super::crud_service::CrudService;
@@ -17,18 +18,18 @@ use super::crud_service::CrudService;
 
 pub struct SysParamsService {}
 impl Default for SysParamsService {
-    fn default() -> Self {
-        SysParamsService {}
-    }
+  fn default() -> Self {
+    SysParamsService {}
+  }
 }
 impl CrudService<SysParams, SysParamsDTO, SysParamsQuery> for SysParamsService {
-    fn get_wrapper(arg: &SysParamsQuery) -> rbatis::wrapper::Wrapper {
-        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-        rb.new_wrapper()
-    }
-    fn set_save_common_fields(&self, common: CommonField, data: &mut SysParams) {
-        data.id = common.id;
-        data.creator = common.creator;
-        data.create_date = common.create_date;
-    }
+  fn get_wrapper(arg: &SysParamsQuery) -> rbatis::wrapper::Wrapper {
+    let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+    rb.new_wrapper()
+  }
+  fn set_save_common_fields(&self, common: CommonField, data: &mut SysParams) {
+    data.id = common.id;
+    data.creator = common.creator;
+    data.create_date = common.create_date;
+  }
 }

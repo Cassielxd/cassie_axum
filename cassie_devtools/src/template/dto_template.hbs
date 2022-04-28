@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
+use crate::entity::{{table_name}}_entity::{{model_name}};
 #[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct {{model_name}}DTO {
     {{#each columns as |column| }}
-        {{column.field_name}}:: Option<{{column.field_type}}>,
+        {{column.field_name}}: Option<{{column.field_type}}>,// {{column.comment}}
     {{/each}}
 }
 

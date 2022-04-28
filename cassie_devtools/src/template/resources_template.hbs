@@ -1,7 +1,7 @@
 
-use crate::crud_service::CrudService;
+use crate::service::{crud_service::CrudService, {{table_name}}_service::{{model_name}}Service};
+
 use crate::APPLICATION_CONTEXT;
-use crate::service::{{model}}::{{model}}_service::{{model}}Service;
 use axum::{
 extract::{Path, Query},
 response::IntoResponse,

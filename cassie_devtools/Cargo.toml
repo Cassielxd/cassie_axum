@@ -11,3 +11,4 @@ serde_json = "1.0"
 rbson = "2.0"
 rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
 handlebars = "4.2.2"
+tokio = { version = "1",features = ["full"] }

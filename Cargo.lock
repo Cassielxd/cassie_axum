@@ -800,6 +800,7 @@ dependencies = [
  "rbson",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -879,7 +880,6 @@ dependencies = [
  "jsonwebtoken",
  "lazy_static",
  "log",
- "mime",
  "mongodb",
  "percent-encoding",
  "pharos",
@@ -920,7 +920,6 @@ dependencies = [
  "serde_json",
  "sxd-document",
  "sxd-xpath",
- "tokio",
 ]
 
 [[package]]

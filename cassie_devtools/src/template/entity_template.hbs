@@ -2,11 +2,11 @@
 #[derive(Clone, Debug)]
 pub struct {{model_name}} {
     {{#each columns as |column| }}
-        pub {{column.field_name}}: Option<{{column.field_type}}>,
+        pub {{column.field_name}}: Option<{{column.field_type}}>,// {{column.comment}}
     {{/each}}
 }
 impl_field_name_method!({{model_name}} {
     {{#each columns as |column| }}
-        {{column.field_name}}
+        {{column.field_name}},
     {{/each}}
 });
