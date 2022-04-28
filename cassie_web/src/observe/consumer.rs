@@ -14,6 +14,6 @@ pub async fn init_consumer() {
     .unwrap();
   loop {
     let event = events.next().await.unwrap();
-    consume(event).await
+    consume(event).await;
   }
 }

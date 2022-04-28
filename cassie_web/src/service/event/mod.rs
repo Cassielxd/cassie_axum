@@ -54,14 +54,14 @@ pub async fn consume(e: CassieEvent) {
           .collect::<Vec<_>>();
 
         if d.len() > 0 {
-          execute_script(d, &custom);
+          execute_script(d, &custom).await;
         }
       }
     }
   }
 }
 //核心动态脚本执行方法
-fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
+async fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
   let init_code = format!(
     r#" var request_context=JSON.parse({});"#,
     serde_json::to_string_pretty(
