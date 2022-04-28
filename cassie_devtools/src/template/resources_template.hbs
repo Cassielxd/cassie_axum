@@ -13,6 +13,7 @@ use cassie_domain::{dto::{{model}}_dto::{{model_name}}DTO, entity::PageData, req
 use validator::Validate;
 
 
+//{{model_name}}分页条件查询
 pub async fn page(arg: Option<Query<{{model_name}}Query>>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     let arg = arg.unwrap();
@@ -27,33 +28,33 @@ pub async fn page(arg: Option<Query<{{model_name}}Query>>) -> impl IntoResponse 
         .await;
     RespVO::from_result(&vo).resp_json()
 }
-
+//{{model_name}}没有分页条件查询
 pub async fn list(arg: Option<Query<{{model_name}}Query>>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     let arg = arg.unwrap();
     let vo = service.list(&arg).await;
     RespVO::from_result(&vo).resp_json()
 }
-
+//{{model_name}}根据id获取
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     let dto = service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
-
+//{{model_name}}根据id删除
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
 }
-
+//{{model_name}}新增
 pub async fn save(Json(arg): Json<{{model_name}}DTO>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     let mut entity = arg.into();
     let vo = service.save(&mut entity).await;
     RespVO::from_result(&vo).resp_json()
 }
-
+//{{model_name}}修改
 pub async fn edit(Json(arg): Json<{{model_name}}DTO>) -> impl IntoResponse {
     let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
     let id = arg.id().clone();
@@ -63,7 +64,7 @@ pub async fn edit(Json(arg): Json<{{model_name}}DTO>) -> impl IntoResponse {
         .await;
     RespVO::from(&"更新成功".to_string()).resp_json()
 }
-
+//{{model_name}}初始化路由
 pub fn init_router() -> Router {
     Router::new()
         .route("/{{model}}", get(page).post(save).put(edit))

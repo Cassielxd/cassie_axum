@@ -9,6 +9,15 @@ dto::{{model}}_dto::{{model_name}}DTO, entity::{{table_name}}_entity::{{model_na
 use super::crud_service::CrudService;
 
 
+///#### Example
+/// 
+///let service = APPLICATION_CONTEXT.get::<{{model_name}}Service>();
+/// let vo = service.list(&arg).await;  query data
+///let dto = service.get(id).await;   update data
+/// service.del(&id).await;      delete data
+///let vo = service.save(&mut entity).await; save  data
+///
+///
 pub struct {{model_name}}Service {}
 impl Default for {{model_name}}Service {
     fn default() -> Self {
