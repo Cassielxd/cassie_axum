@@ -16,13 +16,14 @@ byteorder = "1.4.3"
 base64 = "0.13.0"
 chrono = "0.4.19"
 lazy_static = "1.4.0"
-# Xml解析
-sxd-document = "0.3.2"
-sxd-xpath = "0.4.2"
 # reqwest
 bytes = { version = "1.1.0" }
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls","blocking"] }
 indicatif = { version = "0.16.2" }
+
+serde-xml-rs = "0.5.1"
+itertools= "0.10.3"
+md5= "0.7.0"
 
 
 percent-encoding = "2.1.0"

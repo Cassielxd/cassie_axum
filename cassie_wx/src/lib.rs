@@ -1,6 +1,7 @@
 pub mod mp;
 pub mod sdk;
 pub mod wxapp;
+pub mod pay;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
 ///
