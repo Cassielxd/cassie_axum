@@ -8,14 +8,15 @@ use crate::{
     service::crud_service::CrudService,
     APPLICATION_CONTEXT,
 };
+use tokio::time::Instant;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
 use log::info;
 use pharos::SharedPharos;
 use serde_json::json;
-
+use deno_runtime::worker::MainWorker;
 //事件消费 待二次开发 todo
-pub async fn consume(e: CassieEvent) {
+pub async fn consume(e: CassieEvent, workers:&mut MainWorker) {
     //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
     match e {
         //登录事件
@@ -44,44 +45,22 @@ pub async fn consume(e: CassieEvent) {
                     .collect::<Vec<_>>();
                 info!("事件个数：{:?}", d.len());
                 if d.len() > 0 {
-                    match custom.insulate {
-                        true => insulate_execute_script(d, &custom),
-                        false => execute_script(d, &custom),
-                    }
+                  execute_script(d, &custom,workers);
                 }
             }
         }
     }
 }
 
-fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
-    let init_code = format!(
-        r#" var request_context=JSON.parse({});"#,
-        serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
-    );
 
-    let mut workers = init(None);
-    workers.execute_script("init_context", &init_code).unwrap();
-    for event in data {
-        match workers
-            .js_runtime
-            .execute_script(event.event_name().clone().unwrap().as_str(), event.event_script().clone().unwrap().as_str())
-        {
-            Ok(data) => {}
-            Err(e) => {
-                info!("error info {:#?}", e.to_string());
-            }
-        }
-    }
-}
 
 //核心动态脚本执行方法
-fn insulate_execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
+fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent,workers:&mut MainWorker) {
+  let start = Instant::now();
     let init_code = format!(
         r#" var request_context=JSON.parse({});"#,
         serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
     );
-    let mut workers = init(None);
     for event in data {
         let code = build_script(init_code.clone(), event.event_script().clone().unwrap().clone());
         match workers.js_runtime.execute_script(event.event_name().clone().unwrap().as_str(), code.as_str()) {
@@ -91,6 +70,7 @@ fn insulate_execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
             }
         }
     }
+    info!("execute script time {} 毫秒", start.elapsed().as_millis().to_string());
 }
 //构建脚本每个脚本独立运行上下文隔离
 fn build_script(init_code: String, event_script: String) -> String {
