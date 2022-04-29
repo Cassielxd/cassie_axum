@@ -22,5 +22,5 @@ pub struct EmptyDTO {}
 /// IdDTO
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct IdDTO {
-  pub id: String,
+    pub id: String,
 }

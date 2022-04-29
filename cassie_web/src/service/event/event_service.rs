@@ -5,19 +5,19 @@ use rbatis::rbatis::Rbatis;
 
 pub struct EventConfigService {}
 impl EventConfigService {
-  pub async fn load_event(&self) -> Result<Vec<EventConfigDTO>> {
-    let query = vec!["0".to_string()];
-    let list = self.fetch_list_by_column(EventConfig::status(), &query).await;
-    list
-  }
+    pub async fn load_event(&self) -> Result<Vec<EventConfigDTO>> {
+        let query = vec!["0".to_string()];
+        let list = self.fetch_list_by_column(EventConfig::status(), &query).await;
+        list
+    }
 }
 impl CrudService<EventConfig, EventConfigDTO, EventQuery> for EventConfigService {
-  fn get_wrapper(arg: &EventQuery) -> rbatis::wrapper::Wrapper {
-    let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-    rb.new_wrapper()
-  }
+    fn get_wrapper(arg: &EventQuery) -> rbatis::wrapper::Wrapper {
+        let rb = APPLICATION_CONTEXT.get::<Rbatis>();
+        rb.new_wrapper()
+    }
 
-  fn set_save_common_fields(&self, common: cassie_domain::entity::sys_entitys::CommonField, data: &mut EventConfig) {
-    data.id = common.id;
-  }
+    fn set_save_common_fields(&self, common: cassie_domain::entity::sys_entitys::CommonField, data: &mut EventConfig) {
+        data.id = common.id;
+    }
 }
