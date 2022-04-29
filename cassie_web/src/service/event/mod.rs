@@ -57,18 +57,29 @@ fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
         serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
     );
     let mut workers = init(None);
-    workers.execute_script("init_request_context", &init_code);
     for event in data {
-        match workers
-            .js_runtime
-            .execute_script(event.event_name().clone().unwrap().as_str(), event.event_script().clone().unwrap().as_str())
-        {
+        let code = build_script(init_code.clone(), event.event_script().clone().unwrap().clone());
+        match workers.js_runtime.execute_script(event.event_name().clone().unwrap().as_str(), code.as_str()) {
             Ok(data) => {}
             Err(e) => {
                 info!("error info {:#?}", e.to_string());
             }
         }
     }
+}
+//构建脚本每个脚本独立运行上下文隔离
+fn build_script(init_code: String, event_script: String) -> String {
+    let script = format!(
+        r#"
+        "use strict";
+        ((window) => {{
+         {}
+         {}
+        }})(this);
+    "#,
+        init_code, event_script
+    );
+    script
 }
 
 //发布事件
