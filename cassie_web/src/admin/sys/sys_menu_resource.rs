@@ -60,6 +60,7 @@ async fn fire_custom_event() {
                 params_values: None,
                 return_values: None,
                 request_model: Some(data),
+                insulate: false,
             };
             let event = CassieEvent::Custom(cus);
             fire_event(event).await;

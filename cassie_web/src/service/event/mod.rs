@@ -44,14 +44,39 @@ pub async fn consume(e: CassieEvent) {
                     .collect::<Vec<_>>();
                 info!("事件个数：{:?}", d.len());
                 if d.len() > 0 {
-                    execute_script(d, &custom);
+                    match custom.insulate{
+                        true => insulate_execute_script(d, &custom),
+                        false => execute_script(d, &custom),
+                    }
+                    
                 }
             }
         }
     }
 }
-//核心动态脚本执行方法
+
+
 fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
+    let init_code = format!(
+        r#" var request_context=JSON.parse({});"#,
+        serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
+    );
+    
+    let mut workers = init(None);
+    workers.execute_script("init_context", &init_code).unwrap();
+    for event in data {
+        match workers.js_runtime.execute_script(event.event_name().clone().unwrap().as_str(), event.event_script().clone().unwrap().as_str()) {
+            Ok(data) => {}
+            Err(e) => {
+                info!("error info {:#?}", e.to_string());
+            }
+        }
+    }
+}
+
+
+//核心动态脚本执行方法  
+fn insulate_execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
     let init_code = format!(
         r#" var request_context=JSON.parse({});"#,
         serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
