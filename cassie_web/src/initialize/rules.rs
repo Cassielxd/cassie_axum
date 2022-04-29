@@ -20,7 +20,6 @@ pub async fn init_rules() {
   //规则引擎测试使用 test().await;
 }
 
-
 fn get_error_class_name(e: &AnyError) -> &'static str {
   deno_runtime::errors::get_error_class_name(e).unwrap_or("Error")
 }
@@ -52,13 +51,6 @@ fn get_error_class_name(e: &AnyError) -> &'static str {
 pub fn init(args: Option<Vec<String>>) -> MainWorker {
   let start = Instant::now();
   let module_loader = Rc::new(FsModuleLoader);
-  let create_web_worker_cb = Arc::new(|_| {
-    todo!("Web workers are not supported in the example");
-  });
-  let web_worker_preload_module_cb = Arc::new(|_| {
-    todo!("Web workers are not supported in the example");
-  });
-
   let options = WorkerOptions {
     bootstrap: get_option(args),
     extensions: vec![init_sys_ops()],
@@ -67,8 +59,8 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
     user_agent: "cassie_engine".to_string(),
     seed: None,
     js_error_create_fn: None,
-    web_worker_preload_module_cb,
-    create_web_worker_cb,
+    web_worker_preload_module_cb: Arc::new(|_| unreachable!()),
+    create_web_worker_cb: Arc::new(|_| unreachable!()),
     maybe_inspector_server: None,
     should_break_on_first_statement: false,
     module_loader,

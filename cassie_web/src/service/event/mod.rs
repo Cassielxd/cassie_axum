@@ -5,16 +5,13 @@ use cassie_domain::dto::sys_event_dto::EventConfigDTO;
 use log::info;
 use pharos::SharedPharos;
 use serde_json::json;
-
 use crate::{
   initialize::rules::init,
   observe::event::{CassieEvent, CustomEvent},
   service::crud_service::CrudService,
   APPLICATION_CONTEXT,
 };
-
 use self::event_service::EventConfigService;
-
 use super::log::log_service::{LogLoginService, LogOperationService};
 
 //事件消费 待二次开发 todo
@@ -52,16 +49,16 @@ pub async fn consume(e: CassieEvent) {
             ) || item.path().clone().unwrap().contains(&custom.path.clone())
           })
           .collect::<Vec<_>>();
-
+        info!("事件个数：{:?}", d.len());
         if d.len() > 0 {
-          execute_script(d, &custom).await;
+          execute_script(d, &custom);
         }
       }
     }
   }
 }
 //核心动态脚本执行方法
-async fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
+fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
   let init_code = format!(
     r#" var request_context=JSON.parse({});"#,
     serde_json::to_string_pretty(
