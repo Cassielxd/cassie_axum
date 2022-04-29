@@ -19,29 +19,19 @@ impl CrudService<SysLogLogin, SysLogLoginDto, LogQuery> for LogLoginService {
     rb.new_wrapper()
   }
 
-  fn set_save_common_fields(
-    &self,
-    common: CommonField,
-    data: &mut SysLogLogin,
-  ) {
+  fn set_save_common_fields(&self, common: CommonField, data: &mut SysLogLogin) {
     data.id = common.id;
     data.create_date = common.create_date;
   }
 }
 pub struct LogOperationService {}
-impl CrudService<SysLogOperation, SysLogOperationDto, LogQuery>
-  for LogOperationService
-{
+impl CrudService<SysLogOperation, SysLogOperationDto, LogQuery> for LogOperationService {
   fn get_wrapper(arg: &LogQuery) -> Wrapper {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     rb.new_wrapper()
   }
 
-  fn set_save_common_fields(
-    &self,
-    common: CommonField,
-    data: &mut SysLogOperation,
-  ) {
+  fn set_save_common_fields(&self, common: CommonField, data: &mut SysLogOperation) {
     data.id = common.id;
     data.create_date = common.create_date;
   }

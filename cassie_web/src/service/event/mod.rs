@@ -1,18 +1,18 @@
 pub mod event_service;
 pub mod ops;
-use casbin::function_map::key_match2;
-use cassie_domain::dto::sys_event_dto::EventConfigDTO;
-use log::info;
-use pharos::SharedPharos;
-use serde_json::json;
+use self::event_service::EventConfigService;
+use super::log::log_service::{LogLoginService, LogOperationService};
 use crate::{
   initialize::rules::init,
   observe::event::{CassieEvent, CustomEvent},
   service::crud_service::CrudService,
   APPLICATION_CONTEXT,
 };
-use self::event_service::EventConfigService;
-use super::log::log_service::{LogLoginService, LogOperationService};
+use casbin::function_map::key_match2;
+use cassie_domain::dto::sys_event_dto::EventConfigDTO;
+use log::info;
+use pharos::SharedPharos;
+use serde_json::json;
 
 //事件消费 待二次开发 todo
 pub async fn consume(e: CassieEvent) {
@@ -27,27 +27,20 @@ pub async fn consume(e: CassieEvent) {
     //操作事件
     CassieEvent::LogOperation(dto) => {
       let mut entity = dto.into();
-      let log_operation_service =
-        APPLICATION_CONTEXT.get::<LogOperationService>();
+      let log_operation_service = APPLICATION_CONTEXT.get::<LogOperationService>();
       log_operation_service.save(&mut entity).await;
     }
     //消息事件
     CassieEvent::Sms { sms_type } => todo!("待开发"),
     //自定义事件
     CassieEvent::Custom(custom) => {
-      let event_config_service =
-        APPLICATION_CONTEXT.get::<EventConfigService>();
+      let event_config_service = APPLICATION_CONTEXT.get::<EventConfigService>();
       //获取到所有的事件配置
       let list = event_config_service.load_event().await;
       if let Ok(data) = list {
         let d = data
           .iter()
-          .filter(|item| {
-            key_match2(
-              &custom.path.clone().as_str(),
-              &item.path().clone().unwrap(),
-            ) || item.path().clone().unwrap().contains(&custom.path.clone())
-          })
+          .filter(|item| key_match2(&custom.path.clone().as_str(), &item.path().clone().unwrap()) || item.path().clone().unwrap().contains(&custom.path.clone()))
           .collect::<Vec<_>>();
         info!("事件个数：{:?}", d.len());
         if d.len() > 0 {
@@ -61,18 +54,15 @@ pub async fn consume(e: CassieEvent) {
 fn execute_script(data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
   let init_code = format!(
     r#" var request_context=JSON.parse({});"#,
-    serde_json::to_string_pretty(
-      &serde_json::to_string_pretty(&json!(custom)).unwrap()
-    )
-    .unwrap()
+    serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
   );
   let mut workers = init(None);
   workers.execute_script("init_request_context", &init_code);
   for event in data {
-    match workers.js_runtime.execute_script(
-      event.event_name().clone().unwrap().as_str(),
-      event.event_script().clone().unwrap().as_str(),
-    ) {
+    match workers
+      .js_runtime
+      .execute_script(event.event_name().clone().unwrap().as_str(), event.event_script().clone().unwrap().as_str())
+    {
       Ok(data) => {}
       Err(e) => {
         info!("error info {:#?}", e.to_string());

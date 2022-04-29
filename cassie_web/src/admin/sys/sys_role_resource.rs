@@ -44,10 +44,7 @@ pub async fn list(arg: Option<Query<SysRoleQuery>>) -> impl IntoResponse {
 pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
   let sys_role_service = APPLICATION_CONTEXT.get::<SysRoleService>();
   let mut vo = sys_role_service.get(id).await.unwrap();
-  let menu_list = sys_role_service
-    .sys_role_menu_service
-    .get_menu_id_list(vo.id.clone().unwrap())
-    .await;
+  let menu_list = sys_role_service.sys_role_menu_service.get_menu_id_list(vo.id.clone().unwrap()).await;
   vo.menuid_list = Option::from(menu_list);
   RespVO::from(&vo).resp_json()
 }
@@ -78,33 +75,12 @@ pub async fn save(Json(arg): Json<SysRoleDTO>) -> impl IntoResponse {
  */
 pub async fn casbin_test() -> impl IntoResponse {
   let rules = vec![
-    vec![
-      "admin".to_owned(),
-      "superadmin".to_owned(),
-      "/cici_admin/user/list".to_owned(),
-      "POST".to_owned(),
-    ],
-    vec![
-      "admin1".to_owned(),
-      "superadmin".to_owned(),
-      "/cici_admin/user/list".to_owned(),
-      "POST".to_owned(),
-    ],
-    vec![
-      "admin2".to_owned(),
-      "superadmin".to_owned(),
-      "/cici_admin/user/list".to_owned(),
-      "POST".to_owned(),
-    ],
-    vec![
-      "admin3".to_owned(),
-      "superadmin".to_owned(),
-      "/cici_admin/user/list".to_owned(),
-      "POST".to_owned(),
-    ],
+    vec!["admin".to_owned(), "superadmin".to_owned(), "/cici_admin/user/list".to_owned(), "POST".to_owned()],
+    vec!["admin1".to_owned(), "superadmin".to_owned(), "/cici_admin/user/list".to_owned(), "POST".to_owned()],
+    vec!["admin2".to_owned(), "superadmin".to_owned(), "/cici_admin/user/list".to_owned(), "POST".to_owned()],
+    vec!["admin3".to_owned(), "superadmin".to_owned(), "/cici_admin/user/list".to_owned(), "POST".to_owned()],
   ];
-  let cached_enforcer =
-    APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
+  let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
   let mut enforcer = cached_enforcer.write().await;
   enforcer.add_policies(rules).await;
 
@@ -114,21 +90,9 @@ pub async fn casbin_test() -> impl IntoResponse {
       "admin".to_owned(),       //role_code
       "superadmin".to_owned(),  //anency_code
     ],
-    vec![
-      "lixingdong2".to_owned(),
-      "admin".to_owned(),
-      "superadmin".to_owned(),
-    ],
-    vec![
-      "lixingdong3".to_owned(),
-      "admin".to_owned(),
-      "superadmin".to_owned(),
-    ],
-    vec![
-      "lixingdong4".to_owned(),
-      "admin".to_owned(),
-      "superadmin".to_owned(),
-    ],
+    vec!["lixingdong2".to_owned(), "admin".to_owned(), "superadmin".to_owned()],
+    vec!["lixingdong3".to_owned(), "admin".to_owned(), "superadmin".to_owned()],
+    vec!["lixingdong4".to_owned(), "admin".to_owned(), "superadmin".to_owned()],
   ];
   enforcer.add_grouping_policies(user_rules).await;
   let res = Ok("保存成功".to_string());

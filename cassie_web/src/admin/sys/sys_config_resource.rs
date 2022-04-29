@@ -1,6 +1,4 @@
-use crate::service::{
-  crud_service::CrudService, sys_config_service::SysConfigService,
-};
+use crate::service::{crud_service::CrudService, sys_config_service::SysConfigService};
 use crate::APPLICATION_CONTEXT;
 
 use axum::{
@@ -10,9 +8,7 @@ use axum::{
   Json, Router,
 };
 use cassie_common::{error::Error, RespVO};
-use cassie_domain::{
-  dto::sys_config_dto::SysConfigDTO, entity::PageData, request::SysConfigQuery,
-};
+use cassie_domain::{dto::sys_config_dto::SysConfigDTO, entity::PageData, request::SysConfigQuery};
 
 pub async fn page(arg: Option<Query<SysConfigQuery>>) -> impl IntoResponse {
   let service = APPLICATION_CONTEXT.get::<SysConfigService>();
@@ -59,9 +55,7 @@ pub async fn edit(Json(arg): Json<SysConfigDTO>) -> impl IntoResponse {
   let service = APPLICATION_CONTEXT.get::<SysConfigService>();
   let id = arg.id().clone();
   let mut entity = arg.into();
-  service
-    .update_by_id(id.unwrap().to_string(), &mut entity)
-    .await;
+  service.update_by_id(id.unwrap().to_string(), &mut entity).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 

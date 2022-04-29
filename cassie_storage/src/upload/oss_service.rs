@@ -19,13 +19,7 @@ pub struct OssService {
   access_endpoint: String,
 }
 impl OssService {
-  pub fn new(
-    key_id: String,
-    key_secret: String,
-    endpoint: String,
-    bucket: String,
-    access_endpoint: String,
-  ) -> OssService {
+  pub fn new(key_id: String, key_secret: String, endpoint: String, bucket: String, access_endpoint: String) -> OssService {
     let client = Arc::new(OSS::new(key_id, key_secret, endpoint, bucket));
     OSS_CLIENT.set(client);
     OssService {
@@ -36,22 +30,14 @@ impl OssService {
 
 #[async_trait]
 impl IUploadService for OssService {
-  async fn upload(
-    &self,
-    data: Bytes,
-    file_name: String,
-    content_type: String,
-  ) -> Result<String> {
+  async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String> {
     let mut headers = HashMap::new();
     headers.insert(CONTENT_TYPE, content_type.as_str());
     let client: &OSS = OSS_CLIENT.get();
-    let result = client
-      .async_put_object_from_buffer(&data, file_name.clone(), headers, None)
-      .await;
+    let result = client.async_put_object_from_buffer(&data, file_name.clone(), headers, None).await;
     match result {
       Ok(_) => {
-        let path =
-          format!("{}/{}", self.access_endpoint.clone(), file_name.clone());
+        let path = format!("{}/{}", self.access_endpoint.clone(), file_name.clone());
         return Ok(path);
       }
       Err(e) => Err(Error::E(e.to_string())),

@@ -22,8 +22,7 @@ pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
 }
 
 pub fn get_local() -> Option<RequestModel> {
-  let request_model =
-    APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
+  let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
   match request_model {
     None => None,
     Some(e) => {
@@ -41,8 +40,7 @@ pub fn get_local() -> Option<RequestModel> {
 }
 
 pub fn set_local(data: JWTToken, path: String) {
-  let request_model =
-    APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
+  let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
   match request_model {
     Some(d) => {
       let a = d.clone();

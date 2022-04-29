@@ -33,11 +33,7 @@ pub struct AsiGroupService {
 }
 // -> Result<Page<AsiGroupDTO>>
 impl TreeService<AsiGroup, AsiGroupDTO> for AsiGroupService {
-  fn set_children(
-    &self,
-    arg: &mut AsiGroupDTO,
-    childs: Option<Vec<AsiGroupDTO>>,
-  ) {
+  fn set_children(&self, arg: &mut AsiGroupDTO, childs: Option<Vec<AsiGroupDTO>>) {
     arg.set_children(childs);
   }
 }
@@ -50,10 +46,7 @@ impl AsiGroupService {
    * @author String
    * @date: 2022/3/22 18:03
    */
-  pub async fn get_group_list(
-    &self,
-    group: AsiQuery,
-  ) -> Result<Vec<AsiGroupDTO>> {
+  pub async fn get_group_list(&self, group: AsiQuery) -> Result<Vec<AsiGroupDTO>> {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     let wrapper = Self::get_wrapper(&group);
     let list: Vec<AsiGroup> = rb.fetch_list_by_wrapper(wrapper).await?;
@@ -66,18 +59,13 @@ impl AsiGroupService {
    * @author String
    * @date: 2022/3/22 18:04
    */
-  pub async fn get_group_page(
-    &self,
-    group: AsiQuery,
-  ) -> Result<Page<AsiGroupDTO>> {
+  pub async fn get_group_page(&self, group: AsiQuery) -> Result<Page<AsiGroupDTO>> {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     let wrapper = Self::get_wrapper(&group);
     //构建分页条件
-    let page_request =
-      PageRequest::new(group.page().unwrap_or(1), group.limit().unwrap_or(10));
+    let page_request = PageRequest::new(group.page().unwrap_or(1), group.limit().unwrap_or(10));
     //执行分页查询
-    let data_page: Page<AsiGroup> =
-      rb.fetch_page_by_wrapper(wrapper, &page_request).await?;
+    let data_page: Page<AsiGroup> = rb.fetch_page_by_wrapper(wrapper, &page_request).await?;
     let records = data_page.records;
 
     Ok(Page::<AsiGroupDTO> {
@@ -100,15 +88,9 @@ impl AsiGroupService {
     /*查询有没有重复的*/
 
     let g = group.group_code().clone();
-    let count = rb
-      .fetch_count_by_wrapper::<AsiGroup>(
-        rb.new_wrapper().eq(AsiGroup::group_code(), g.unwrap()),
-      )
-      .await;
+    let count = rb.fetch_count_by_wrapper::<AsiGroup>(rb.new_wrapper().eq(AsiGroup::group_code(), g.unwrap())).await;
     if count.unwrap() > 0 {
-      return Err(cassie_common::error::Error::from(
-        "group_code已经存在".to_string(),
-      ));
+      return Err(cassie_common::error::Error::from("group_code已经存在".to_string()));
     }
     let request_model = get_local().unwrap();
     let mut entity: AsiGroup = group.into();
@@ -124,11 +106,7 @@ impl AsiGroupService {
    *author:String
    *email:348040933@qq.com
    */
-  pub async fn save_values_for_from(
-    &self,
-    id: String,
-    args: HashMap<String, HashMap<String, String>>,
-  ) -> Result<bool> {
+  pub async fn save_values_for_from(&self, id: String, args: HashMap<String, HashMap<String, String>>) -> Result<bool> {
     for (key, value) in args {
       let searchc = vec![key.clone()];
       //获取分组定义信息
@@ -166,11 +144,7 @@ impl AsiGroupService {
    *author:String
    *email:348040933@qq.com
    */
-  pub async fn save_values_for_table(
-    &self,
-    id: String,
-    args: HashMap<String, Vec<HashMap<String, String>>>,
-  ) -> Result<bool> {
+  pub async fn save_values_for_table(&self, id: String, args: HashMap<String, Vec<HashMap<String, String>>>) -> Result<bool> {
     for (key, value) in args {
       let searchc = vec![key.clone()];
       //获取分组定义信息
@@ -202,23 +176,12 @@ impl AsiGroupService {
     return Ok(true);
   }
   //构建插入语句
-  fn build_data(
-    &self,
-    id: &String,
-    group: &AsiGroupDTO,
-    values: &HashMap<String, String>,
-  ) -> (bool, Document) {
+  fn build_data(&self, id: &String, group: &AsiGroupDTO, values: &HashMap<String, String>) -> (bool, Document) {
     let mut insert = false;
     let mut doc = Document::new();
     doc.insert("entity_id", id.clone());
-    doc.insert(
-      AsiGroup::agency_code().to_string(),
-      group.agency_code().clone().unwrap(),
-    );
-    doc.insert(
-      AsiGroup::group_code().to_string(),
-      group.group_code().clone().unwrap(),
-    );
+    doc.insert(AsiGroup::agency_code().to_string(), group.agency_code().clone().unwrap());
+    doc.insert(AsiGroup::group_code().to_string(), group.group_code().clone().unwrap());
     for (key, value) in values {
       doc.insert(key, value);
     }
@@ -234,12 +197,7 @@ impl AsiGroupService {
     (insert, doc)
   }
 
-  pub async fn save_from_values(
-    &self,
-    id: &String,
-    group: &AsiGroupDTO,
-    values: HashMap<String, String>,
-  ) {
+  pub async fn save_from_values(&self, id: &String, group: &AsiGroupDTO, values: HashMap<String, String>) {
     let mdb = APPLICATION_CONTEXT.get::<Database>();
     let (insert, doc) = self.build_data(id, group, &values);
     let collection = mdb.collection::<Document>(build_table(group).as_str());
@@ -250,18 +208,11 @@ impl AsiGroupService {
       query.insert("_id", doc.get("_id"));
       let mut update_doc = Document::new();
       update_doc.insert("$set", doc);
-      collection
-        .update_one(query, UpdateModifications::Document(update_doc), None)
-        .await;
+      collection.update_one(query, UpdateModifications::Document(update_doc), None).await;
     }
   }
 
-  pub async fn save_table_values(
-    &self,
-    id: &String,
-    group: &AsiGroupDTO,
-    values_map: Vec<HashMap<String, String>>,
-  ) {
+  pub async fn save_table_values(&self, id: &String, group: &AsiGroupDTO, values_map: Vec<HashMap<String, String>>) {
     let mdb = APPLICATION_CONTEXT.get::<Database>();
     let collection = mdb.collection::<Document>(build_table(group).as_str());
     let mut insert_docs = vec![];
@@ -283,24 +234,15 @@ impl AsiGroupService {
         doc.insert("_id", i.get("_id"));
         let mut update_doc = Document::new();
         update_doc.insert("$set", i);
-        collection
-          .update_one(doc, UpdateModifications::Document(update_doc), None)
-          .await;
+        collection.update_one(doc, UpdateModifications::Document(update_doc), None).await;
       }
     }
   }
-  pub async fn value_list(
-    &self,
-    id: &String,
-    group: &AsiGroupDTO,
-  ) -> Result<Vec<HashMap<String, Bson>>> {
+  pub async fn value_list(&self, id: &String, group: &AsiGroupDTO) -> Result<Vec<HashMap<String, Bson>>> {
     let mdb = APPLICATION_CONTEXT.get::<Database>();
     let columns = self
       .asi_column
-      .fetch_list_by_column(
-        "group_code",
-        &vec![group.group_code().clone().unwrap()],
-      )
+      .fetch_list_by_column("group_code", &vec![group.group_code().clone().unwrap()])
       .await
       .unwrap();
 
@@ -308,59 +250,29 @@ impl AsiGroupService {
     let filter = doc! { "entity_id": id.clone() };
     let mut result = collection.find(filter, None).await.unwrap();
     let mut r = Vec::new();
-    while let Some(doc) = result
-      .try_next()
-      .await
-      .map_err(|e| Error::E(e.to_string()))
-      .unwrap()
-    {
+    while let Some(doc) = result.try_next().await.map_err(|e| Error::E(e.to_string())).unwrap() {
       let mut d = HashMap::new();
       //使用已经定义的列进行获取
       for c in &columns {
         if doc.contains_key(c.column_code().clone().unwrap()) {
-          d.insert(
-            c.column_code().clone().unwrap(),
-            doc.get(c.column_code().clone().unwrap()).unwrap().clone(),
-          );
+          d.insert(c.column_code().clone().unwrap(), doc.get(c.column_code().clone().unwrap()).unwrap().clone());
         } else {
-          d.insert(
-            c.column_code().clone().unwrap(),
-            Bson::String("".to_string()),
-          );
+          d.insert(c.column_code().clone().unwrap(), Bson::String("".to_string()));
         }
       }
-      d.insert(
-        AsiGroup::agency_code().to_string(),
-        doc
-          .get(AsiGroup::agency_code().to_string())
-          .unwrap()
-          .clone(),
-      );
-      d.insert(
-        AsiGroup::group_code().to_string(),
-        doc.get(AsiGroup::group_code().to_string()).unwrap().clone(),
-      );
-      d.insert(
-        "_id".to_string(),
-        doc.get("_id".to_string()).unwrap().clone(),
-      );
+      d.insert(AsiGroup::agency_code().to_string(), doc.get(AsiGroup::agency_code().to_string()).unwrap().clone());
+      d.insert(AsiGroup::group_code().to_string(), doc.get(AsiGroup::group_code().to_string()).unwrap().clone());
+      d.insert("_id".to_string(), doc.get("_id".to_string()).unwrap().clone());
       r.push(d);
     }
     Ok(r)
   }
   ///查询values
-  pub async fn value_page(
-    &self,
-    id: &String,
-    group: &AsiGroupDTO,
-  ) -> Result<Vec<HashMap<String, Bson>>> {
+  pub async fn value_page(&self, id: &String, group: &AsiGroupDTO) -> Result<Vec<HashMap<String, Bson>>> {
     let mdb = APPLICATION_CONTEXT.get::<Database>();
     let columns = self
       .asi_column
-      .fetch_list_by_column(
-        "group_code",
-        &vec![group.group_code().clone().unwrap()],
-      )
+      .fetch_list_by_column("group_code", &vec![group.group_code().clone().unwrap()])
       .await
       .unwrap();
 
@@ -368,42 +280,19 @@ impl AsiGroupService {
     let filter = doc! { "entity_id": id.clone() };
     let mut result = collection.find(filter, None).await.unwrap();
     let mut r = Vec::new();
-    while let Some(doc) = result
-      .try_next()
-      .await
-      .map_err(|e| Error::E(e.to_string()))
-      .unwrap()
-    {
+    while let Some(doc) = result.try_next().await.map_err(|e| Error::E(e.to_string())).unwrap() {
       let mut d = HashMap::new();
       //使用已经定义的列进行获取
       for c in &columns {
         if doc.contains_key(c.column_code().clone().unwrap()) {
-          d.insert(
-            c.column_code().clone().unwrap(),
-            doc.get(c.column_code().clone().unwrap()).unwrap().clone(),
-          );
+          d.insert(c.column_code().clone().unwrap(), doc.get(c.column_code().clone().unwrap()).unwrap().clone());
         } else {
-          d.insert(
-            c.column_code().clone().unwrap(),
-            Bson::String("".to_string()),
-          );
+          d.insert(c.column_code().clone().unwrap(), Bson::String("".to_string()));
         }
       }
-      d.insert(
-        AsiGroup::agency_code().to_string(),
-        doc
-          .get(AsiGroup::agency_code().to_string())
-          .unwrap()
-          .clone(),
-      );
-      d.insert(
-        AsiGroup::group_code().to_string(),
-        doc.get(AsiGroup::group_code().to_string()).unwrap().clone(),
-      );
-      d.insert(
-        "_id".to_string(),
-        doc.get("_id".to_string()).unwrap().clone(),
-      );
+      d.insert(AsiGroup::agency_code().to_string(), doc.get(AsiGroup::agency_code().to_string()).unwrap().clone());
+      d.insert(AsiGroup::group_code().to_string(), doc.get(AsiGroup::group_code().to_string()).unwrap().clone());
+      d.insert("_id".to_string(), doc.get("_id".to_string()).unwrap().clone());
       r.push(d);
     }
     Ok(r)
@@ -423,15 +312,8 @@ impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
   fn get_wrapper(arg: &AsiQuery) -> Wrapper {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     rb.new_wrapper()
-      .do_if(!arg.group_code().is_empty(), |w| {
-        w.eq("group_code", arg.group_code().clone().unwrap())
-      })
-      .do_if(!arg.parent_group_code().is_empty(), |w| {
-        w.eq(
-          "parent_group_code",
-          arg.parent_group_code().clone().unwrap(),
-        )
-      })
+      .do_if(!arg.group_code().is_empty(), |w| w.eq("group_code", arg.group_code().clone().unwrap()))
+      .do_if(!arg.parent_group_code().is_empty(), |w| w.eq("parent_group_code", arg.parent_group_code().clone().unwrap()))
   }
 
   fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroup) {
@@ -448,11 +330,7 @@ impl CrudService<AsiGroup, AsiGroupDTO, AsiQuery> for AsiGroupService {
 pub struct AsiGroupColumnService {}
 
 impl AsiGroupColumnService {
-  pub async fn save_column(
-    &self,
-    group: AsiGroupDTO,
-    column: AsiGroupColumnDTO,
-  ) {
+  pub async fn save_column(&self, group: AsiGroupDTO, column: AsiGroupColumnDTO) {
     let request_model = get_local().unwrap();
     let id = column.id().clone();
     let mut entity: AsiGroupColumn = column.into();
@@ -470,19 +348,10 @@ impl AsiGroupColumnService {
    *author:String
    *email:348040933@qq.com
    */
-  pub async fn save_batch_colums(
-    &self,
-    group: AsiGroupDTO,
-    columns: Vec<AsiGroupColumnDTO>,
-  ) {
+  pub async fn save_batch_colums(&self, group: AsiGroupDTO, columns: Vec<AsiGroupColumnDTO>) {
     /*不管是不是存在 直接删除在新增*/
     let group_code = group.group_code();
-    self
-      .del_by_column(
-        AsiGroupColumn::group_code(),
-        group_code.clone().unwrap().as_str(),
-      )
-      .await;
+    self.del_by_column(AsiGroupColumn::group_code(), group_code.clone().unwrap().as_str()).await;
     /*获取当前登录信息*/
     let request_model = get_local().unwrap();
     let mut entitys: Vec<AsiGroupColumn> = columns
@@ -504,21 +373,14 @@ impl Default for AsiGroupColumnService {
   }
 }
 
-impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery>
-  for AsiGroupColumnService
-{
+impl CrudService<AsiGroupColumn, AsiGroupColumnDTO, AsiQuery> for AsiGroupColumnService {
   fn get_wrapper(arg: &AsiQuery) -> Wrapper {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-    rb.new_wrapper().do_if(!arg.group_code().is_empty(), |w| {
-      w.eq(AsiGroup::group_code(), arg.group_code().clone().unwrap())
-    })
+    rb.new_wrapper()
+      .do_if(!arg.group_code().is_empty(), |w| w.eq(AsiGroup::group_code(), arg.group_code().clone().unwrap()))
   }
 
-  fn set_save_common_fields(
-    &self,
-    common: CommonField,
-    data: &mut AsiGroupColumn,
-  ) {
+  fn set_save_common_fields(&self, common: CommonField, data: &mut AsiGroupColumn) {
     data.id = common.id;
   }
 }

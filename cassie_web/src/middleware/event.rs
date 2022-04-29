@@ -1,7 +1,4 @@
-use crate::{
-  cici_casbin::is_white_list_api, observe::event::CassieEvent,
-  service::fire_event,
-};
+use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event};
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::dto::sys_log::SysLogOperationDto;
 use futures::future::BoxFuture;
@@ -25,10 +22,7 @@ where
   type Error = S::Error;
   type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
 
-  fn poll_ready(
-    &mut self,
-    cx: &mut Context<'_>,
-  ) -> Poll<Result<(), Self::Error>> {
+  fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
     self.inner.poll_ready(cx)
   }
   fn call(&mut self, request: Request<Body>) -> Self::Future {
@@ -49,11 +43,7 @@ where
       //拿到返回值
       let response: Response = future.await?;
       //判断请求返回是不是成功
-      let status = if response.status().is_success() {
-        Some(1)
-      } else {
-        Some(0)
-      };
+      let status = if response.status().is_success() { Some(1) } else { Some(0) };
       //构建操作日志event对象
       let mut operation = SysLogOperationDto::default();
       operation.set_operation(Some(action.clone()));

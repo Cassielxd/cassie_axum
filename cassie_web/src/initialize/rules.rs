@@ -74,18 +74,10 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
   };
 
   let js_path = Path::new(env!("CARGO_MANIFEST_DIR"));
-  let main_module =
-    deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
+  let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
   let permissions = Permissions::allow_all();
-  let main_worker = MainWorker::bootstrap_from_options(
-    main_module.clone(),
-    permissions,
-    options,
-  );
-  info!(
-    "instance workers time {} 毫秒",
-    start.elapsed().as_millis().to_string()
-  );
+  let main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
+  info!("instance workers time {} 毫秒", start.elapsed().as_millis().to_string());
   main_worker
 }
 
@@ -96,9 +88,7 @@ fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
   };
   BootstrapOptions {
     args: arg,
-    cpu_count: std::thread::available_parallelism()
-      .map(|p| p.get())
-      .unwrap_or(1),
+    cpu_count: std::thread::available_parallelism().map(|p| p.get()).unwrap_or(1),
     debug_flag: false,
     enable_testing_features: false,
     location: None,

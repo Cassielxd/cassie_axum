@@ -4,9 +4,7 @@ use crate::service::cache_service::CacheService;
 use crate::service::event_service::EventConfigService;
 use crate::service::log::log_service::{LogLoginService, LogOperationService};
 use crate::service::sys_auth_service::SysAuthService;
-use crate::service::sys_dict_service::{
-  SysDictDataService, SysDictTypeService,
-};
+use crate::service::sys_dict_service::{SysDictDataService, SysDictTypeService};
 use crate::service::sys_menu_service::SysMenuService;
 use crate::service::sys_params_service::SysParamsService;
 use crate::service::sys_role_service::SysRoleService;
@@ -37,14 +35,10 @@ pub async fn init_service() {
   APPLICATION_CONTEXT.set::<AsiGroupService>(AsiGroupService::default());
   info!("AsiGroupService init success!");
   APPLICATION_CONTEXT.set::<UploadService>(UploadService::new(config).unwrap());
-  info!(
-    "UploadService init success! storage_type is {}",
-    config.upload_type()
-  );
+  info!("UploadService init success! storage_type is {}", config.upload_type());
   APPLICATION_CONTEXT.set::<LogLoginService>(LogLoginService::default());
   info!("LogLoginService init success!");
-  APPLICATION_CONTEXT
-    .set::<LogOperationService>(LogOperationService::default());
+  APPLICATION_CONTEXT.set::<LogOperationService>(LogOperationService::default());
   info!("LogOperationService init success!");
   APPLICATION_CONTEXT.set::<EventConfigService>(EventConfigService {});
   info!("EventConfigService init success!");

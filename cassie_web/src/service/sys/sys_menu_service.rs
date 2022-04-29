@@ -61,33 +61,18 @@ impl CrudService<SysMenu, SysMenuDTO, SysMenuQuery> for SysMenuService {
   }
 }
 impl TreeService<SysMenu, SysMenuDTO> for SysMenuService {
-  fn set_children(
-    &self,
-    arg: &mut SysMenuDTO,
-    childs: Option<Vec<SysMenuDTO>>,
-  ) {
+  fn set_children(&self, arg: &mut SysMenuDTO, childs: Option<Vec<SysMenuDTO>>) {
     arg.set_children(childs);
   }
 }
 
-pub async fn get_user_menu_list(
-  uid: String,
-  super_admin: i32,
-  agency_code: String,
-) -> Result<Vec<SysMenuDTO>> {
+pub async fn get_user_menu_list(uid: String, super_admin: i32, agency_code: String) -> Result<Vec<SysMenuDTO>> {
   let rb = APPLICATION_CONTEXT.get::<Rbatis>();
   print!("{}", super_admin);
   let result = if super_admin > 0 {
     menu_list(&mut rb.as_executor(), "0").await.unwrap()
   } else {
-    user_menu_list(
-      &mut rb.as_executor(),
-      uid.as_str(),
-      "0",
-      agency_code.as_str(),
-    )
-    .await
-    .unwrap()
+    user_menu_list(&mut rb.as_executor(), uid.as_str(), "0", agency_code.as_str()).await.unwrap()
   };
   let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
   Ok(sys_menu_service.build(result.unwrap()))

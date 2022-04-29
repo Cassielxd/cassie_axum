@@ -23,13 +23,11 @@ async fn upload(mut multipart: Multipart) -> impl IntoResponse {
         return RespVO::from(&s).resp_json();
       }
       Err(e) => {
-        return RespVO::<()>::from_error(&Error::from(e.to_string()))
-          .resp_json();
+        return RespVO::<()>::from_error(&Error::from(e.to_string())).resp_json();
       }
     }
   }
-  return RespVO::<()>::from_error(&Error::from("params error".to_string()))
-    .resp_json();
+  return RespVO::<()>::from_error(&Error::from("params error".to_string())).resp_json();
 }
 
 pub fn init_router() -> Router {

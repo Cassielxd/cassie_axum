@@ -62,9 +62,7 @@ pub async fn edit(Json(arg): Json<SysDictTypeDTO>) -> impl IntoResponse {
   let sys_dict_type_service = APPLICATION_CONTEXT.get::<SysDictTypeService>();
   let id = arg.id().clone();
   let mut entity = arg.into();
-  sys_dict_type_service
-    .update_by_id(id.unwrap().to_string(), &mut entity)
-    .await;
+  sys_dict_type_service.update_by_id(id.unwrap().to_string(), &mut entity).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {

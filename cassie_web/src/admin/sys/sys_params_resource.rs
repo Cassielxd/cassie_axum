@@ -55,9 +55,7 @@ pub async fn edit(Json(arg): Json<SysParamsDTO>) -> impl IntoResponse {
   let sys_params_service = APPLICATION_CONTEXT.get::<SysParamsService>();
   let id = arg.id().clone();
   let mut entity = arg.into();
-  sys_params_service
-    .update_by_id(id.unwrap().to_string(), &mut entity)
-    .await;
+  sys_params_service.update_by_id(id.unwrap().to_string(), &mut entity).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 

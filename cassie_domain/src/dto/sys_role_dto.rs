@@ -1,6 +1,4 @@
-use crate::entity::sys_entitys::{
-  SysRole, SysRoleDataScope, SysRoleMenu, SysRoleUser,
-};
+use crate::entity::sys_entitys::{SysRole, SysRoleDataScope, SysRoleMenu, SysRoleUser};
 use rbatis::DateTimeNative;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
@@ -8,9 +6,7 @@ use validator_derive::Validate;
 /**
  * 角色dto
  */
-#[derive(
-  Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters, Default,
-)]
+#[derive(Clone, Debug, Serialize, Deserialize, Validate, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysRoleDTO {
   pub id: Option<i64>,

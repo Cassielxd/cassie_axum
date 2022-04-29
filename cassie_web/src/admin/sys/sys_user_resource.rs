@@ -61,10 +61,7 @@ pub async fn get_user_by_id(Path(id): Path<String>) -> impl IntoResponse {
 pub async fn info() -> impl IntoResponse {
   let sys_user_service = APPLICATION_CONTEXT.get::<SysUserService>();
   let request_model = get_local().unwrap();
-  let mut vo = sys_user_service
-    .get(request_model.uid().clone().to_string())
-    .await
-    .unwrap();
+  let mut vo = sys_user_service.get(request_model.uid().clone().to_string()).await.unwrap();
   vo.set_password(None);
   RespVO::from(&vo).resp_json()
 }

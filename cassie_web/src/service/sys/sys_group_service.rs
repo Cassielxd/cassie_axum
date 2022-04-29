@@ -2,10 +2,7 @@ use rbatis::rbatis::Rbatis;
 
 use crate::APPLICATION_CONTEXT;
 use cassie_domain::entity::sys_entitys::CommonField;
-use cassie_domain::{
-  dto::sys_group_dto::SysGroupDTO, entity::sys_group_entity::SysGroup,
-  request::SysGroupQuery,
-};
+use cassie_domain::{dto::sys_group_dto::SysGroupDTO, entity::sys_group_entity::SysGroup, request::SysGroupQuery};
 
 use super::crud_service::CrudService;
 

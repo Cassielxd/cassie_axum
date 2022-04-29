@@ -12,10 +12,7 @@ pub struct Client {
 impl Client {
   pub fn new() -> Self {
     let mut headers = header::HeaderMap::new();
-    headers.insert(
-      header::USER_AGENT,
-      header::HeaderValue::from_static(DEFAULT_USER_AGENT),
-    );
+    headers.insert(header::USER_AGENT, header::HeaderValue::from_static(DEFAULT_USER_AGENT));
 
     Client {
       client: HttpClient::builder()
@@ -26,11 +23,7 @@ impl Client {
         .unwrap(),
     }
   }
-  pub async fn post<T: Serialize + ?Sized>(
-    &self,
-    url: &str,
-    params: &T,
-  ) -> Result<String> {
+  pub async fn post<T: Serialize + ?Sized>(&self, url: &str, params: &T) -> Result<String> {
     match self.client.post(url).json(params).send().await {
       Ok(res) => {
         if res.status() == 200 {

@@ -1,6 +1,4 @@
-use crate::service::{
-  crud_service::CrudService, sys_config_tab_service::SysConfigTabService,
-};
+use crate::service::{crud_service::CrudService, sys_config_tab_service::SysConfigTabService};
 
 use crate::APPLICATION_CONTEXT;
 use axum::{
@@ -10,10 +8,7 @@ use axum::{
   Json, Router,
 };
 use cassie_common::{error::Error, RespVO};
-use cassie_domain::{
-  dto::sys_config_tab_dto::SysConfigTabDTO, entity::PageData,
-  request::SysConfigTabQuery,
-};
+use cassie_domain::{dto::sys_config_tab_dto::SysConfigTabDTO, entity::PageData, request::SysConfigTabQuery};
 use validator::Validate;
 
 pub async fn page(arg: Option<Query<SysConfigTabQuery>>) -> impl IntoResponse {
@@ -61,9 +56,7 @@ pub async fn edit(Json(arg): Json<SysConfigTabDTO>) -> impl IntoResponse {
   let service = APPLICATION_CONTEXT.get::<SysConfigTabService>();
   let id = arg.id().clone();
   let mut entity = arg.into();
-  service
-    .update_by_id(id.unwrap().to_string(), &mut entity)
-    .await;
+  service.update_by_id(id.unwrap().to_string(), &mut entity).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 

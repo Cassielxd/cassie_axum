@@ -1,9 +1,7 @@
 use crate::entity::sys_group_data_entity::SysGroupData;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
-#[derive(
-  Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default,
-)]
+#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysGroupDataDTO {
   id: Option<i32>,       // 组合数据详情ID

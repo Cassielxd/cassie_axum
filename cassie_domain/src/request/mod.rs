@@ -5,9 +5,7 @@ pub use request_model::*;
 pub mod request_model;
 pub mod tree;
 
-#[derive(
-  Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Getters, Setters, Default,
-)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct RequestModel {
   uid: i64,

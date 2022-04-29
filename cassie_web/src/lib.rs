@@ -33,9 +33,7 @@ use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
 use crate::nacos::register_service;
-use crate::{
-  cici_casbin::casbin_service::CasbinService, config::log::init_log,
-};
+use crate::{cici_casbin::casbin_service::CasbinService, config::log::init_log};
 use cassie_config::config::ApplicationConfig;
 pub use deno_runtime::deno_core;
 use log::info;
@@ -51,8 +49,7 @@ ServiceContext 服务上下文
 CasbinService 权限服务
 */
 
-pub static APPLICATION_CONTEXT: Container![Send + Sync] =
-  <Container![Send + Sync]>::new();
+pub static APPLICATION_CONTEXT: Container![Send + Sync] = <Container![Send + Sync]>::new();
 /*初始化环境上下文*/
 pub async fn init_context() {
   //第一步加载配置
@@ -78,10 +75,7 @@ pub async fn init_context() {
   let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   info!(
     " - Local:   http://{}:{}",
-    cassie_config
-      .server()
-      .host()
-      .replace("0.0.0.0", "127.0.0.1"),
+    cassie_config.server().host().replace("0.0.0.0", "127.0.0.1"),
     cassie_config.server().port()
   );
 }

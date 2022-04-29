@@ -31,13 +31,7 @@ pub struct AgencyInterceptor {
 impl AgencyInterceptor {}
 impl SqlIntercept for AgencyInterceptor {
   //sql拦截逻辑
-  fn do_intercept(
-    &self,
-    rb: &Rbatis,
-    sql: &mut String,
-    args: &mut Vec<Bson>,
-    is_prepared_sql: bool,
-  ) -> Result<(), Error> {
+  fn do_intercept(&self, rb: &Rbatis, sql: &mut String, args: &mut Vec<Bson>, is_prepared_sql: bool) -> Result<(), Error> {
     //判断是否开启租户化
     if self.enable {
       if let Some(request_model) = get_local() {
@@ -107,30 +101,14 @@ pub fn build(up_sql: String, agency_code: String) -> String {
           }
         }
       }
-      Update {
-        table,
-        assignments,
-        selection,
-      } => {
+      Update { table, assignments, selection } => {
         if intercept_update(table.clone(), selection.clone()) {
-          return build_update(
-            agency_code,
-            table.clone(),
-            assignments.clone(),
-            selection.clone(),
-          );
+          return build_update(agency_code, table.clone(), assignments.clone(), selection.clone());
         }
       }
-      Delete {
-        table_name,
-        selection,
-      } => {
+      Delete { table_name, selection } => {
         if intercept_delete(table_name.clone(), selection.clone()) {
-          return build_delete(
-            agency_code,
-            table_name.clone(),
-            selection.clone(),
-          );
+          return build_delete(agency_code, table_name.clone(), selection.clone());
         }
       }
       _ => {}

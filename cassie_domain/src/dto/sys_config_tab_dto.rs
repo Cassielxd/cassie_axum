@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 
 use crate::entity::sys_config_tab_entity::SysConfigTab;
-#[derive(
-  Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default,
-)]
+#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SysConfigTabDTO {
   id: Option<i32>,           // 配置分类id

@@ -15,12 +15,7 @@ pub trait ICacheService: Sync + Send {
 
   async fn get_string(&self, k: &str) -> Result<String>;
 
-  async fn set_string_ex(
-    &self,
-    k: &str,
-    v: &str,
-    ex: Option<Duration>,
-  ) -> Result<String>;
+  async fn set_string_ex(&self, k: &str, v: &str, ex: Option<Duration>) -> Result<String>;
 
   async fn ttl(&self, k: &str) -> Result<i64>;
 }
@@ -59,10 +54,7 @@ impl CacheService {
   {
     let data = serde_json::to_string(v);
     if data.is_err() {
-      return Err(Error::from(format!(
-        "MemCacheService set_json fail:{}",
-        data.err().unwrap()
-      )));
+      return Err(Error::from(format!("MemCacheService set_json fail:{}", data.err().unwrap())));
     }
     let data = self.set_string(k, data.unwrap().as_str()).await?;
     Ok(data)
@@ -78,20 +70,12 @@ impl CacheService {
     }
     let data: serde_json::Result<T> = serde_json::from_str(r.as_str());
     if data.is_err() {
-      return Err(Error::from(format!(
-        "MemCacheService GET fail:{}",
-        data.err().unwrap()
-      )));
+      return Err(Error::from(format!("MemCacheService GET fail:{}", data.err().unwrap())));
     }
     Ok(data.unwrap())
   }
 
-  pub async fn set_string_ex(
-    &self,
-    k: &str,
-    v: &str,
-    ex: Option<Duration>,
-  ) -> Result<String> {
+  pub async fn set_string_ex(&self, k: &str, v: &str, ex: Option<Duration>) -> Result<String> {
     self.inner.set_string_ex(k, v, ex).await
   }
 

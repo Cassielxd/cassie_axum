@@ -12,10 +12,7 @@ use cassie_common::{error::Error, RespVO};
 use cassie_domain::request::AsiQuery;
 use std::collections::HashMap;
 
-pub async fn list(
-  Path(id): Path<String>,
-  arg: Option<Query<AsiQuery>>,
-) -> impl IntoResponse {
+pub async fn list(Path(id): Path<String>, arg: Option<Query<AsiQuery>>) -> impl IntoResponse {
   let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
   let arg = arg.unwrap();
   let vo = asi_service.list(&arg).await;
@@ -24,24 +21,17 @@ pub async fn list(
     let r = asi_service.value_list(&id, &group.unwrap()).await;
     return RespVO::from_result(&r).resp_json();
   }
-  RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string()))
-    .resp_json()
+  RespVO::<()>::from_error(&Error::E("业务分类没有定义".to_string())).resp_json()
 }
 
-pub async fn save_from(
-  Path(id): Path<String>,
-  Json(arg): Json<HashMap<String, HashMap<String, String>>>,
-) -> impl IntoResponse {
+pub async fn save_from(Path(id): Path<String>, Json(arg): Json<HashMap<String, HashMap<String, String>>>) -> impl IntoResponse {
   let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
   /*执行验证逻辑*/
   let res = asi_service.save_values_for_from(id, arg).await;
   RespVO::from_result(&res).resp_json()
 }
 
-pub async fn save_table(
-  Path(id): Path<String>,
-  Json(arg): Json<HashMap<String, Vec<HashMap<String, String>>>>,
-) -> impl IntoResponse {
+pub async fn save_table(Path(id): Path<String>, Json(arg): Json<HashMap<String, Vec<HashMap<String, String>>>>) -> impl IntoResponse {
   let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
   /*执行验证逻辑*/
   let res = asi_service.save_values_for_table(id, arg).await;

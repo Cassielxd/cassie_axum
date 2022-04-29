@@ -4,23 +4,14 @@ use log::info;
 use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
 use tokio::time;
 
-const FRAGMENT: &AsciiSet = &CONTROLS
-  .add(b' ')
-  .add(b'"')
-  .add(b'{')
-  .add(b'}')
-  .add(b':')
-  .add(b',');
+const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'{').add(b'}').add(b':').add(b',');
 
 //nacos服务注册
 pub async fn register_service() {
   let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   //如果开启了nacos注册，则注册服务
   if cassie_config.nacos().nacos_flag().clone() {
-    info!(
-      "register service: {:?}",
-      cassie_config.nacos().nacos_server()
-    );
+    info!("register service: {:?}", cassie_config.nacos().nacos_server());
     let client = reqwest::Client::new();
     let body = client
       .post(
@@ -55,11 +46,11 @@ pub async fn ping() {
   // nacos 文档中没有说明 metadata 必选, 测试发现，如果没有 metadata 信息， java 端会有错误
   //
   let beat = format!(
-        "{{\"serviceName\":\"{}\",\"ip\":\"{}\",\"port\":\"{}\",\"weight\":1,\"metadata\":{{}}}}",
-        cassie_config.nacos().application_name(),
-        cassie_config.server().host(),
-        cassie_config.server().port()
-    );
+    "{{\"serviceName\":\"{}\",\"ip\":\"{}\",\"port\":\"{}\",\"weight\":1,\"metadata\":{{}}}}",
+    cassie_config.nacos().application_name(),
+    cassie_config.server().host(),
+    cassie_config.server().port()
+  );
   let encode = utf8_percent_encode(&beat, FRAGMENT).to_string();
   let client = reqwest::Client::new();
   client

@@ -55,10 +55,7 @@ impl CasbinService {
     }
   }
 
-  pub async fn new<M: TryIntoModel, A: TryIntoAdapter>(
-    m: M,
-    a: A,
-  ) -> CasbinResult<Self> {
+  pub async fn new<M: TryIntoModel, A: TryIntoAdapter>(m: M, a: A) -> CasbinResult<Self> {
     let enforcer: CachedEnforcer = CachedEnforcer::new(m, a).await?;
     Ok(CasbinService {
       enforcer: Arc::new(RwLock::new(enforcer)),
@@ -78,12 +75,7 @@ impl CasbinService {
    *author:String
    *email:348040933@qq.com
    */
-  pub async fn call(
-    &self,
-    path: String,
-    action: String,
-    vals: CasbinVals,
-  ) -> bool {
+  pub async fn call(&self, path: String, action: String, vals: CasbinVals) -> bool {
     /*获取验证器*/
     let cloned_enforcer = self.get_enforcer();
     let uid = vals.uid.clone();

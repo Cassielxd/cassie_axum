@@ -12,12 +12,7 @@ use cassie_config::config::ApplicationConfig;
  */
 #[async_trait]
 pub trait IUploadService: Sync + Send {
-  async fn upload(
-    &self,
-    data: Bytes,
-    file_name: String,
-    content_type: String,
-  ) -> Result<String>;
+  async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String>;
 }
 
 pub struct UploadService {
@@ -45,12 +40,7 @@ impl UploadService {
       }
     }
   }
-  pub async fn upload(
-    &self,
-    data: Bytes,
-    file_name: String,
-    content_type: String,
-  ) -> Result<String> {
+  pub async fn upload(&self, data: Bytes, file_name: String, content_type: String) -> Result<String> {
     self.inner.upload(data, file_name, content_type).await
   }
 }

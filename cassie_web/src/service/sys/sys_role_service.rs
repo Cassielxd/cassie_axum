@@ -1,17 +1,11 @@
 use super::{
-  crud_service::CrudService,
-  sys_role_data_scope_service::SysRoleDataScopeService,
-  sys_role_menu_service::SysRoleMenuService,
-  sys_role_user_service::SysRoleUserService,
+  crud_service::CrudService, sys_role_data_scope_service::SysRoleDataScopeService, sys_role_menu_service::SysRoleMenuService, sys_role_user_service::SysRoleUserService,
 };
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Result;
 use cassie_common::utils::string::IsEmpty;
 use cassie_domain::entity::sys_entitys::CommonField;
-use cassie_domain::{
-  dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole,
-  request::SysRoleQuery,
-};
+use cassie_domain::{dto::sys_role_dto::SysRoleDTO, entity::sys_entitys::SysRole, request::SysRoleQuery};
 use rbatis::rbatis::Rbatis;
 
 /**
@@ -41,12 +35,7 @@ impl SysRoleService {
     query.set_user_id(Some(uid_id));
     let user_role = self.sys_role_user_service.list(&query).await;
     if let Ok(list) = user_role {
-      Ok(
-        list
-          .iter()
-          .map(|f| f.role_id.clone().unwrap_or_default())
-          .collect::<Vec<i64>>(),
-      )
+      Ok(list.iter().map(|f| f.role_id.clone().unwrap_or_default()).collect::<Vec<i64>>())
     } else {
       Ok(Vec::<i64>::new())
     }
@@ -54,10 +43,7 @@ impl SysRoleService {
   //删除角色
   pub async fn delete_by_role_id(&self, id: String) {
     self.del(&id).await;
-    self
-      .sys_role_menu_service
-      .delete_by_role_id(id.parse::<i64>().unwrap())
-      .await;
+    self.sys_role_menu_service.delete_by_role_id(id.parse::<i64>().unwrap()).await;
   }
   //保存角色
   pub async fn save_role(&self, sys_role: SysRoleDTO) {
@@ -72,19 +58,14 @@ impl SysRoleService {
       role_id.unwrap()
     };
     //保存角色菜单关系
-    self
-      .sys_role_menu_service
-      .save_or_update(id, menu_id_list.clone())
-      .await;
+    self.sys_role_menu_service.save_or_update(id, menu_id_list.clone()).await;
   }
 }
 
 impl CrudService<SysRole, SysRoleDTO, SysRoleQuery> for SysRoleService {
   fn get_wrapper(arg: &SysRoleQuery) -> rbatis::wrapper::Wrapper {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-    rb.new_wrapper().do_if(!arg.name().is_empty(), |w| {
-      w.like(SysRole::name(), &arg.name())
-    })
+    rb.new_wrapper().do_if(!arg.name().is_empty(), |w| w.like(SysRole::name(), &arg.name()))
   }
   fn set_save_common_fields(&self, common: CommonField, data: &mut SysRole) {
     data.id = common.id;

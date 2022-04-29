@@ -1,14 +1,9 @@
 use cassie_config::config::ApplicationConfig;
-use cassie_domain::dto::{
-  sys_dict_dto::SysDictTypeDTO, sys_user_dto::SysUserDTO,
-};
+use cassie_domain::dto::{sys_dict_dto::SysDictTypeDTO, sys_user_dto::SysUserDTO};
 use deno_core::{op, Extension};
 
 use crate::{
-  service::{
-    crud_service::CrudService, sys_dict_service::get_all_list,
-    sys_user_service::SysUserService,
-  },
+  service::{crud_service::CrudService, sys_dict_service::get_all_list, sys_user_service::SysUserService},
   APPLICATION_CONTEXT,
 };
 
@@ -34,11 +29,5 @@ fn op_user_info(id: String) -> Result<SysUserDTO, deno_core::error::AnyError> {
 }
 
 pub fn init_sys_ops() -> Extension {
-  Extension::builder()
-    .ops(vec![
-      op_user_info::decl(),
-      op_all_dict::decl(),
-      op_config::decl(),
-    ])
-    .build()
+  Extension::builder().ops(vec![op_user_info::decl(), op_all_dict::decl(), op_config::decl()]).build()
 }

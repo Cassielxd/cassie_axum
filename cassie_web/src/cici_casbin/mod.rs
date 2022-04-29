@@ -15,8 +15,7 @@ pub fn is_white_api_list_api(path: String) -> bool {
   let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   for x in cassie_config.api_white_list_api() {
     //匹配 user/:id 模式
-    if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str())
-    {
+    if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str()) {
       return true;
     }
   }
@@ -32,8 +31,7 @@ pub fn is_white_list_api(path: String) -> bool {
   let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   for x in cassie_config.admin_white_list_api() {
     //匹配 user/:id 模式
-    if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str())
-    {
+    if key_match2(path.clone().as_str(), x) || x.contains(path.clone().as_str()) {
       return true;
     }
   }
@@ -48,9 +46,7 @@ pub fn is_auth_list_api(path: String) -> bool {
   let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   for x in cassie_config.admin_auth_list_api().clone().unwrap() {
     //匹配 user/:id 模式
-    if key_match2(path.clone().as_str(), &x)
-      || x.contains(path.clone().as_str())
-    {
+    if key_match2(path.clone().as_str(), &x) || x.contains(path.clone().as_str()) {
       return true;
     }
   }
@@ -78,8 +74,7 @@ pub fn cici_match(user: ImmutableString, path: ImmutableString) -> bool {
     return true;
   }
 
-  if !user.is_empty() && is_super_admin(&user, cassie_config.super_admin_ids())
-  {
+  if !user.is_empty() && is_super_admin(&user, cassie_config.super_admin_ids()) {
     return true;
   }
   return false;

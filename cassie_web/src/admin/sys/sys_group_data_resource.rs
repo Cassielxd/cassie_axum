@@ -1,6 +1,4 @@
-use crate::service::{
-  crud_service::CrudService, sys_group_data_service::SysGroupDataService,
-};
+use crate::service::{crud_service::CrudService, sys_group_data_service::SysGroupDataService};
 
 use crate::APPLICATION_CONTEXT;
 use axum::{
@@ -10,10 +8,7 @@ use axum::{
   Json, Router,
 };
 use cassie_common::{error::Error, RespVO};
-use cassie_domain::{
-  dto::sys_group_data_dto::SysGroupDataDTO, entity::PageData,
-  request::SysGroupDataQuery,
-};
+use cassie_domain::{dto::sys_group_data_dto::SysGroupDataDTO, entity::PageData, request::SysGroupDataQuery};
 use validator::Validate;
 
 pub async fn page(arg: Option<Query<SysGroupDataQuery>>) -> impl IntoResponse {
@@ -61,9 +56,7 @@ pub async fn edit(Json(arg): Json<SysGroupDataDTO>) -> impl IntoResponse {
   let service = APPLICATION_CONTEXT.get::<SysGroupDataService>();
   let id = arg.id().clone();
   let mut entity = arg.into();
-  service
-    .update_by_id(id.unwrap().to_string(), &mut entity)
-    .await;
+  service.update_by_id(id.unwrap().to_string(), &mut entity).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 

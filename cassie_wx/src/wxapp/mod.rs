@@ -3,11 +3,7 @@ use cassie_common::error::Result;
 use serde::{Deserialize, Serialize};
 pub mod auth;
 
-pub fn resolve_data(
-  session_key: String,
-  iv: String,
-  encrypted_data: String,
-) -> Result<WxUserInfo> {
+pub fn resolve_data(session_key: String, iv: String, encrypted_data: String) -> Result<WxUserInfo> {
   let key = base64::decode(session_key).unwrap();
   let iv = base64::decode(iv).unwrap();
   let aes = AesCrypt::new(key, iv);

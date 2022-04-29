@@ -6,23 +6,15 @@ use cassie_common::error::Result;
 
 //获取token
 #[cached(time = 7200, result = true, size = 10)]
-pub async fn get_access_token(
-  app_id: String,
-  secret: String,
-  grant_type: String,
-) -> Result<String> {
+pub async fn get_access_token(app_id: String, secret: String, grant_type: String) -> Result<String> {
   // 组装请求地址
   let url = format!(
-        "{domain}/cgi-bin/token?grant_type={grant_type}&appid={app_id}&secret={secret}",
-        domain = API_DOMAIN,
-        grant_type = if grant_type.is_empty() {
-            "client_credential".to_string()
-        } else {
-            grant_type
-        },
-        app_id = app_id,
-        secret = secret
-    );
+    "{domain}/cgi-bin/token?grant_type={grant_type}&appid={app_id}&secret={secret}",
+    domain = API_DOMAIN,
+    grant_type = if grant_type.is_empty() { "client_credential".to_string() } else { grant_type },
+    app_id = app_id,
+    secret = secret
+  );
   // 调用远程接口
   match Client::new().get(&url).await {
     Ok(res) => {

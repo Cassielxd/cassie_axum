@@ -44,9 +44,7 @@ pub async fn edit(Json(arg): Json<AsiGroupDTO>) -> impl IntoResponse {
   let asi_service = APPLICATION_CONTEXT.get::<AsiGroupService>();
 
   let id = arg.id().clone();
-  asi_service
-    .update_by_id(id.unwrap().to_string(), &mut arg.into())
-    .await;
+  asi_service.update_by_id(id.unwrap().to_string(), &mut arg.into()).await;
   RespVO::from(&"更新成功".to_string()).resp_json()
 }
 pub fn init_router() -> Router {

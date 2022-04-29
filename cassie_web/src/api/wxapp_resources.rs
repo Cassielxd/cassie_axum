@@ -39,10 +39,7 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
           return RespVO::from(&result).resp_json();
         }
         Err(_) => {
-          return RespVO::<()>::from_error(&Error::from(
-            "获取用户访问token失败",
-          ))
-          .resp_json();
+          return RespVO::<()>::from_error(&Error::from("获取用户访问token失败")).resp_json();
         }
       }
     }
@@ -52,9 +49,7 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
   }
 }
 //授权获取小程序用户手机号 直接绑定
-pub async fn auth_binding_phone(
-  Json(sign): Json<WxSignInVo>,
-) -> impl IntoResponse {
+pub async fn auth_binding_phone(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
   match binding_phone(sign).await {
     Ok(s) => {
       return RespVO::from(&s).resp_json();

@@ -1,27 +1,11 @@
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct NacosConfig {
   nacos_flag: bool,
   nacos_server: String,
   application_name: String,
 }
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct Wxapp {
   appid: String,
@@ -41,15 +25,7 @@ impl NacosConfig {
     }
   }
 }
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ServerConfig {
   ///当前服务地址
@@ -57,30 +33,14 @@ pub struct ServerConfig {
   port: String,
 }
 
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct TenantConfig {
   enable: bool,
   column: String,
   ignore_table: Vec<String>,
 }
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct OSSConfig {
   key_id: String,
@@ -91,27 +51,14 @@ pub struct OSSConfig {
 }
 impl OSSConfig {
   pub fn validate(&self) {
-    if self.key_id.is_empty()
-      || self.key_secret.is_empty()
-      || self.endpoint.is_empty()
-      || self.bucket.is_empty()
-    {
+    if self.key_id.is_empty() || self.key_secret.is_empty() || self.endpoint.is_empty() || self.bucket.is_empty() {
       panic!("请配置oss ！！！！！！！！！！！！！！！！！！！")
     }
   }
 }
 
 ///服务启动配置
-#[derive(
-  Debug,
-  PartialEq,
-  serde::Serialize,
-  serde::Deserialize,
-  Clone,
-  Getters,
-  Setters,
-  MutGetters,
-)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters, MutGetters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ApplicationConfig {
   debug: bool,

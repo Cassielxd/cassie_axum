@@ -1,9 +1,6 @@
 use crate::{middleware::get_local, APPLICATION_CONTEXT};
 use cassie_common::utils::password_encoder::PasswordEncoder;
-use cassie_domain::{
-  dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser,
-  request::SysUserQuery,
-};
+use cassie_domain::{dto::sys_user_dto::SysUserDTO, entity::sys_entitys::SysUser, request::SysUserQuery};
 use rbatis::rbatis::Rbatis;
 use rbatis::wrapper::Wrapper;
 
@@ -34,20 +31,15 @@ impl SysUserService {
   pub async fn delete_user(&self, id: String) {
     let user_info = self.get(id.clone()).await.unwrap();
     self.del(&id).await;
-    self
-      .sys_role_user_service
-      .del_by_column(SysRoleUser::user_id(), id.clone().as_str())
-      .await;
-    let cached_enforcer =
-      APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
+    self.sys_role_user_service.del_by_column(SysRoleUser::user_id(), id.clone().as_str()).await;
+    let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
     let mut lock = cached_enforcer.write().await;
     lock.remove_grouping_policy(vec![id]).await;
     drop(lock);
   }
   //保存用户
   pub async fn save_info(&self, arg: SysUserDTO) {
-    let password =
-      PasswordEncoder::encode(&arg.password().clone().unwrap().as_str());
+    let password = PasswordEncoder::encode(&arg.password().clone().unwrap().as_str());
     let role_id = arg.role_id().clone();
     let mut entity: SysUser = arg.into();
     let request_model = get_local().unwrap();
@@ -73,17 +65,10 @@ impl SysUserService {
     };
     self.sys_role_user_service.save(&mut data).await;
     if let Some(rid) = role_id {
-      let cached_enforcer =
-        APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
+      let cached_enforcer = APPLICATION_CONTEXT.get::<CasbinService>().enforcer.clone();
       let mut lock = cached_enforcer.write().await;
 
-      lock
-        .add_grouping_policy(vec![
-          uid.to_string(),
-          rid.to_string(),
-          request_model.agency_code().clone(),
-        ])
-        .await;
+      lock.add_grouping_policy(vec![uid.to_string(), rid.to_string(), request_model.agency_code().clone()]).await;
       drop(lock);
     }
   }

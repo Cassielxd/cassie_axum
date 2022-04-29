@@ -5,10 +5,7 @@ use sqlparser::ast::Select;
 use sqlparser::ast::SqliteOnConflict;
 use sqlparser::ast::Statement::{Delete, Insert, Update};
 use sqlparser::ast::TableWithJoins;
-use sqlparser::ast::{
-  BinaryOperator, Expr, Ident, ObjectName, Query, SetExpr, Value as Text,
-  Values,
-};
+use sqlparser::ast::{BinaryOperator, Expr, Ident, ObjectName, Query, SetExpr, Value as Text, Values};
 
 use crate::APPLICATION_CONTEXT; //构建租户化insert语句
 ///构建插入语句
@@ -38,9 +35,7 @@ pub fn build_insert(
         let mut values = value.clone().0;
         //组装value 如果是 insert into table values (1,2,3),(4,5,6)  多values 的情况就需要循环处理 把租户字段添加进去
         for elem in values.iter_mut() {
-          elem.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(
-            agency_code.clone(),
-          )));
+          elem.push(sqlparser::ast::Expr::Value(Text::SingleQuotedString(agency_code.clone())));
         }
         let insert = Insert {
           or: or.clone(),
@@ -64,10 +59,7 @@ pub fn build_insert(
   return None;
 }
 ///构建租户化where条件语句
-pub fn build_where(
-  agency_code: String,
-  selection: Option<Expr>,
-) -> Option<Expr> {
+pub fn build_where(agency_code: String, selection: Option<Expr>) -> Option<Expr> {
   let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
   let u_selection = match selection {
     //如果原SQL已经有查询条件 则直接加上 租户化条件
@@ -96,12 +88,7 @@ pub fn build_where(
   u_selection
 }
 //构建更新语句
-pub fn build_update(
-  agency_code: String,
-  table: TableWithJoins,
-  assignments: Vec<Assignment>,
-  selection: Option<Expr>,
-) -> String {
+pub fn build_update(agency_code: String, table: TableWithJoins, assignments: Vec<Assignment>, selection: Option<Expr>) -> String {
   let update = Update {
     table: table,
     assignments: assignments,
@@ -110,11 +97,7 @@ pub fn build_update(
   return update.to_string();
 }
 ///构建删除语句
-pub fn build_delete(
-  agency_code: String,
-  table_info: ObjectName,
-  selection: Option<Expr>,
-) -> String {
+pub fn build_delete(agency_code: String, table_info: ObjectName, selection: Option<Expr>) -> String {
   let delete = Delete {
     table_name: table_info,
     selection: build_where(agency_code, selection),
@@ -190,12 +173,7 @@ pub fn intercept_query(select: Select) -> bool {
   for elem in from.iter() {
     let relation = &elem.relation;
     match relation {
-      sqlparser::ast::TableFactor::Table {
-        name,
-        alias,
-        args,
-        with_hints,
-      } => {
+      sqlparser::ast::TableFactor::Table { name, alias, args, with_hints } => {
         //获取到表名称
         if has_table(name.clone(), config) {
           return false;
@@ -220,12 +198,7 @@ pub fn intercept_update(elem: TableWithJoins, selection: Option<Expr>) -> bool {
 
   let relation = &elem.relation;
   match relation {
-    sqlparser::ast::TableFactor::Table {
-      name,
-      alias,
-      args,
-      with_hints,
-    } => {
+    sqlparser::ast::TableFactor::Table { name, alias, args, with_hints } => {
       //获取到表名称
       if has_table(name.clone(), config) {
         return false;
@@ -237,10 +210,7 @@ pub fn intercept_update(elem: TableWithJoins, selection: Option<Expr>) -> bool {
   true
 }
 
-pub fn intercept_delete(
-  table_info: ObjectName,
-  selection: Option<Expr>,
-) -> bool {
+pub fn intercept_delete(table_info: ObjectName, selection: Option<Expr>) -> bool {
   //拿到where查询条件
   if let Some(selection) = selection {
     //如果租户列已经存在了就不需要再租户化了 查询条件里已经存在了

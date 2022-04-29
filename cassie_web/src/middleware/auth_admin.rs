@@ -27,9 +27,7 @@ where
 {
   type Rejection = Error;
 
-  async fn from_request(
-    req: &mut RequestParts<B>,
-  ) -> Result<Self, Self::Rejection> {
+  async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
 
     /*获取method path */
@@ -70,9 +68,7 @@ where
           let service = APPLICATION_CONTEXT.get::<CasbinService>();
           /*casbin 验证有效性 处理返回结果集*/
 
-          if is_auth_list_api(path.clone())
-            || service.call(path, action, vals).await
-          {
+          if is_auth_list_api(path.clone()) || service.call(path, action, vals).await {
             return Ok(Self {});
           } else {
             return Err(Error::from(serde_json::json!(&resp).to_string()));

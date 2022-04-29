@@ -42,16 +42,10 @@ where
     //构建查询条件
     let wrapper = Self::get_wrapper(arg);
     //构建分页条件
-    let page_request =
-      PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
+    let page_request = PageRequest::new(page.page_no.unwrap_or(1), page.page_size.unwrap_or(10));
     //执行分页查询
-    let data_page: Page<Entity> =
-      rb.fetch_page_by_wrapper(wrapper, &page_request).await?;
-    let vos = data_page
-      .records
-      .into_iter()
-      .map(|e| Dto::from(e.clone()))
-      .collect::<Vec<Dto>>();
+    let data_page: Page<Entity> = rb.fetch_page_by_wrapper(wrapper, &page_request).await?;
+    let vos = data_page.records.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
 
     Ok(Page::<Dto> {
       records: vos,
@@ -62,19 +56,11 @@ where
       search_count: data_page.search_count,
     })
   }
-  async fn fetch_list_by_column(
-    &self,
-    column: &str,
-    column_values: &Vec<String>,
-  ) -> Result<Vec<Dto>> {
+  async fn fetch_list_by_column(&self, column: &str, column_values: &Vec<String>) -> Result<Vec<Dto>> {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     //执行查询
-    let list: Vec<Entity> =
-      rb.fetch_list_by_column(column, column_values).await?;
-    let result = list
-      .into_iter()
-      .map(|e| Dto::from(e.clone()))
-      .collect::<Vec<Dto>>();
+    let list: Vec<Entity> = rb.fetch_list_by_column(column, column_values).await?;
+    let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
     Ok(result)
   }
 
@@ -95,10 +81,7 @@ where
     let wrapper = Self::get_wrapper(arg);
     //执行查询
     let list: Vec<Entity> = rb.fetch_list_by_wrapper(wrapper).await?;
-    let result = list
-      .into_iter()
-      .map(|e| Dto::from(e.clone()))
-      .collect::<Vec<Dto>>();
+    let result = list.into_iter().map(|e| Dto::from(e.clone())).collect::<Vec<Dto>>();
     Ok(result)
   }
 
@@ -108,12 +91,7 @@ where
   async fn update_by_id(&self, id: String, mut data: &Entity) {
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
     let wrapper = rb.new_wrapper().eq("id", id);
-    rb.update_by_wrapper(
-      &mut data,
-      wrapper,
-      &[Skip::Column("id"), Skip::Column("create_date")],
-    )
-    .await;
+    rb.update_by_wrapper(&mut data, wrapper, &[Skip::Column("id"), Skip::Column("create_date")]).await;
   }
   /**
    * 根据id查询条件查询单个值
@@ -131,11 +109,7 @@ where
   async fn save(&self, data: &mut Entity) -> Result<i64> {
     /*设置创建人*/
     let rb = APPLICATION_CONTEXT.get::<Rbatis>();
-    let uid = if let Some(request_model) = get_local() {
-      request_model.uid().clone()
-    } else {
-      0
-    };
+    let uid = if let Some(request_model) = get_local() { request_model.uid().clone() } else { 0 };
     /*设置公共字段*/
     self.set_save_common_fields(
       CommonField {

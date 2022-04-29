@@ -3,9 +3,7 @@ use serde::{Deserialize, Serialize};
 /// 登陆
 use validator_derive::Validate;
 
-#[derive(
-  Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default,
-)]
+#[derive(Serialize, Deserialize, Validate, Clone, Debug, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct SignInDTO {
   #[validate(required)]
