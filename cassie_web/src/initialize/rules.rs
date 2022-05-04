@@ -78,7 +78,7 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
     let permissions = Permissions::allow_all();
     let main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
-    info!("instance workers time {} 毫秒", start.elapsed().as_millis().to_string());
+    info!("init JsRuntime time {} millisecond!", start.elapsed().as_millis().to_string());
     main_worker
 }
 
