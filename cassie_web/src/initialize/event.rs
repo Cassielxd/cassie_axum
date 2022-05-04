@@ -10,5 +10,4 @@ pub async fn init_event_bus() {
     thread::spawn(move || {
         async_std::task::block_on(async { init_consumer().await });
     });
-    //tokio::task::spawn(init_consumer()); error
 }
