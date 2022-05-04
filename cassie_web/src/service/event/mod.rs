@@ -8,15 +8,15 @@ use crate::{
     service::crud_service::CrudService,
     APPLICATION_CONTEXT,
 };
-use deno_runtime::worker::MainWorker;
-use tokio::time::Instant;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
+use deno_runtime::worker::MainWorker;
 use log::info;
 use pharos::SharedPharos;
 use serde_json::json;
+use tokio::time::Instant;
 //事件消费 待二次开发 todo
-pub async fn consume(worker: &mut MainWorker,e: CassieEvent) {
+pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
     //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
     match e {
         //登录事件
@@ -30,7 +30,6 @@ pub async fn consume(worker: &mut MainWorker,e: CassieEvent) {
             let mut entity = dto.into();
             let log_operation_service = APPLICATION_CONTEXT.get::<LogOperationService>();
             log_operation_service.save(&mut entity).await;
-
         }
         //消息事件
         CassieEvent::Sms { sms_type } => todo!("待开发"),
@@ -46,7 +45,7 @@ pub async fn consume(worker: &mut MainWorker,e: CassieEvent) {
                     .collect::<Vec<_>>();
                 info!("事件个数：{:?}", d.len());
                 if d.len() > 0 {
-                    execute_script(worker,d, &custom).await;
+                    execute_script(worker, d, &custom).await;
                 }
             }
         }
@@ -54,8 +53,8 @@ pub async fn consume(worker: &mut MainWorker,e: CassieEvent) {
 }
 
 //核心动态脚本执行方法
-async fn execute_script(workers: &mut MainWorker,data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
-  let start = Instant::now();
+async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
+    let start = Instant::now();
     let init_code = format!(
         r#" var request_context=JSON.parse({});"#,
         serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
