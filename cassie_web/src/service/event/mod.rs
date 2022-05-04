@@ -1,9 +1,8 @@
 pub mod event_service;
 pub mod ops;
-use self::event_service::EventConfigService;
+use self::event_service::{load_event, EventConfigService};
 use super::log::log_service::{LogLoginService, LogOperationService};
 use crate::{
-    initialize::rules::init,
     observe::event::{CassieEvent, CustomEvent},
     service::crud_service::CrudService,
     APPLICATION_CONTEXT,
@@ -37,7 +36,7 @@ pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
         CassieEvent::Custom(custom) => {
             let event_config_service = APPLICATION_CONTEXT.get::<EventConfigService>();
             //获取到所有的事件配置
-            let list = event_config_service.load_event().await;
+            let list = load_event().await;
             if let Ok(data) = list {
                 let d = data
                     .iter()
