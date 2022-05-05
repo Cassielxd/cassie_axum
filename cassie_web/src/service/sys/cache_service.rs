@@ -18,6 +18,8 @@ pub trait ICacheService: Sync + Send {
     async fn set_string_ex(&self, k: &str, v: &str, ex: Option<Duration>) -> Result<String>;
 
     async fn ttl(&self, k: &str) -> Result<i64>;
+
+    async fn del(&self, k: &str) -> Result<i64>;
 }
 
 pub struct CacheService {
@@ -81,5 +83,9 @@ impl CacheService {
 
     pub async fn ttl(&self, k: &str) -> Result<i64> {
         self.inner.ttl(k).await
+    }
+
+    pub async fn del(&self, k: &str) -> Result<i64> {
+        self.inner.del(k).await
     }
 }

@@ -65,11 +65,18 @@ impl ICacheService for RedisService {
     ///set_string 自动过期
     async fn ttl(&self, k: &str) -> Result<i64> {
         let mut conn = self.get_conn().await?;
-        //cmd("DEL").arg(key)
         return match redis::cmd("TTL").arg(&[k]).query_async(&mut conn).await {
             Ok(v) => Ok(v),
             Err(e) => Err(Error::from(format!("RedisService ttl fail:{}", e.to_string()))),
         };
     }
-
+     ///set_string 自动过期
+     async fn del(&self, k: &str) -> Result<i64> {
+        let mut conn = self.get_conn().await?;
+        //cmd("DEL").arg(key)
+        return match redis::cmd("DEL").arg(&[k]).query_async(&mut conn).await {
+            Ok(v) => Ok(v),
+            Err(e) => Err(Error::from(format!("RedisService del fail:{}", e.to_string()))),
+        };
+    }
 }
