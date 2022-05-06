@@ -1,9 +1,11 @@
+use std::collections::HashMap;
+
 use crate::middleware::get_local;
 use crate::observe::event::{CassieEvent, CustomEvent};
 use crate::service::crud_service::CrudService;
 use crate::service::fire_event;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
-use crate::APPLICATION_CONTEXT;
+use crate::{APPLICATION_CONTEXT, fire_script_event};
 use axum::routing::get;
 use axum::{
     extract::{Path, Query},
@@ -48,25 +50,10 @@ pub async fn nav() -> impl IntoResponse {
     let request_model = get_local().unwrap();
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     //事件测试代码
-    fire_custom_event().await;
+    fire_script_event(None,None).await;
     RespVO::from_result(&vo).resp_json()
 }
-async fn fire_custom_event() {
-    let request = get_local();
-    match request {
-        Some(data) => {
-            let cus = CustomEvent {
-                path: data.path().clone(),
-                params_values: None,
-                return_values: None,
-                request_model: Some(data),
-            };
-            let event = CassieEvent::Custom(cus);
-            fire_event(event).await;
-        }
-        None => {}
-    }
-}
+
 
 /**
  *method:get_by_id
