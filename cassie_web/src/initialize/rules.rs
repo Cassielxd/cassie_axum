@@ -49,7 +49,7 @@ fn get_error_class_name(e: &AnyError) -> &'static str {
 ///  workers.run_event_loop(false).await;
 ///}
 
-pub fn init(args: Option<Vec<String>>) -> MainWorker {
+pub async fn init(args: Option<Vec<String>>) -> MainWorker {
     let start = Instant::now();
     let module_loader = Rc::new(FsModuleLoader);
     let options = WorkerOptions {
@@ -59,7 +59,6 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
         root_cert_store: None,
         user_agent: "cassie_engine".to_string(),
         seed: None,
-        js_error_create_fn: None,
         web_worker_preload_module_cb: Arc::new(|_| unreachable!()),
         create_web_worker_cb: Arc::new(|_| unreachable!()),
         maybe_inspector_server: None,
@@ -72,12 +71,17 @@ pub fn init(args: Option<Vec<String>>) -> MainWorker {
         shared_array_buffer_store: None,
         compiled_wasm_module_store: None,
         source_map_getter: None,
+        format_js_error_fn: None,
+        stdio: Default::default(),
     };
 
-    let js_path = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("js/cassie.js");
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
+    info!("{}", main_module.clone());
     let permissions = Permissions::allow_all();
-    let main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
+    let mut main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
+    main_worker.execute_main_module(&main_module).await.unwrap();
+    main_worker.run_event_loop(false).await.unwrap();
     info!("init JsRuntime time {} millisecond!", start.elapsed().as_millis().to_string());
     main_worker
 }
@@ -95,7 +99,7 @@ fn get_option(args: Option<Vec<String>>) -> BootstrapOptions {
         location: None,
         no_color: false,
         is_tty: false,
-        runtime_version: "x".to_string(),
+        runtime_version: "0.1".to_string(),
         ts_version: "x".to_string(),
         unstable: false,
     }
