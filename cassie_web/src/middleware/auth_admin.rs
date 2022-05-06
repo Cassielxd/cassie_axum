@@ -57,7 +57,6 @@ where
                 Ok(data) => {
                     //登录了但是不需要权限
                     let data1 = data.clone();
-
                     set_local(data1, path.clone());
                     // 获取用户名和租户编码 进入下一步资源认证
                     let vals = CasbinVals {

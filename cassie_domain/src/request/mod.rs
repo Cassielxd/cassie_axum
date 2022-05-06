@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 pub use request_model::*;
 
+use crate::vo::jwt::Resource;
+
 pub mod request_model;
 pub mod tree;
 
@@ -14,5 +16,5 @@ pub struct RequestModel {
     agency_code: String,
     product_code: String,
     path: String,
-    from: String,
+    from: Resource,
 }

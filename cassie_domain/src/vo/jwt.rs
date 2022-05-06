@@ -1,3 +1,5 @@
+use std::default;
+
 use cassie_common::error::Error;
 use jsonwebtoken::errors::ErrorKind;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
@@ -9,6 +11,19 @@ use serde::{Deserialize, Serialize};
 *author:String
 *email:348040933@qq.com
 */
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub enum Resource {
+    Admin,//管理端
+    Wxapp,//微信小程序
+    Pc,//pc端
+    Mp//微信公众号
+}
+impl default::Default for Resource {
+    fn default() -> Self {
+        Resource::Admin
+    }
+}
+    
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct JWTToken {
@@ -18,7 +33,7 @@ pub struct JWTToken {
     super_admin: i32,
     //账号
     username: String,
-    from: String,
+    from: Resource,
     //租户编码
     agency_code: String,
     //过期时间

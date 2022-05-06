@@ -36,8 +36,11 @@ impl SqlIntercept for AgencyInterceptor {
         if self.enable {
             if let Some(request_model) = get_local() {
                 //只对管理端进行租户化
-                if request_model.from() == "admin" {
-                    *sql = build(sql.clone(), request_model.agency_code().clone());
+                match request_model.from(){
+                    cassie_domain::vo::jwt::Resource::Admin => {
+                        *sql = build(sql.clone(), request_model.agency_code().clone());
+                    },
+                    _ => {},
                 }
             }
         }
