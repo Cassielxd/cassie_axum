@@ -5,7 +5,7 @@ use crate::observe::event::{CassieEvent, CustomEvent};
 use crate::service::crud_service::CrudService;
 use crate::service::fire_event;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
-use crate::{APPLICATION_CONTEXT, fire_script_event};
+use crate::{fire_script_event, APPLICATION_CONTEXT};
 use axum::routing::get;
 use axum::{
     extract::{Path, Query},
@@ -50,10 +50,9 @@ pub async fn nav() -> impl IntoResponse {
     let request_model = get_local().unwrap();
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     //事件测试代码
-    fire_script_event(None,None).await;
+    fire_script_event(None, None).await;
     RespVO::from_result(&vo).resp_json()
 }
-
 
 /**
  *method:get_by_id

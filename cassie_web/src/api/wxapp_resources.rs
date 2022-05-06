@@ -26,7 +26,7 @@ pub async fn mp_auth(Json(sign): Json<WxSignInVo>) -> impl IntoResponse {
             jwt_token.set_super_admin(0);
             jwt_token.set_username(user.account().clone().unwrap_or_default());
             jwt_token.set_agency_code("".to_string());
-            jwt_token.set_from(cassie_domain::vo::jwt::Resource::Wxapp);
+            jwt_token.set_from(cassie_domain::vo::jwt::Source::Wxapp);
             jwt_token.set_exp(DateTimeNative::now().timestamp_millis() as usize);
 
             let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();

@@ -81,7 +81,7 @@ pub async fn init_context() {
     info!(" - Local:   http://{}:{}", cassie_config.server().host().replace("0.0.0.0", "127.0.0.1"), cassie_config.server().port());
 }
 
-async fn fire_script_event(params_values: Option<HashMap<String, String>>,return_values: Option<HashMap<String, String>>) {
+async fn fire_script_event(params_values: Option<HashMap<String, String>>, return_values: Option<HashMap<String, String>>) {
     let request = get_local();
     match request {
         Some(data) => {

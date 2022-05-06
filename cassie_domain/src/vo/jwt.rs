@@ -12,18 +12,18 @@ use serde::{Deserialize, Serialize};
 *email:348040933@qq.com
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-pub enum Resource {
-    Admin,//管理端
-    Wxapp,//微信小程序
-    Pc,//pc端
-    Mp//微信公众号
+pub enum Source {
+    Admin, //管理端
+    Wxapp, //微信小程序
+    Pc,    //pc端
+    Mp,    //微信公众号
 }
-impl default::Default for Resource {
+impl default::Default for Source {
     fn default() -> Self {
-        Resource::Admin
+        Source::Admin
     }
 }
-    
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Getters, Setters, Default)]
 #[getset(get = "pub", set = "pub")]
 pub struct JWTToken {
@@ -33,7 +33,8 @@ pub struct JWTToken {
     super_admin: i32,
     //账号
     username: String,
-    from: Resource,
+    //来源
+    from: Source,
     //租户编码
     agency_code: String,
     //过期时间

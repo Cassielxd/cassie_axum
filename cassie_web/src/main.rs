@@ -1,4 +1,4 @@
-use axum::{handler::Handler, http::Uri, response::IntoResponse, Router, Server, middleware::from_extractor};
+use axum::{handler::Handler, http::Uri, middleware::from_extractor, response::IntoResponse, Router, Server};
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
