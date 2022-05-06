@@ -12,7 +12,7 @@ members = [
     "cassie_casbin_adapter",
     "cassie_tests"
 ]
-exclude = ["cassie_tests"]
+exclude = ["cassie_tests","cassie_devtools"]
 [profile.release]
 codegen-units = 1
 incremental = true
