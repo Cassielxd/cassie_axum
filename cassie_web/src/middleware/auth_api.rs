@@ -35,7 +35,7 @@ where
 
         /*获取token*/
         let value = HeaderValue::from_str("").unwrap();
-        let headers = req.headers().unwrap();
+        let headers = req.headers();
         let token = headers.get("access_token").unwrap_or(&value);
         let resp: RespVO<String> = RespVO {
             code: Some(-1),

@@ -1,6 +1,4 @@
 use crate::service::ops::init_sys_ops;
-use crate::APPLICATION_CONTEXT;
-use cassie_config::config::ApplicationConfig;
 use deno_runtime::deno_broadcast_channel::InMemoryBroadcastChannel;
 use deno_runtime::deno_core::error::AnyError;
 use deno_runtime::deno_core::FsModuleLoader;
@@ -10,7 +8,6 @@ use deno_runtime::worker::MainWorker;
 use deno_runtime::worker::WorkerOptions;
 use deno_runtime::{deno_core, BootstrapOptions};
 use log::info;
-use serde_json::json;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -48,7 +45,6 @@ fn get_error_class_name(e: &AnyError) -> &'static str {
 ///  workers.execute_script("script_name", code);
 ///  workers.run_event_loop(false).await;
 ///}
-
 pub async fn init(args: Option<Vec<String>>) -> MainWorker {
     let start = Instant::now();
     let module_loader = Rc::new(FsModuleLoader);
@@ -77,7 +73,6 @@ pub async fn init(args: Option<Vec<String>>) -> MainWorker {
 
     let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("js/cassie.js");
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
-    info!("{}", main_module.clone());
     let permissions = Permissions::allow_all();
     let mut main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
     main_worker.execute_main_module(&main_module).await.unwrap();

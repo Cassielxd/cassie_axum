@@ -1,4 +1,4 @@
-use axum::{extract::extractor_middleware, handler::Handler, http::Uri, response::IntoResponse, Router, Server};
+use axum::{handler::Handler, http::Uri, response::IntoResponse, Router, Server, middleware::from_extractor};
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
@@ -42,9 +42,9 @@ async fn main() {
             "/admin",
             admin::routers()
                 .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
-                .layer(extractor_middleware::<auth_admin::Auth>()), //最先执行的
+                .layer(from_extractor::<auth_admin::Auth>()), //最先执行的
         )
-        .nest("/api", api::routers().layer(extractor_middleware::<auth_api::Auth>()))
+        .nest("/api", api::routers().layer(from_extractor::<auth_api::Auth>()))
         .layer(cors)
         .fallback(fallback.into_service());
     // 启动服务
