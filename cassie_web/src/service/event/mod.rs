@@ -54,10 +54,7 @@ pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
 //核心动态脚本执行方法
 async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, custom: &CustomEvent) {
     let start = Instant::now();
-    let init_code = format!(
-        r#" var request_context=JSON.parse({});"#,
-        serde_json::to_string_pretty(&serde_json::to_string_pretty(&json!(custom)).unwrap()).unwrap()
-    );
+    let init_code = format!(r#" var request_context={};"#, custom.as_json());
     for event in data {
         let code = build_script(init_code.clone(), event.event_script().clone().unwrap().clone());
         match workers.js_runtime.execute_script(event.event_name().clone().unwrap().as_str(), code.as_str()) {
