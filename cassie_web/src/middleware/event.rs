@@ -1,4 +1,4 @@
-use crate::{cici_casbin::is_white_list_api, observe::event::CassieEvent, service::fire_event};
+use crate::{observe::event::CassieEvent, service::fire_event};
 use axum::{body::Body, http::Request, response::Response};
 use cassie_domain::dto::sys_log::SysLogOperationDto;
 use futures::future::BoxFuture;
@@ -29,11 +29,9 @@ where
         /*获取method path */
         let action = request.method().clone().to_string();
         let path = request.uri().clone().to_string();
-        let creator_name = if !is_white_list_api(path.clone()) {
-            let request_model = get_local().unwrap();
-            Some(request_model.username().clone())
-        } else {
-            None
+        let creator_name = match get_local() {
+            Some(request_model) => Some(request_model.username().clone()),
+            None => None,
         };
         //调用service
         let future = self.inner.call(request);

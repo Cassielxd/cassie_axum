@@ -1,15 +1,13 @@
-use axum::{handler::Handler, http::Uri, middleware::from_extractor, response::IntoResponse, Router, Server};
+use axum::{handler::Handler, http::Uri, response::IntoResponse, Router, Server};
 use cassie_common::RespVO;
 use cassie_config::config::ApplicationConfig;
 use cassie_web::{
     init_context,
-    middleware::{auth_admin, auth_api, event::EventMiddleware},
     routers::{admin, api},
     APPLICATION_CONTEXT,
 };
 use log::warn;
 use std::time::Duration;
-use tower::layer::layer_fn;
 use tower_http::cors::{Any, CorsLayer};
 
 async fn fallback(uri: Uri) -> impl IntoResponse {
@@ -38,13 +36,8 @@ async fn main() {
     let cors = CorsLayer::new().allow_methods(Any).allow_origin(Any).allow_headers(Any).max_age(Duration::from_secs(60) * 10);
     //绑定端口 初始化 路由
     let app = Router::new()
-        .nest(
-            "/admin",
-            admin::routers()
-                .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
-                .layer(from_extractor::<auth_admin::Auth>()), //最先执行的
-        )
-        .nest("/api", api::routers().layer(from_extractor::<auth_api::Auth>()))
+        .nest("/admin", admin::routers())
+        .nest("/api", api::routers())
         .layer(cors)
         .fallback(fallback.into_service());
     // 启动服务

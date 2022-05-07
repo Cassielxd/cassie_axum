@@ -1,19 +1,25 @@
-use crate::admin::{
-    asi::{asi_group_column_resource, asi_group_resource, asi_group_values_resource},
-    sys::{
-        sys_auth_resource, sys_config_resource, sys_config_tab_resource, sys_dict_type_resource, sys_dict_value_resource, sys_group_data_resource, sys_group_resource, sys_menu_resource,
-        sys_params_resource, sys_role_resource, sys_upload_resource, sys_user_resource,
+use crate::{
+    admin::{
+        asi::{asi_group_column_resource, asi_group_resource, asi_group_values_resource},
+        sys::{
+            sys_auth_resource, sys_config_resource, sys_config_tab_resource, sys_dict_type_resource, sys_dict_value_resource, sys_group_data_resource, sys_group_resource, sys_menu_resource,
+            sys_params_resource, sys_role_resource, sys_upload_resource, sys_user_resource,
+        },
     },
+    middleware::{auth_admin, event::EventMiddleware},
 };
 use axum::{
+    middleware::from_extractor,
     routing::{get, post},
     Router,
 };
+use tower::layer::layer_fn;
 pub fn routers() -> Router {
+    need_auth_routers().merge(noneed_auth_routers())
+}
+//需要权限认证的路由
+pub fn need_auth_routers() -> Router {
     Router::new()
-        //-------------------------------------登录服务-------------------------------------------------------
-        .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
-        .route("/login", post(sys_auth_resource::login))
         //-------------------------------------菜单服务-------------------------------------------------------
         .merge(sys_menu_resource::init_router())
         //-------------------------------------用户服务-------------------------------------------------------
@@ -39,4 +45,13 @@ pub fn routers() -> Router {
         //-------------------------------------组合数据-------------------------------------------------------
         .merge(sys_group_resource::init_router())
         .merge(sys_group_data_resource::init_router())
+        .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
+        .layer(from_extractor::<auth_admin::Auth>()) //最先执行的
+}
+//不需要权限认证的路由
+pub fn noneed_auth_routers() -> Router {
+    Router::new()
+        //-------------------------------------登录服务-------------------------------------------------------
+        .route("/captcha/:uuid", get(sys_auth_resource::captcha_img))
+        .route("/login", post(sys_auth_resource::login))
 }
