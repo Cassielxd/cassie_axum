@@ -12,3 +12,4 @@ tokio = { version = "1", features = ["full", "fs", "io-util", "sync"] }
 serde = { version = "1", features = ["derive"] }
 rbson = "2.0"
 rbatis = { version = "3.0", default-features = false, features = ["mysql", "runtime-async-std-rustls"] }
+gag = "1.0.0"
