@@ -68,7 +68,7 @@ async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, cu
     info!("execute script time {} 毫秒", start.elapsed().as_millis().to_string());
 }
 //构建脚本每个脚本独立运行上下文隔离
-fn build_script(init_code: String, event_script: String) -> String {
+pub fn build_script(init_code: String, event_script: String) -> String {
     let script = format!(
         r#"
         "use strict";

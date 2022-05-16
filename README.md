@@ -56,9 +56,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
  3. 启动前端项目https://gitee.com/stringlxd/cassie_admin
     默认端口 9999
 
-#### javascript playground
 
-![图片](./img.png)
 
 
 #### 目录结构
@@ -264,6 +262,28 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+
+2022.5.16
+完成js playground开发
+![图片](./img.png)
+```renderscript
+//获取数据字典     
+let  data = Cassie.getAllDict();
+for(let i=0;i<data.length;i++){
+console.log("name:"+data[i].dict_name);
+//获取系统配置
+let  data = Cassie.getConfig();
+console.log(data.redis_url);
+//根据id获取用户
+let  data = Cassie.getUserById("1");
+console.log(data);
+//获取当前登录用户
+let request_model = request_context.request_model;
+let data = Cassie.getUserById(request_model.uid+"");
+console.log(data);
+```
+
+
 2022.4.25
 微信开发
 ````````````````````````````````````````````````````````````````
