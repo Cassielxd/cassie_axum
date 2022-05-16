@@ -6,9 +6,7 @@ use cassie_web::{
     routers::{admin, api},
     APPLICATION_CONTEXT,
 };
-use gag::BufferRedirect;
 use log::warn;
-use std::io::Read;
 use std::time::Duration;
 use tower_http::cors::{Any, CorsLayer};
 
