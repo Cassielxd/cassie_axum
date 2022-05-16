@@ -43,6 +43,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
 6. 动态表单实现
 7. 租户化实现
 8. javascript动态脚本集成
+9. 自定义javascript playground
 
 #### 使用说明
 
@@ -54,6 +55,11 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
    cago run
  3. 启动前端项目https://gitee.com/stringlxd/cassie_admin
     默认端口 9999
+
+#### javascript playground
+
+![图片](./img.png)
+
 
 #### 目录结构
 ```
