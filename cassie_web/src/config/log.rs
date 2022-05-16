@@ -2,6 +2,7 @@ use fast_log::config::Config;
 use fast_log::consts::LogSize;
 use fast_log::plugin::file_split::RollingType;
 use fast_log::plugin::packer::ZipPacker;
+use log::Level;
 use std::time::Duration;
 
 use crate::APPLICATION_CONTEXT;
@@ -13,12 +14,17 @@ pub fn init_log() {
     //create log dir
     std::fs::create_dir_all(&cassie_config.log_dir());
     //initialize fast log
-    fast_log::init(Config::new().console().file_split(
-        &cassie_config.log_dir(),
-        str_to_temp_size(&cassie_config.log_temp_size()),
-        str_to_rolling(&cassie_config.log_rolling_type()),
-        ZipPacker {},
-    ))
+    fast_log::init(
+        Config::new()
+            .console()
+            .file_split(
+                &cassie_config.log_dir(),
+                str_to_temp_size(&cassie_config.log_temp_size()),
+                str_to_rolling(&cassie_config.log_rolling_type()),
+                ZipPacker {},
+            )
+            .level(Level::Info),
+    )
     .unwrap();
 }
 

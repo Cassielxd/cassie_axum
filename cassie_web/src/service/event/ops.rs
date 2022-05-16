@@ -1,3 +1,5 @@
+use std::sync::{Mutex, Arc};
+
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::{sys_dict_dto::SysDictTypeDTO, sys_user_dto::SysUserDTO};
 use deno_core::{op, Extension};
@@ -29,5 +31,65 @@ fn op_user_info(id: String) -> Result<SysUserDTO, deno_core::error::AnyError> {
 }
 
 pub fn init_sys_ops() -> Extension {
-    Extension::builder().ops(vec![op_user_info::decl(), op_all_dict::decl(), op_config::decl()]).build()
+    Extension::builder()
+    .middleware(|op| match op.name {
+        "op_print" =>op_print::decl() ,
+        _ => op,
+      })
+    .ops(vec![op_user_info::decl(), op_all_dict::decl(), op_config::decl(), op_print::decl()]).build()
+}
+
+
+
+#[op]
+pub fn op_print(msg: String, is_err: bool) -> Result<(), deno_core::error::AnyError> {
+    set_msg(msg);
+    Ok(())
+}
+
+pub fn get_msg() -> Option<Vec<String>> {
+    let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<Vec<String>>>>();
+    match request_model {
+        None => None,
+        Some(e) => {
+            let mut e = e.lock().unwrap();
+            Some(e.clone())
+        }
+    }
+}
+
+pub fn set_msg(msg: String) {
+    let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<Vec<String>>>>();
+    match request_model {
+        Some(d) => {
+            let a = d.clone();
+            let mut vec = a.lock().unwrap();
+            vec.push(msg);
+        }
+        None => {
+            APPLICATION_CONTEXT.set_local(move || {
+                let mut vec = Vec::<String>::new();
+                vec.push(msg.clone());
+                let mutex = Arc::new(Mutex::new(vec));
+                return mutex;
+            });
+        }
+    }
+}
+pub fn clear_msg(){
+    let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<Vec<String>>>>();
+    match request_model {
+        Some(d) => {
+            let a = d.clone();
+            let mut vec = a.lock().unwrap();
+            *vec=Vec::<String>::new();
+        }
+        None => {
+            APPLICATION_CONTEXT.set_local(move || {
+                let vec = Vec::<String>::new();
+                let mutex = Arc::new(Mutex::new(vec));
+                return mutex;
+            });
+        }
+    }
 }

@@ -847,6 +847,8 @@ dependencies = [
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
+ "deno_core",
+ "deno_runtime",
  "gag",
  "rbatis",
  "rbson",
