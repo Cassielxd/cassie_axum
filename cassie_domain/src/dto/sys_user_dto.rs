@@ -2,6 +2,7 @@ use crate::entity::sys_entitys::SysUser;
 use serde::{Deserialize, Serialize};
 use validator_derive::Validate;
 #[derive(Clone, Debug, Serialize, Validate, Deserialize, Getters, Setters, Default)]
+#[serde(rename_all = "camelCase")]
 #[getset(get = "pub", set = "pub")]
 pub struct SysUserDTO {
     id: Option<i64>,

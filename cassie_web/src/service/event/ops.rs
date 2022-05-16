@@ -3,6 +3,7 @@ use std::sync::{Mutex, Arc};
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::{sys_dict_dto::SysDictTypeDTO, sys_user_dto::SysUserDTO};
 use deno_core::{op, Extension};
+use log::info;
 
 use crate::{
     service::{crud_service::CrudService, sys_dict_service::get_all_list, sys_user_service::SysUserService},
@@ -24,7 +25,7 @@ fn op_all_dict() -> Result<Vec<SysDictTypeDTO>, deno_core::error::AnyError> {
 
 //获取用户信息
 #[op]
-fn op_user_info(id: String) -> Result<SysUserDTO, deno_core::error::AnyError> {
+pub fn op_user_info(id: String) -> Result<SysUserDTO, deno_core::error::AnyError> {
     let user_service = APPLICATION_CONTEXT.get::<SysUserService>();
     let vo = async_std::task::block_on(async { user_service.get(id).await });
     Ok(vo.unwrap())

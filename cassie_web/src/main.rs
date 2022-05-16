@@ -31,7 +31,6 @@ async fn fallback(uri: Uri) -> impl IntoResponse {
 async fn main() {
     //初始化上环境下文
     init_context().await;
-
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let server = format!("{}:{}", cassie_config.server().host(), cassie_config.server().port());
     let cors = CorsLayer::new().allow_methods(Any).allow_origin(Any).allow_headers(Any).max_age(Duration::from_secs(60) * 10);

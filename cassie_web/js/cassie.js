@@ -2,13 +2,13 @@
 ((window) => {
     const core = Deno.core;
     function getConfig(){
-        return core.opAsync("op_config");
+        return core.opSync("op_config");
     }
     function getAllDict(){
-        return core.opAsync("op_all_dict");
+        return core.opSync("op_all_dict");
     }
     function getUserById(id){
-        return core.opAsync("op_user_info",id);
+        return core.opSync("op_user_info",id);
     }
     const finalCassieOP = {
         getConfig:getConfig,
