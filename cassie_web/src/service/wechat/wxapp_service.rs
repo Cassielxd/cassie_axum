@@ -46,7 +46,7 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
         uid = if let Some(routine_openid) = user.routine_openid() {
             let list = wechat_user_service.fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()]).await.unwrap();
             if list.len() > 0 {
-               let  userinfo = list.get(0).unwrap();
+                let userinfo = list.get(0).unwrap();
                 let uid = userinfo.id().clone().unwrap();
                 //执行更新逻辑
                 wechat_user_service.update_by_id(uid.to_string(), &mut user.clone().into()).await;

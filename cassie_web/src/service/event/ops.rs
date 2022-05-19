@@ -1,8 +1,8 @@
-use std::sync::{Mutex, Arc};
+use std::sync::{Arc, Mutex};
 
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::{sys_dict_dto::SysDictTypeDTO, sys_user_dto::SysUserDTO};
-use deno_core::{op, Extension};
+use deno_core::{op, Extension, OpDecl};
 use log::info;
 
 use crate::{
@@ -32,15 +32,19 @@ pub fn op_user_info(id: String) -> Result<SysUserDTO, deno_core::error::AnyError
 }
 
 pub fn init_sys_ops() -> Extension {
-    Extension::builder()
-    .middleware(|op| match op.name {
-        "op_print" =>op_print::decl() ,
+    let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    let mut builder = Extension::builder();
+
+    //如果是开发环境 则重写 op_print 方法
+    let f = |op: OpDecl| match op.name {
+        "op_print" => op_print::decl(),
         _ => op,
-      })
-    .ops(vec![op_user_info::decl(), op_all_dict::decl(), op_config::decl(), op_print::decl()]).build()
+    };
+    if *config.debug() {
+        builder.middleware(f);
+    }
+    builder.ops(vec![op_user_info::decl(), op_all_dict::decl(), op_config::decl(), op_print::decl()]).build()
 }
-
-
 
 #[op]
 pub fn op_print(msg: String, is_err: bool) -> Result<(), deno_core::error::AnyError> {
@@ -77,13 +81,13 @@ pub fn set_msg(msg: String) {
         }
     }
 }
-pub fn clear_msg(){
+pub fn clear_msg() {
     let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<Vec<String>>>>();
     match request_model {
         Some(d) => {
             let a = d.clone();
             let mut vec = a.lock().unwrap();
-            *vec=Vec::<String>::new();
+            *vec = Vec::<String>::new();
         }
         None => {
             APPLICATION_CONTEXT.set_local(move || {

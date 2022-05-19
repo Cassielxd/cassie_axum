@@ -26,7 +26,9 @@ pub async fn run(Json(arg): Json<HashMap<String, String>>) -> impl IntoResponse 
         let code = build_script(init_code.clone(), original_code.clone());
         match worker.js_runtime.execute_script("test.js", &code) {
             Ok(data) => {
-                msg = get_msg().unwrap();
+                if let Some(m) = get_msg() {
+                    msg = m;
+                }
             }
             Err(e) => {
                 msg.push(e.to_string());

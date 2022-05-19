@@ -1,10 +1,11 @@
 use crate::{
     admin::{
         asi::{asi_group_column_resource, asi_group_resource, asi_group_values_resource},
+        jsruntime::init_router,
         sys::{
             sys_auth_resource, sys_config_resource, sys_config_tab_resource, sys_dict_type_resource, sys_dict_value_resource, sys_group_data_resource, sys_group_resource, sys_menu_resource,
             sys_params_resource, sys_role_resource, sys_upload_resource, sys_user_resource,
-        }, jsruntime::init_router,
+        },
     },
     middleware::{auth_admin, event::EventMiddleware},
 };
@@ -45,7 +46,6 @@ pub fn need_auth_routers() -> Router {
         //-------------------------------------组合数据-------------------------------------------------------
         .merge(sys_group_resource::init_router())
         .merge(sys_group_data_resource::init_router())
-
         .merge(init_router())
         .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
         .layer(from_extractor::<auth_admin::Auth>()) //最先执行的
