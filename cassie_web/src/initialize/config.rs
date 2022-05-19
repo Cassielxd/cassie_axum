@@ -1,9 +1,13 @@
 use crate::APPLICATION_CONTEXT;
 use cassie_config::config::ApplicationConfig;
+use std::env;
+use tokio::fs::{read_to_string, File};
+use tokio::io::AsyncReadExt;
+
 //初始化配置信息
 pub async fn init_config() {
-    let yml_data = include_str!("../../application.yml");
-    let mut config = ApplicationConfig::new(yml_data);
+    let content = read_to_string("application.yml").await.unwrap();
+    let mut config = ApplicationConfig::new(content.as_str());
     let mut list = match config.admin_auth_list_api().clone() {
         Some(e) => e,
         None => Vec::new(),

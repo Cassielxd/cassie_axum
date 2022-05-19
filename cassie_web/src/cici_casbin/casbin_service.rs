@@ -40,7 +40,6 @@ impl CasbinService {
      */
     pub async fn default() -> Self {
         /*加载模型文件*/
-
         let m = DefaultModel::from_str(MODEL_AUTH).await.unwrap();
         info!("casbin model init success!");
 
