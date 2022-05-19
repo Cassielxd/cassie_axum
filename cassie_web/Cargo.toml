@@ -7,9 +7,9 @@ author = "String<348040933@qq.com>"
 
 [dependencies]
 axum ={version="0.5.4",features = ["multipart"] }
-tokio = { version = "1",features = ["full"] }
-tower ={version="0.4.0",features = ["full"] }
-tower-http = { version = "0.2.0", features = ["full"] }
+tokio = { version = "1" }
+tower ={version="0.4.0" }
+tower-http = { version = "0.2.0" }
 #serde and json
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
