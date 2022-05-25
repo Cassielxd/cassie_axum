@@ -10,12 +10,11 @@ use crate::{
 use anyhow::Error as AnyError;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
-use deno_core::{v8::{self, Global}, anyhow, serde_v8::Value};
+use deno_core::{v8::{self}, anyhow};
 use deno_runtime::worker::MainWorker;
 use log::info;
 use pharos::SharedPharos;
 use retry::{retry_with_index, delay::Fixed, OperationResult, Error};
-use serde_json::json;
 use tokio::time::Instant;
 //事件消费 待二次开发 todo
 pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
