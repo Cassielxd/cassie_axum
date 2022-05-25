@@ -16,7 +16,7 @@ pub struct EventConfig {
     pub event_name: Option<String>,
     pub lock_user_id: Option<String>,
     pub event_script: Option<String>,
-    pub need_persist: Option<String>,
+    pub need_persist: Option<u64>,
 }
 impl_field_name_method!(EventConfig {
     id,

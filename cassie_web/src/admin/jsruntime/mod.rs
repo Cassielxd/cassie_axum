@@ -5,17 +5,16 @@ use crate::{get_local, CustomEvent};
 use axum::response::IntoResponse;
 use axum::routing::post;
 use axum::{Json, Router};
-use cassie_common::error::Error;
 use cassie_common::RespVO;
 use std::collections::HashMap;
-use std::path::Path;
 
 pub async fn run(Json(arg): Json<HashMap<String, String>>) -> impl IntoResponse {
+    clear_msg();
     let request = get_local().unwrap();
     let cus = CustomEvent {
         path: request.path().clone(),
-        params_values: None,
-        return_values: None,
+        params_values: serde_json::Value::Null,
+        return_values: serde_json::Value::Null,
         request_model: Some(request),
     };
     let original_code = arg.get("code").unwrap();
@@ -35,7 +34,7 @@ pub async fn run(Json(arg): Json<HashMap<String, String>>) -> impl IntoResponse 
             }
         }
     });
-    clear_msg();
+
     return RespVO::from(&msg.join("<br/>")).resp_json();
 }
 

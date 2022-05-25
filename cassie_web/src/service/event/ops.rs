@@ -57,7 +57,7 @@ pub fn get_msg() -> Option<Vec<String>> {
     match request_model {
         None => None,
         Some(e) => {
-            let mut e = e.lock().unwrap();
+            let e = e.lock().unwrap();
             Some(e.clone())
         }
     }

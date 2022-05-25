@@ -18,7 +18,7 @@ pub struct EventConfigDTO {
     event_name: Option<String>,
     lock_user_id: Option<String>,
     event_script: Option<String>,
-    need_persist: Option<String>,
+    need_persist: Option<u64>,
 }
 
 impl From<EventConfig> for EventConfigDTO {

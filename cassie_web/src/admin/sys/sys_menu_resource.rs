@@ -50,7 +50,7 @@ pub async fn nav() -> impl IntoResponse {
     let request_model = get_local().unwrap();
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     //事件测试代码
-    fire_script_event(None, None).await;
+    fire_script_event(serde_json::Value::Null, serde_json::Value::Null).await;
     RespVO::from_result(&vo).resp_json()
 }
 

@@ -8,8 +8,8 @@ use serde_json::json;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct CustomEvent {
     pub path: String,
-    pub params_values: Option<HashMap<String, String>>,
-    pub return_values: Option<HashMap<String, String>>,
+    pub params_values: serde_json::Value,
+    pub return_values: serde_json::Value,
     pub request_model: Option<RequestModel>,
 }
 

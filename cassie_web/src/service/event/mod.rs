@@ -7,11 +7,14 @@ use crate::{
     service::crud_service::CrudService,
     APPLICATION_CONTEXT,
 };
+use anyhow::Error as AnyError;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
+use deno_core::{v8::{self, Global}, anyhow, serde_v8::Value};
 use deno_runtime::worker::MainWorker;
 use log::info;
 use pharos::SharedPharos;
+use retry::{retry_with_index, delay::Fixed, OperationResult, Error};
 use serde_json::json;
 use tokio::time::Instant;
 //事件消费 待二次开发 todo
@@ -57,15 +60,37 @@ async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, cu
     let init_code = format!(r#" var request_context={};"#, custom.as_json());
     for event in data {
         let code = build_script(init_code.clone(), event.event_script().clone().unwrap().clone());
-        match workers.js_runtime.execute_script(event.event_name().clone().unwrap().as_str(), code.as_str()) {
-            Ok(data) => {}
-            Err(e) => {
-                info!("error info {:#?}", e.to_string());
+        //如果错误需要重试
+       let result = retry_with_index(Fixed::from_millis(100), |current_try|{
+            if current_try > event.need_persist().unwrap() {
+                return OperationResult::Err(format!("超过重试次数：{}", current_try));
             }
-        }
+            match do_execute_script(workers,event.event_name().clone().unwrap().as_str(), code.as_str()) {
+                Ok(result) => OperationResult::Ok(result),
+                Err(e) => OperationResult::Retry(e.to_string()),
+            } 
+        });
+        handle_result(result,event.clone(),custom.clone());
     }
     workers.run_event_loop(false).await;
     info!("execute script time {} 毫秒", start.elapsed().as_millis().to_string());
+}
+
+//处理结果集  event 事件  custom参数
+fn handle_result(result:Result<v8::Global<v8::Value>, Error<String>>,event:EventConfigDTO,custom:CustomEvent) {
+       match result {
+        Ok(data) =>{
+            //处理结果
+        },
+        Err(e) => {
+            //处理错误 保存错误日志  
+            
+        },
+    }
+}
+
+fn do_execute_script(workers: &mut MainWorker,name: &str,source_code: &str)->Result<v8::Global<v8::Value>, AnyError>{
+     workers.js_runtime.execute_script(name, source_code)
 }
 //构建脚本每个脚本独立运行上下文隔离
 pub fn build_script(init_code: String, event_script: String) -> String {

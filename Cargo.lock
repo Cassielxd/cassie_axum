@@ -391,6 +391,7 @@ checksum = "f4af7447fc1214c1f3a1ace861d0216a6c8bb13965b64bbad9650f375b67689a"
 dependencies = [
  "async-trait",
  "axum-core",
+ "base64 0.13.0",
  "bitflags",
  "bytes",
  "futures-util",
@@ -407,8 +408,10 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
+ "sha-1 0.10.0",
  "sync_wrapper",
  "tokio",
+ "tokio-tungstenite 0.17.1",
  "tower",
  "tower-http 0.3.2",
  "tower-layer",
@@ -891,6 +894,7 @@ dependencies = [
  "rbson",
  "redis",
  "reqwest",
+ "retry",
  "serde",
  "serde_json",
  "sqlparser 0.15.0",
@@ -1633,7 +1637,7 @@ dependencies = [
  "serde",
  "tokio",
  "tokio-rustls",
- "tokio-tungstenite",
+ "tokio-tungstenite 0.16.1",
 ]
 
 [[package]]
@@ -4387,6 +4391,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "retry"
+version = "1.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac95c60a949a63fd2822f4964939662d8f2c16c4fa0624fd954bc6e703b9a3f6"
+dependencies = [
+ "rand 0.8.5",
+]
+
+[[package]]
 name = "rexpr"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5670,9 +5683,21 @@ dependencies = [
  "rustls 0.20.4",
  "tokio",
  "tokio-rustls",
- "tungstenite",
+ "tungstenite 0.16.0",
  "webpki 0.22.0",
  "webpki-roots 0.22.3",
+]
+
+[[package]]
+name = "tokio-tungstenite"
+version = "0.17.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "06cda1232a49558c46f8a504d5b93101d42c0bf7f911f12a105ba48168f821ae"
+dependencies = [
+ "futures-util",
+ "log",
+ "tokio",
+ "tungstenite 0.17.2",
 ]
 
 [[package]]
@@ -5959,6 +5984,25 @@ dependencies = [
  "url",
  "utf-8",
  "webpki 0.22.0",
+]
+
+[[package]]
+name = "tungstenite"
+version = "0.17.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d96a2dea40e7570482f28eb57afbe42d97551905da6a9400acc5c328d24004f5"
+dependencies = [
+ "base64 0.13.0",
+ "byteorder",
+ "bytes",
+ "http",
+ "httparse",
+ "log",
+ "rand 0.8.5",
+ "sha-1 0.10.0",
+ "thiserror",
+ "url",
+ "utf-8",
 ]
 
 [[package]]
