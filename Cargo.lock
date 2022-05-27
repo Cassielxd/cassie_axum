@@ -823,6 +823,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "cassie_event"
+version = "0.1.0"
+dependencies = [
+ "proc-macro-crate",
+ "proc-macro2 1.0.37",
+ "quote 1.0.18",
+ "syn 1.0.91",
+]
+
+[[package]]
 name = "cassie_orm"
 version = "0.1.0"
 dependencies = [
@@ -850,15 +860,7 @@ dependencies = [
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
- "deno_core",
- "deno_runtime",
- "gag",
- "rbatis",
- "rbson",
- "reqwest",
- "serde",
- "sqlparser 0.16.0",
- "tokio",
+ "cassie_event",
 ]
 
 [[package]]
@@ -897,7 +899,7 @@ dependencies = [
  "retry",
  "serde",
  "serde_json",
- "sqlparser 0.15.0",
+ "sqlparser",
  "state",
  "thread_local",
  "tokio",
@@ -1926,17 +1928,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "filedescriptor"
-version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7199d965852c3bac31f779ef99cbb4537f80e952e2d6aa0ffeb30cce00f4f46e"
-dependencies = [
- "libc",
- "thiserror",
- "winapi",
-]
-
-[[package]]
 name = "filetime"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2169,16 +2160,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
 dependencies = [
  "byteorder",
-]
-
-[[package]]
-name = "gag"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a713bee13966e9fbffdf7193af71d54a6b35a0bb34997cd6c9519ebeb5005972"
-dependencies = [
- "filedescriptor",
- "tempfile",
 ]
 
 [[package]]
@@ -5176,15 +5157,6 @@ name = "sqlparser"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "adbbea2526ad0d02ad9414a07c396078a5b944bbf9ca4fbab8f01bb4cb579081"
-dependencies = [
- "log",
-]
-
-[[package]]
-name = "sqlparser"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e9a527b68048eb95495a1508f6c8395c8defcff5ecdbe8ad4106d08a2ef2a3c"
 dependencies = [
  "log",
 ]

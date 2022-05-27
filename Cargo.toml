@@ -10,7 +10,8 @@ members = [
     "cassie_web",
     "cassie_wx",
     "cassie_casbin_adapter",
-    "cassie_tests"
+    "cassie_tests",
+    "cassie_event"
 ]
 exclude = ["cassie_tests","cassie_devtools"]
 [profile.release]
