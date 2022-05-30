@@ -45,13 +45,16 @@ pub async fn list() -> impl IntoResponse {
     let vo = sys_menu_service.menu_list().await;
     RespVO::from_result(&vo).resp_json()
 }
+///api_operation event_bus触发器
+/// #[api_operation("result=false")] 返回值为Result类型 默认是true  关闭 false 
+/// #[api_operation("return=true")]  是否传递返回值 到jsRuntime里面 默认是不开启的
+/// #[api_operation("result=false|return=true")]多参数同时使用
 #[api_operation]
 pub async fn nav() -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let request_model = get_local().unwrap();
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     vo
-    
 }
 
 /**
@@ -65,6 +68,7 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
     let dto = sys_menu_service.get(id).await;
     RespVO::from_result(&dto).resp_json()
 }
+
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     sys_menu_service.del(&id).await;

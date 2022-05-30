@@ -1,16 +1,48 @@
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{parse_macro_input, AttributeArgs, ItemFn, FnArg, Local, token::{Let, Semi}, PatIdent, parse::Parse, punctuated::Punctuated, Pat, Ident, PatType, Token};
+use syn::{parse_macro_input, AttributeArgs, ItemFn, FnArg, Local, token::{Let, Semi, Else}, PatIdent, parse::Parse, punctuated::Punctuated, Pat, Ident, PatType, Token, NestedMeta, LitBool, LitStr};
 
 #[proc_macro_attribute]
 pub fn api_operation(attr: TokenStream, item: TokenStream) -> TokenStream {
     let args = parse_macro_input!(attr as AttributeArgs);
+    
     let func = syn::parse::<syn::ItemFn>(item.clone()).expect("只适用于函数");
     let stream = impl_api_operation(&func, &args);
     
     stream
 }
 
+pub(crate) fn formate_params(args:&Vec<NestedMeta>)->(bool,bool){
+    let  mut result=(true,false);
+      for arg  in args {
+        println!("{:#?}", arg);
+          match arg{
+            NestedMeta::Lit(lit) => {
+                match lit {
+                    syn::Lit::Str(s) => {
+                       let data = s.value();
+                       let params = data.split("|").collect::<Vec<&str>>();
+                       for param in  params{
+                            let a = param.split("=").collect::<Vec<&str>>();
+                            if a.len()>1{
+                                if a[0] =="result"{
+                                    result.0 = false;
+                                }
+                                if a[0] =="return"{
+                                    result.1 = true;
+                                }
+                            }
+                       }
+                      
+                    },
+                    _=>{},
+                }
+            },
+            _=>{}
+        }
+      }
+      result
+} 
 
 pub(crate) fn impl_api_operation(target_fn: &ItemFn, args: &AttributeArgs) -> TokenStream {
     //返回值类型
@@ -22,17 +54,35 @@ pub(crate) fn impl_api_operation(target_fn: &ItemFn, args: &AttributeArgs) -> To
     let params = get_params_value(target_fn.sig.inputs.clone());
     //拿到方法体
     let fn_body = target_fn.block.to_token_stream();
+    let (is_result,is_return) = formate_params(args);
+    let res = if is_result{
+        quote! {
+            RespVO::from_result(&result).resp_json()
+        }
+     }else{
+        quote! {
+            RespVO::from(&result).resp_json()
+        }
+     };
+     let rerurn = if is_return{
+        quote! {
+            let result_values=serde_json::to_value(result.clone()).unwrap();
+        }
+     }else{
+        quote! {
+            let result_values=serde_json::Value::Null;
+        }
+     };
     return quote! {
         pub async fn #func_name_ident(#func_args_stream) #return_ty {
           use cassie_common::RespVO;
           use crate::service::fire_event;
            #params
            let result =  #fn_body ;
-           let result_values=serde_json::to_value(result.clone()).unwrap();
-           println!("{:#?}",parm);
+           #rerurn
            //事件发送代码
            fire_script_event(parm, result_values).await;
-           RespVO::from_result(&result).resp_json()
+           #res
           }
      }
          .into();
