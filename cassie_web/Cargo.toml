@@ -70,5 +70,5 @@ deno_core = "0.133.0"
 deno_runtime = "0.59.0"
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
-
+cassie_event = {path="../cassie_event"}
 retry = "1.3.1"

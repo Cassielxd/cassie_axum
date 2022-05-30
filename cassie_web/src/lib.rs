@@ -81,13 +81,13 @@ pub async fn init_context() {
     info!(" - Local:   http://{}:{}", cassie_config.server().host().replace("0.0.0.0", "127.0.0.1"), cassie_config.server().port());
 }
 
-async fn fire_script_event(params_values: serde_json::Value, return_values: serde_json::Value) {
+async fn fire_script_event(params_values: HashMap < String, serde_json :: Value >, return_values: serde_json::Value) {
     let request = get_local();
     match request {
         Some(data) => {
             let cus = CustomEvent {
                 path: data.path().clone(),
-                params_values,
+                params_values:Some(params_values),
                 return_values,
                 request_model: Some(data),
             };

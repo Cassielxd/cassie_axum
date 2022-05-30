@@ -861,6 +861,8 @@ name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
  "cassie_event",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -877,6 +879,7 @@ dependencies = [
  "cassie_common",
  "cassie_config",
  "cassie_domain",
+ "cassie_event",
  "cassie_orm",
  "cassie_storage",
  "cassie_wx",
