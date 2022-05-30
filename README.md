@@ -262,7 +262,22 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
-
+2022.5.30
+event事件宏定义
+开发者无需关注事件如何发送触发
+只需要在数据库里配置响应脚本即可
+```rust
+///api_operation event_bus触发器
+/// #[api_operation("result=false")] 返回值为Result类型 默认是true   false 
+/// #[api_operation("return=true")]  是否传递返回值 到jsRuntime里面 默认是不开启的
+/// #[api_operation("result=false|return=true")]多参数同时使用
+#[api_operation]
+pub async fn nav() -> impl IntoResponse {
+    let request_model = get_local().unwrap();
+    let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
+    vo
+}
+```
 2022.5.16
 完成js playground开发
 ![图片](./img.png)

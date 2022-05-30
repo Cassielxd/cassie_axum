@@ -46,7 +46,7 @@ pub async fn list() -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 ///api_operation event_bus触发器
-/// #[api_operation("result=false")] 返回值为Result类型 默认是true  关闭 false 
+/// #[api_operation("result=false")] 返回值为Result类型 默认是true   false 
 /// #[api_operation("return=true")]  是否传递返回值 到jsRuntime里面 默认是不开启的
 /// #[api_operation("result=false|return=true")]多参数同时使用
 #[api_operation]
