@@ -10,8 +10,9 @@ use crate::{
 use anyhow::Error as AnyError;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
+use deno_core::v8::{Global, Value};
 use deno_core::{
-    anyhow,
+    anyhow, serde_v8,
     v8::{self},
 };
 use deno_runtime::worker::MainWorker;
@@ -38,7 +39,7 @@ pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
         //消息事件
         CassieEvent::Sms { sms_type } => {
             //todo!("消息事件");  短信发送  公众号消息  app消息
-        },
+        }
         //自定义事件
         CassieEvent::Custom(custom) => {
             let event_config_service = APPLICATION_CONTEXT.get::<EventConfigService>();
@@ -81,7 +82,7 @@ async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, cu
 }
 
 //处理结果集  event 事件  custom参数
-fn handle_result(result: Result<v8::Global<v8::Value>, Error<String>>, event: EventConfigDTO, custom: CustomEvent) {
+fn handle_result(result: Result<serde_json::Value, Error<String>>, event: EventConfigDTO, custom: CustomEvent) {
     match result {
         Ok(data) => {
             //处理结果 由于是异步处理处理结果可以放到数据库里
@@ -91,9 +92,20 @@ fn handle_result(result: Result<v8::Global<v8::Value>, Error<String>>, event: Ev
         }
     }
 }
-//执行脚本
-fn do_execute_script(workers: &mut MainWorker, name: &str, source_code: &str) -> Result<v8::Global<v8::Value>, AnyError> {
-    workers.js_runtime.execute_script(name, source_code)
+//执行脚本 并处理结果集
+fn do_execute_script(workers: &mut MainWorker, name: &str, source_code: &str) -> Result<serde_json::Value, String> {
+    match workers.js_runtime.execute_script(name, source_code) {
+        Ok(global) => {
+            let scope = &mut workers.js_runtime.handle_scope();
+            let local = v8::Local::new(scope, global);
+            let deserialized_value = serde_v8::from_v8::<serde_json::Value>(scope, local);
+            match deserialized_value {
+                Ok(value) => Ok(value),
+                Err(err) => Err(format!("Cannot deserialize value: {:?}", err)),
+            }
+        }
+        Err(e) => e,
+    }
 }
 //构建脚本每个脚本独立运行上下文隔离
 pub fn build_script(init_code: String, event_script: String) -> String {
