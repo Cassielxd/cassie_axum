@@ -11,7 +11,8 @@ members = [
     "cassie_wx",
     "cassie_casbin_adapter",
     "cassie_tests",
-    "cassie_event"
+    "cassie_event",
+    "cassie_msg"
 ]
 exclude = ["cassie_tests","cassie_devtools"]
 [profile.release]
@@ -56,3 +57,5 @@ opt-level = 3
 
 [profile.release.package.serde]
 opt-level = 3
+
+

@@ -9,3 +9,4 @@ edition = "2021"
 cassie_event = {path="../cassie_event"}
 serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
+cassie_msg = {path="../cassie_msg"}

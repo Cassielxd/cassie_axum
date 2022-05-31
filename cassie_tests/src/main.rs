@@ -1,11 +1,5 @@
-
-
-use cassie_event::api_operation;
-
-
+use cassie_msg::sms::dayu::AliDaYuSmsService;
 
 fn main() {
-    
-
+    let service = AliDaYuSmsService {};
 }
-
