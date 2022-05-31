@@ -30,6 +30,7 @@ pub async fn page(arg: Option<Query<SysDictQuery>>) -> impl IntoResponse {
             },
         )
         .await;
+
     RespVO::from_result(&vo).resp_json()
 }
 

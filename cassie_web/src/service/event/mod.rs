@@ -106,7 +106,7 @@ fn do_execute_script(workers: &mut MainWorker, name: &str, source_code: &str) ->
                 Err(err) => Err(format!("Cannot deserialize value: {:?}", err)),
             }
         }
-        Err(e) => e,
+        Err(e) => Err(format!("{:?}", e)),
     }
 }
 

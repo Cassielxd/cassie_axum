@@ -51,24 +51,33 @@ pub(crate) fn impl_api_operation(target_fn: &ItemFn, args: &AttributeArgs) -> To
     //拿到原始方法体
     let fn_body = target_fn.block.to_token_stream();
     let (is_result, is_return) = formate_params(args);
-    //如果 返回值是result类型
-    let res = if is_result {
-        quote! {
-            RespVO::from_result(&result).resp_json()
-        }
-    } else {
-        quote! {
-            RespVO::from(&result).resp_json()
-        }
-    };
+
     //如果开启了 返回值透传到 jsRuntime中 则获取
     let rerurn = if is_return {
         quote! {
-            let result_values=serde_json::to_value(result.clone()).unwrap();
+            let result_values=serde_json::to_value(result.clone().unwrap()).unwrap();
         }
     } else {
         quote! {
             let result_values=serde_json::Value::Null;
+        }
+    };
+
+    //如果 返回值是result类型
+    let res = if is_result {
+        quote! {
+            if result.is_ok(){
+                #rerurn
+                //事件发送代码
+             fire_script_event(parm, result_values).await;
+            }
+            RespVO::from_result(&result).resp_json()
+        }
+    } else {
+        quote! {
+            #rerurn
+            fire_script_event(parm, result_values).await;
+            RespVO::from(&result).resp_json()
         }
     };
     return quote! {
@@ -77,9 +86,6 @@ pub(crate) fn impl_api_operation(target_fn: &ItemFn, args: &AttributeArgs) -> To
          use crate::service::fire_event;
           #params
           let result =  #fn_body ;
-          #rerurn
-          //事件发送代码
-          fire_script_event(parm, result_values).await;
           #res
          }
     }

@@ -46,13 +46,14 @@ pub async fn list() -> impl IntoResponse {
     RespVO::from_result(&vo).resp_json()
 }
 ///api_operation event_bus触发器
-/// #[api_operation("result=false")] 返回值为Result类型 默认是true   false 
+/// #[api_operation("result=false")] 返回值为Result类型 默认是true   false
 /// #[api_operation("return=true")]  是否传递返回值 到jsRuntime里面 默认是不开启的
 /// #[api_operation("result=false|return=true")]多参数同时使用
 #[api_operation]
 pub async fn nav() -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let request_model = get_local().unwrap();
+
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     vo
 }
