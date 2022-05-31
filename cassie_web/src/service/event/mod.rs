@@ -109,6 +109,7 @@ fn do_execute_script(workers: &mut MainWorker, name: &str, source_code: &str) ->
         Err(e) => e,
     }
 }
+
 //构建脚本每个脚本独立运行上下文隔离
 pub fn build_script(init_code: String, event_script: String) -> String {
     let script = format!(
