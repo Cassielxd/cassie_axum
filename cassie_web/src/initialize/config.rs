@@ -1,7 +1,6 @@
 use crate::APPLICATION_CONTEXT;
 use cassie_config::config::ApplicationConfig;
-use std::env;
-use tokio::fs::{read_to_string, File};
+use tokio::fs::read_to_string;
 use tokio::io::AsyncReadExt;
 
 //初始化配置信息

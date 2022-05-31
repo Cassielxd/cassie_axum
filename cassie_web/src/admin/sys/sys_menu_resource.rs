@@ -1,9 +1,5 @@
-use std::collections::HashMap;
-
 use crate::middleware::get_local;
-use crate::observe::event::{CassieEvent, CustomEvent};
 use crate::service::crud_service::CrudService;
-use crate::service::fire_event;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
 use crate::{fire_script_event, APPLICATION_CONTEXT};
 use axum::routing::get;

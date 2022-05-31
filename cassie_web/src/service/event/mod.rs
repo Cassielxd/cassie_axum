@@ -7,10 +7,8 @@ use crate::{
     service::crud_service::CrudService,
     APPLICATION_CONTEXT,
 };
-use anyhow::Error as AnyError;
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
-use deno_core::v8::{Global, Value};
 use deno_core::{
     anyhow, serde_v8,
     v8::{self},
