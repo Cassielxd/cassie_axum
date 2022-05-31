@@ -96,8 +96,10 @@ fn handle_result(result: Result<serde_json::Value, Error<String>>, event: EventC
 fn do_execute_script(workers: &mut MainWorker, name: &str, source_code: &str) -> Result<serde_json::Value, String> {
     match workers.js_runtime.execute_script(name, source_code) {
         Ok(global) => {
+            //处理结果集
             let scope = &mut workers.js_runtime.handle_scope();
             let local = v8::Local::new(scope, global);
+            //把v8结果转换成 serde_json::Value
             let deserialized_value = serde_v8::from_v8::<serde_json::Value>(scope, local);
             match deserialized_value {
                 Ok(value) => Ok(value),
