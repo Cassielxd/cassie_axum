@@ -1,10 +1,6 @@
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{
-    parse_macro_input,
-    punctuated::Punctuated,
-    AttributeArgs, FnArg,  ItemFn,   NestedMeta, Pat, PatType, Token,
-};
+use syn::{parse_macro_input, punctuated::Punctuated, AttributeArgs, FnArg, ItemFn, NestedMeta, Pat, PatType, Token};
 
 #[proc_macro_attribute]
 pub fn api_operation(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -15,11 +11,9 @@ pub fn api_operation(attr: TokenStream, item: TokenStream) -> TokenStream {
         Err(_) => panic!("只适用于cassie axum  api"),
     }
 }
-
 pub(crate) fn formate_params(args: &Vec<NestedMeta>) -> (bool, bool) {
     let mut result = (true, false);
     for arg in args {
-        println!("{:#?}", arg);
         match arg {
             NestedMeta::Lit(lit) => match lit {
                 syn::Lit::Str(s) => {
