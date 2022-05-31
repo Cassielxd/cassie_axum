@@ -1,11 +1,9 @@
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
-    parse::Parse,
     parse_macro_input,
     punctuated::Punctuated,
-    token::{Else, Let, Semi},
-    AttributeArgs, FnArg, Ident, ItemFn, LitBool, LitStr, Local, NestedMeta, Pat, PatIdent, PatType, Token,
+    AttributeArgs, FnArg,  ItemFn,   NestedMeta, Pat, PatType, Token,
 };
 
 #[proc_macro_attribute]
@@ -109,10 +107,7 @@ pub(crate) fn get_params_value(inputs: Punctuated<FnArg, Token![,]>) -> proc_mac
                     let data = quote!(
                         parm.insert(#name.to_string(),serde_json::to_value(#dent.clone()).unwrap());
                     );
-                    stram = quote!(
-                        #stram
-                        #data
-                    );
+                    stram.extend(data);
                 }
                 _ => {}
             }
