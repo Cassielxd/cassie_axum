@@ -10,7 +10,7 @@ use crate::{
 use casbin::function_map::key_match2;
 use cassie_domain::dto::sys_event_dto::EventConfigDTO;
 use deno_core::{
-    anyhow, serde_v8,
+    serde_v8,
     v8::{self},
 };
 use deno_runtime::worker::MainWorker;
@@ -75,6 +75,7 @@ async fn execute_script(workers: &mut MainWorker, data: Vec<&EventConfigDTO>, cu
         });
         handle_result(result, event.clone(), custom.clone());
     }
+
     workers.run_event_loop(false).await;
     info!("execute script time {} 毫秒", start.elapsed().as_millis().to_string());
 }

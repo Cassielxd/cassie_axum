@@ -12,7 +12,7 @@ use cassie_common::RespVO;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::SysMenuQuery;
-use cassie_event::api_operation;
+use cassie_macros::api_operation;
 
 /**
  *method:/menu

@@ -69,7 +69,7 @@ cassie_axum
 ├─ cassie_config
 ├─ cassie_domain
 ├─ cassie_orm
-├─ cassie_event
+├─ cassie_macros
 ├─ cassie_wx
 ├─ cassie_storage
 ├─ cassie_web

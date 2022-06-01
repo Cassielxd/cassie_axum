@@ -1,5 +1,5 @@
 [package]
-name = "cassie_event"
+name = "cassie_macros"
 version = "0.1.0"
 edition = "2021"
 description = "Proc macro for writing Event Bus"

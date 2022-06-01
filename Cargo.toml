@@ -11,7 +11,7 @@ members = [
     "cassie_wx",
     "cassie_casbin_adapter",
     "cassie_tests",
-    "cassie_event",
+    "cassie_macros",
     "cassie_msg"
 ]
 exclude = ["cassie_tests","cassie_devtools"]

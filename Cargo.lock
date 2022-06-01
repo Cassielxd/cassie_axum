@@ -867,7 +867,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "cassie_event"
+name = "cassie_macros"
 version = "0.1.0"
 dependencies = [
  "proc-macro-crate",
@@ -912,7 +912,7 @@ dependencies = [
 name = "cassie_tests"
 version = "0.1.0"
 dependencies = [
- "cassie_event",
+ "cassie_macros",
  "cassie_msg",
  "serde",
  "serde_json",
@@ -932,7 +932,7 @@ dependencies = [
  "cassie_common",
  "cassie_config",
  "cassie_domain",
- "cassie_event",
+ "cassie_macros",
  "cassie_orm",
  "cassie_storage",
  "cassie_wx",
