@@ -24,37 +24,38 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
     let user_service = APPLICATION_CONTEXT.get::<UserService>();
     let wechat_user_service = APPLICATION_CONTEXT.get::<WechatUserService>();
     //判断unionid  存在根据unionid判断
-    let mut uid = if let Some(unionid) = user.unionid() {
-        let list = wechat_user_service.fetch_list_by_column(WechatUser::unionid(), &vec![unionid.clone()]).await.unwrap();
-
-        if list.len() > 0 {
-            let mut userinfo = list.get(0).unwrap().clone();
-            let uid = userinfo.id().clone().unwrap();
-            userinfo.set_nickname(user.nickname().clone());
-            userinfo.set_headimgurl(user.headimgurl().clone());
-            //执行更新逻辑
-            wechat_user_service.update_by_id(uid.to_string(), &mut userinfo.into()).await;
-            uid
-        } else {
-            0
-        }
-    } else {
-        0
+    let mut uid =match user.unionid(){
+        Some(unionid)=>{
+            let list = wechat_user_service.fetch_list_by_column(WechatUser::unionid(), &vec![unionid.clone()]).await.unwrap();
+            if list.len() > 0 {
+                let mut userinfo = list.get(0).unwrap().clone();
+                let uid = userinfo.id().clone().unwrap();
+                userinfo.set_nickname(user.nickname().clone());
+                userinfo.set_headimgurl(user.headimgurl().clone());
+                //执行更新逻辑
+                wechat_user_service.update_by_id(uid.to_string(), &mut userinfo.into()).await;
+                uid
+            } else {
+                0
+            }
+        },
+        None =>0,
     };
     //如果unionid不存在 则根据openid判断
     if uid == 0 {
-        uid = if let Some(routine_openid) = user.routine_openid() {
-            let list = wechat_user_service.fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()]).await.unwrap();
-            if list.len() > 0 {
-                let userinfo = list.get(0).unwrap();
-                let uid = userinfo.id().clone().unwrap();
-                //执行更新逻辑
-                wechat_user_service.update_by_id(uid.to_string(), &mut user.clone().into()).await;
-                return uid;
-            }
-            0
-        } else {
-            0
+        uid = match user.routine_openid(){
+            Some(unionid)=>{
+                let list = wechat_user_service.fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()]).await.unwrap();
+                if list.len() > 0 {
+                    let userinfo = list.get(0).unwrap();
+                    let uid = userinfo.id().clone().unwrap();
+                    //执行更新逻辑
+                    wechat_user_service.update_by_id(uid.to_string(), &mut user.clone().into()).await;
+                    return uid;
+                }
+                0
+            },
+            None =>0,
         };
         if uid == 0 {
             //执行新增逻辑
