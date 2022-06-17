@@ -15,7 +15,6 @@ use axum::{
     Router,
 };
 use tower::layer::layer_fn;
-use crate::middleware::clean_context;
 use crate::middleware::clean_context::ContextMiddleware;
 
 pub fn routers() -> Router {

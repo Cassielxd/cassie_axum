@@ -47,7 +47,9 @@ pub fn get_local() -> Option<RequestModel> {
 
 pub fn set_local(data: JWTToken, path: String) {
     let req = REQUEST_CONTEXT.clone();
-    let request_model = req.lock().unwrap();
+    let mut request_model = req.lock().unwrap();
+    //先清除再创建
+    request_model.clear();
     request_model.get_or(||{
         let mut model=RequestModel::default();
         model.set_uid(data.id().clone());
@@ -62,8 +64,11 @@ pub fn set_local(data: JWTToken, path: String) {
 
 pub fn set_local_for_model(data: RequestModel) {
     let req = REQUEST_CONTEXT.clone();
-    let request_model = req.lock().unwrap();
+    let mut request_model = req.lock().unwrap();
+    //先清除再创建
+    request_model.clear();
     request_model.get_or(|| data);
+
 }
 
 pub fn clear_local() {

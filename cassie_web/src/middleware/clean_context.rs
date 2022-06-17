@@ -1,12 +1,7 @@
-use crate::{observe::event::CassieEvent, service::fire_event};
 use axum::{body::Body, http::Request, response::Response};
-use cassie_domain::dto::sys_log::SysLogOperationDto;
 use futures::future::BoxFuture;
 use std::task::{Context, Poll};
-use tokio::time::Instant;
 use tower::Service;
-
-use super::get_local;
 use crate::middleware::clear_local;
 
 //日志处理核心拦截类
