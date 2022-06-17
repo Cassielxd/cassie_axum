@@ -6,8 +6,12 @@ use cassie_common::error::Error;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use std::sync::{Arc, Mutex};
-
+use thread_local::ThreadLocal;
 use crate::APPLICATION_CONTEXT;
+
+lazy_static!{
+     static ref REQUEST_CONTEXT:Arc<Mutex<ThreadLocal<RequestModel>>> = Arc::new(Mutex::new(ThreadLocal::new()));
+}
 /**
  *method:checked_token
  *desc:校验token是否有效，未过期
@@ -22,11 +26,11 @@ pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
 }
 
 pub fn get_local() -> Option<RequestModel> {
-    let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
-    match request_model {
+    let req = REQUEST_CONTEXT.clone();
+    let request_model = req.lock().unwrap();
+    match request_model.get(){
         None => None,
         Some(e) => {
-            let e = e.lock().unwrap();
             let mut model = RequestModel::default();
             model.set_uid(e.uid().clone());
             model.set_agency_code(e.agency_code().clone());
@@ -40,30 +44,22 @@ pub fn get_local() -> Option<RequestModel> {
 }
 
 pub fn set_local(data: JWTToken, path: String) {
-    let request_model = APPLICATION_CONTEXT.try_get_local::<Arc<Mutex<RequestModel>>>();
-    match request_model {
-        Some(d) => {
-            let a = d.clone();
-            let mut model = a.lock().unwrap();
-            model.set_uid(data.id().clone());
-            model.set_agency_code(data.agency_code().clone());
-            model.set_super_admin(data.super_admin().clone());
-            model.set_username(data.username().clone());
-            model.set_path(path);
-            model.set_from(data.from().clone());
-        }
-        None => {
-            APPLICATION_CONTEXT.set_local(move || {
-                let mut model = RequestModel::default();
-                model.set_uid(data.id().clone());
-                model.set_agency_code(data.agency_code().clone());
-                model.set_super_admin(data.super_admin().clone());
-                model.set_username(data.username().clone());
-                model.set_path(path.clone());
-                model.set_from(data.from().clone());
-                let mutex = Arc::new(Mutex::new(model));
-                return mutex;
-            });
-        }
-    }
+    let req = REQUEST_CONTEXT.clone();
+    let request_model = req.lock().unwrap();
+    request_model.get_or(||{
+        let mut model=RequestModel::default();
+        model.set_uid(data.id().clone());
+        model.set_agency_code(data.agency_code().clone());
+        model.set_super_admin(data.super_admin().clone());
+        model.set_username(data.username().clone());
+        model.set_path(path.clone());
+        model.set_from(data.from().clone());
+        model
+    });
+}
+
+pub fn set_local_for_model(data: RequestModel) {
+    let req = REQUEST_CONTEXT.clone();
+    let request_model = req.lock().unwrap();
+    request_model.get_or(|| data);
 }
