@@ -2,6 +2,8 @@ use cassie_domain::vo::jwt::JWTToken;
 pub mod auth_admin;
 pub mod auth_api;
 pub mod event;
+pub mod clean_context;
+
 use cassie_common::error::Error;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
@@ -62,4 +64,10 @@ pub fn set_local_for_model(data: RequestModel) {
     let req = REQUEST_CONTEXT.clone();
     let request_model = req.lock().unwrap();
     request_model.get_or(|| data);
+}
+
+pub fn clear_local() {
+    let req = REQUEST_CONTEXT.clone();
+    let mut request_model = req.lock().unwrap();
+    request_model.clear();
 }

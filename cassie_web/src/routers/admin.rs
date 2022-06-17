@@ -15,6 +15,9 @@ use axum::{
     Router,
 };
 use tower::layer::layer_fn;
+use crate::middleware::clean_context;
+use crate::middleware::clean_context::ContextMiddleware;
+
 pub fn routers() -> Router {
     need_auth_routers().merge(noneed_auth_routers())
 }
@@ -47,8 +50,10 @@ pub fn need_auth_routers() -> Router {
         .merge(sys_group_resource::init_router())
         .merge(sys_group_data_resource::init_router())
         .merge(init_router())
-        .layer(layer_fn(|inner| EventMiddleware { inner })) //第二执行的
-        .layer(from_extractor::<auth_admin::Auth>()) //最先执行的
+        .layer(layer_fn(|inner| EventMiddleware { inner })) //日志记录
+        .layer(from_extractor::<auth_admin::Auth>()) //权限拦截
+        .layer(layer_fn(|inner| ContextMiddleware { inner })) //后置处理器
+
 }
 //不需要权限认证的路由
 pub fn noneed_auth_routers() -> Router {
