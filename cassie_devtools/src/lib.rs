@@ -10,10 +10,10 @@ use serde_json::value::{Map, Value as Json};
 use std::fs::File;
 
 const TEMP: [(&str, &str, &str); 4] = [
-    ("service_template", "service.rs", "./cassie_devtools/src/template/service_template.hbs"),
-    ("resource_template", "resource.rs", "./cassie_devtools/src/template/resources_template.hbs"),
-    ("dto_template", "dto.rs", "./cassie_devtools/src/template/dto_template.hbs"),
-    ("entity_template", "entity.rs", "./cassie_devtools/src/template/entity_template.hbs"),
+    ("service_template", "service", "./cassie_devtools/src/template/service_template.hbs"),
+    ("resource_template", "resource", "./cassie_devtools/src/template/resources_template.hbs"),
+    ("dto_template", "dto", "./cassie_devtools/src/template/dto_template.hbs"),
+    ("entity_template", "entity", "./cassie_devtools/src/template/entity_template.hbs"),
 ];
 
 pub async fn init_rbatis(database_url: &str) -> Rbatis {
@@ -33,7 +33,7 @@ pub fn render_template(table_name: &str, data: &Map<String, Json>) {
     let mut handlebars = Handlebars::new();
     for (temp_name, file_path, temple_path) in TEMP {
         handlebars.register_template_file(temp_name, temple_path).unwrap();
-        let mut output__dtofile = File::create(format!("target/{}_{}", table_name, file_path.to_string())).unwrap();
+        let mut output__dtofile = File::create(format!("target/{}_{}.rs", table_name, file_path.to_string())).unwrap();
         handlebars.render_to_write(temp_name, &data, &mut output__dtofile).unwrap();
     }
 }
