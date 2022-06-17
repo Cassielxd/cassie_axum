@@ -144,32 +144,31 @@ pub async fn wxapp_auth(sign: WxSignInVo) -> Result<i64> {
 
 pub async fn binding_phone(sign: WxSignInVo) -> Result<String> {
     let request_model = get_local().unwrap();
-    let mut session_key = "".to_string();
     let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     match get_session_key(config.wxapp().appid(), config.wxapp().secret(), &sign.code().clone().unwrap()).await {
         Ok(data) => {
             let data: WxappSessionKey = serde_json::from_value(data).unwrap();
-            session_key = data.session_key.clone();
+            //解析用户信息
+            match resolve_data(data.session_key, sign.iv().clone().unwrap(), sign.encryptedData().clone().unwrap()) {
+                Ok(wx_info) => {
+                    if wx_info.purePhoneNumber.is_none() || wx_info.purePhoneNumber.clone().unwrap().is_empty() {
+                        return Err(Error::E("手机号获取失败".to_string()));
+                    }
+                    //执行更新逻辑
+                    let user_service = APPLICATION_CONTEXT.get::<UserService>();
+                    let mut user = user_service.get(request_model.uid().to_string()).await.unwrap();
+                    user.set_phone(wx_info.purePhoneNumber.clone());
+                    user_service.update_by_id(request_model.uid().to_string(), &mut user.into()).await;
+                    Ok(wx_info.purePhoneNumber.clone().unwrap())
+                }
+                Err(e) => {
+                    return Err(Error::E(format!("获取会话密匙失败{}", e.to_string())));
+                }
+            }
         }
         Err(e) => {
             return Err(Error::E("获取session_key失败，请检查您的配置！".to_string()));
         }
-    };
-    //解析用户信息
-    match resolve_data(session_key, sign.iv().clone().unwrap(), sign.encryptedData().clone().unwrap()) {
-        Ok(wx_info) => {
-            if wx_info.purePhoneNumber.is_none() || wx_info.purePhoneNumber.clone().unwrap().is_empty() {
-                return Err(Error::E("手机号获取失败".to_string()));
-            }
-            //执行更新逻辑
-            let user_service = APPLICATION_CONTEXT.get::<UserService>();
-            let mut user = user_service.get(request_model.uid().to_string()).await.unwrap();
-            user.set_phone(wx_info.purePhoneNumber.clone());
-            user_service.update_by_id(request_model.uid().to_string(), &mut user.into()).await;
-            Ok(wx_info.purePhoneNumber.clone().unwrap())
-        }
-        Err(e) => {
-            return Err(Error::E(format!("获取会话密匙失败{}", e.to_string())));
-        }
     }
+
 }
