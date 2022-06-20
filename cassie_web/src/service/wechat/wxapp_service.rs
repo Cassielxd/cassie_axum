@@ -24,8 +24,8 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
     let user_service = APPLICATION_CONTEXT.get::<UserService>();
     let wechat_user_service = APPLICATION_CONTEXT.get::<WechatUserService>();
     //判断unionid  存在根据unionid判断
-    let mut uid =match user.unionid(){
-        Some(unionid)=>{
+    let mut uid = match user.unionid() {
+        Some(unionid) => {
             let list = wechat_user_service.fetch_list_by_column(WechatUser::unionid(), &vec![unionid.clone()]).await.unwrap();
             if list.len() > 0 {
                 let mut userinfo = list.get(0).unwrap().clone();
@@ -38,13 +38,13 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
             } else {
                 0
             }
-        },
-        None =>0,
+        }
+        None => 0,
     };
     //如果unionid不存在 则根据openid判断
     if uid == 0 {
-        uid = match user.routine_openid(){
-            Some(unionid)=>{
+        uid = match user.routine_openid() {
+            Some(routine_openid) => {
                 let list = wechat_user_service.fetch_list_by_column(WechatUser::routine_openid(), &vec![routine_openid.clone()]).await.unwrap();
                 if list.len() > 0 {
                     let userinfo = list.get(0).unwrap();
@@ -54,8 +54,8 @@ pub async fn save_or_update_user(user: WechatUserDTO) -> i64 {
                     return uid;
                 }
                 0
-            },
-            None =>0,
+            }
+            None => 0,
         };
         if uid == 0 {
             //执行新增逻辑
@@ -171,5 +171,4 @@ pub async fn binding_phone(sign: WxSignInVo) -> Result<String> {
             return Err(Error::E("获取session_key失败，请检查您的配置！".to_string()));
         }
     }
-
 }

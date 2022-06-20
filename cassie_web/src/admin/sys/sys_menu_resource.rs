@@ -49,7 +49,6 @@ pub async fn list() -> impl IntoResponse {
 pub async fn nav() -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let request_model = get_local().unwrap();
-
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
     vo
 }
