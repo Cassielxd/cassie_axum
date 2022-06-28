@@ -7,7 +7,7 @@ use pharos::SharedPharos;
 pub async fn init_event_bus() {
     APPLICATION_CONTEXT.set::<SharedPharos<CassieEvent>>(SharedPharos::default());
     //这里只能使用thread::spawn
-    thread::spawn(move || {
+    thread::spawn(|| {
         async_std::task::block_on(async { init_consumer().await });
     });
 }

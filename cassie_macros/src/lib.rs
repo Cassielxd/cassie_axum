@@ -50,10 +50,10 @@ pub(crate) fn impl_api_operation(target_fn: &ItemFn, args: &AttributeArgs) -> To
     let params = get_params_value(target_fn.sig.inputs.clone());
     //拿到原始方法体
     let fn_body = target_fn.block.to_token_stream();
-    let (is_result, is_return) = formate_params(args);
+    let (is_result, add_return_value) = formate_params(args);
 
     //如果开启了 返回值透传到 jsRuntime中 则获取
-    let rerurn = if is_return {
+    let rerurn = if add_return_value {
         quote! {
             let result_values=serde_json::to_value(result.clone().unwrap()).unwrap();
         }
