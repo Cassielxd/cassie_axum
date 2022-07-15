@@ -46,7 +46,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
 9. 自定义javascript playground
 
 #### 使用说明
-
+ 前置 安装rust开发环境 遵循官网
  1. 初始化DB，添加配置
    导入db/cassie_admin.sql文件
    配置application.yml
@@ -55,7 +55,7 @@ https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
    cago run
  3. 启动前端项目https://gitee.com/stringlxd/cassie_admin
     默认端口 9999
-
+ 4. 打包 cargo  build --package cassie_web --relaese
 
 
 
