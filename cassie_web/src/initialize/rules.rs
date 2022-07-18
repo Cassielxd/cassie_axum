@@ -73,6 +73,7 @@ pub async fn init(args: Option<Vec<String>>) -> MainWorker {
 
     let js_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("js/cassie.js");
     let main_module = deno_core::resolve_path(&js_path.to_string_lossy()).unwrap();
+    info!("cassie js path {} ", main_module);
     let permissions = Permissions::allow_all();
     let mut main_worker = MainWorker::bootstrap_from_options(main_module.clone(), permissions, options);
     main_worker.execute_main_module(&main_module).await.unwrap();
