@@ -34,22 +34,23 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
     if uuid.is_empty() {
         return RespVO::<()>::from_error(&Error::from("uuid不能为空!")).resp_json();
     }
-    let mut captcha = Captcha::new();
-    captcha
-        .add_chars(4)
-        .apply_filter(Noise::new(0.1))
-        .apply_filter(Wave::new(1.0, 10.0).horizontal())
-        // .apply_filter(Wave::new(2.0, 20.0).vertical())
-        .view(160, 60)
-        .apply_filter(Dots::new(4));
-    let png = captcha.as_png().unwrap();
-    let captcha_str = captcha.chars_as_string().to_lowercase();
-    async_std::task::block_on(async {
-        let res = cache_service
-            .set_string_ex(&format!("_captch:uuid_{}", uuid.clone()), captcha_str.as_str(), Some(std::time::Duration::from_secs(60 * 5)))
-            .await;
-        println!("{:?}", res);
-    });
+    let (captcha_str, png) = {
+        let mut captcha = Captcha::new();
+        captcha
+            .add_chars(4)
+            .apply_filter(Noise::new(0.1))
+            .apply_filter(Wave::new(1.0, 10.0).horizontal())
+            // .apply_filter(Wave::new(2.0, 20.0).vertical())
+            .view(160, 60)
+            .apply_filter(Dots::new(4));
+        let png = captcha.as_png().unwrap();
+        (captcha.chars_as_string().to_lowercase(), png)
+    };
+
+    let res = cache_service
+        .set_string_ex(&format!("_captch:uuid_{}", uuid.clone()), captcha_str.as_str(), Some(std::time::Duration::from_secs(60 * 5)))
+        .await;
+    println!("{:?}", res);
     Response::builder()
         .header("Access-Control-Allow-Origin", "*")
         .header("Cache-Control", "no-cache")
