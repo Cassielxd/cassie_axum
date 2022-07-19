@@ -29,7 +29,7 @@ pub async fn login(Json(sign): Json<SignInDTO>) -> impl IntoResponse {
     return RespVO::from_result(&vo).resp_json();
 }
 
-pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
+pub async fn captcha_img(Path(uuid): Path<String>) -> impl IntoResponse {
     let cache_service = APPLICATION_CONTEXT.get::<CacheService>();
     if uuid.is_empty() {
         return RespVO::<()>::from_error(&Error::from("uuid不能为空!")).resp_json();
@@ -43,7 +43,8 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
             // .apply_filter(Wave::new(2.0, 20.0).vertical())
             .view(160, 60)
             .apply_filter(Dots::new(4));
-        let png = captcha.as_png().unwrap();
+
+        let png = captcha.as_base64();
         (captcha.chars_as_string().to_lowercase(), png)
     };
 
@@ -51,10 +52,5 @@ pub async fn captcha_img(Path(uuid): Path<String>) -> Response<Body> {
         .set_string_ex(&format!("_captch:uuid_{}", uuid.clone()), captcha_str.as_str(), Some(std::time::Duration::from_secs(60 * 5)))
         .await;
     println!("{:?}", res);
-    Response::builder()
-        .header("Access-Control-Allow-Origin", "*")
-        .header("Cache-Control", "no-cache")
-        .header("Content-Type", "image/png")
-        .body(Body::from(png))
-        .unwrap()
+    return RespVO::from(&png.unwrap()).resp_json();
 }
