@@ -3,7 +3,6 @@ use futures_util::{future, pin_mut, stream::TryStreamExt, StreamExt};
 use log::info;
 use std::{
     collections::HashMap,
-    env,
     io::Error as IoError,
     net::SocketAddr,
     sync::{Arc, Mutex},
@@ -20,9 +19,14 @@ use tokio_tungstenite::tungstenite::{
 
 type Tx = UnboundedSender<Message>;
 type PeerMap = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
+type UidMap = Arc<Mutex<HashMap<String,SocketAddr>>>;
 
 async fn handle_connection(peer_map: PeerMap, raw_stream: TcpStream, addr: SocketAddr) {
-    let ws_stream = tokio_tungstenite::accept_hdr_async(raw_stream, |req: &Request, response: Response| Ok(response))
+    let ws_stream = tokio_tungstenite::accept_hdr_async(raw_stream, |req: &Request, response: Response| 
+        {
+            let data = req.uri().path_and_query().unwrap();
+            Ok(response)
+        })
         .await
         .expect("websocket 握手发生错误");
     info!("WebSocket 连接成功: {}", addr);
@@ -48,7 +52,6 @@ async fn handle_connection(peer_map: PeerMap, raw_stream: TcpStream, addr: Socke
         }
         future::ok(())
     });
-
     let receive_from_others = rx.map(Ok).forward(outgoing);
     pin_mut!(broadcast_incoming, receive_from_others);
 
