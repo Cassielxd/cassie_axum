@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 pub use request_model::*;
 
-use crate::vo::jwt::{Source, JWTToken};
+use crate::vo::jwt::{JWTToken, Source};
 
 pub mod request_model;
 pub mod tree;
@@ -20,8 +20,8 @@ pub struct RequestModel {
 }
 
 impl RequestModel {
-   pub fn new(data: JWTToken, path: String) -> Self {
-        let mut model=RequestModel::default();
+    pub fn new(data: JWTToken, path: String) -> Self {
+        let mut model = RequestModel::default();
         model.set_uid(data.id().clone());
         model.set_agency_code(data.agency_code().clone());
         model.set_super_admin(data.super_admin().clone());

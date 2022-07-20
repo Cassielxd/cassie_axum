@@ -25,6 +25,8 @@ pub mod api;
 pub mod initialize;
 pub mod interceptor;
 pub mod observe;
+pub mod ws;
+
 use std::collections::HashMap;
 
 use crate::initialize::casbin::init_casbin;
@@ -35,6 +37,7 @@ use crate::initialize::rules::init_rules;
 use crate::initialize::service::init_service;
 use crate::interceptor::interceptor::AgencyInterceptor;
 use crate::nacos::register_service;
+use crate::ws::ws_server::init_ws;
 use crate::{cici_casbin::casbin_service::CasbinService, config::log::init_log};
 use cassie_config::config::ApplicationConfig;
 pub use deno_runtime::deno_core;
@@ -74,20 +77,20 @@ pub async fn init_context() {
     info!("RulesContext init complete");
     init_event_bus().await;
     info!("EventBus init complete");
-
+    tokio::spawn(init_ws());
     //nacos 服务注册
     register_service().await;
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     info!(" - Local:   http://{}:{}", cassie_config.server().host().replace("0.0.0.0", "127.0.0.1"), cassie_config.server().port());
 }
 
-async fn fire_script_event(params_values: HashMap < String, serde_json :: Value >, return_values: serde_json::Value) {
+async fn fire_script_event(params_values: HashMap<String, serde_json::Value>, return_values: serde_json::Value) {
     let request = get_local();
     match request {
         Some(data) => {
             let cus = CustomEvent {
                 path: data.path().clone(),
-                params_values:Some(params_values),
+                params_values: Some(params_values),
                 return_values,
                 request_model: Some(data),
             };

@@ -31,6 +31,7 @@ pub struct ServerConfig {
     ///当前服务地址
     host: String,
     port: String,
+    ws: Option<String>,
 }
 
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters)]

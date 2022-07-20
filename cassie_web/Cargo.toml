@@ -72,3 +72,7 @@ cassie_macros = {path= "../cassie_macros" }
 deno_core = "0.133.0"
 deno_runtime = "0.59.0"
 
+#ws
+futures-channel = "0.3.21"
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+tokio-tungstenite = "*"

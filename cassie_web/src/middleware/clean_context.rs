@@ -1,8 +1,8 @@
+use crate::middleware::clear_local;
 use axum::{body::Body, http::Request, response::Response};
 use futures::future::BoxFuture;
 use std::task::{Context, Poll};
 use tower::Service;
-use crate::middleware::clear_local;
 
 //日志处理核心拦截类
 #[derive(Clone)]
@@ -10,9 +10,9 @@ pub struct ContextMiddleware<S> {
     pub inner: S,
 }
 impl<S> Service<Request<Body>> for ContextMiddleware<S>
-    where
-        S: Service<Request<Body>, Response = Response> + Send + 'static,
-        S::Future: Send + 'static,
+where
+    S: Service<Request<Body>, Response = Response> + Send + 'static,
+    S::Future: Send + 'static,
 {
     type Response = S::Response;
     type Error = S::Error;

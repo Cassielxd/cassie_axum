@@ -21,30 +21,7 @@ pub async fn init_rules() {
 fn get_error_class_name(e: &AnyError) -> &'static str {
     deno_runtime::errors::get_error_class_name(e).unwrap_or("Error")
 }
-//规则引擎测试类 默认使用全量的模式 包含http localstorage 等 MainWorker
-///async fn test() {
-///  let start = Instant::now();
-///  let mut workers = init(None);
-///  info!(
-///    "instance workers time {} 毫秒",
-///    start.elapsed().as_millis().to_string()
-///  );
-///  let config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
-///  let payload = json!(config);
-///  let init = format!(
-///    r#" var request_context=JSON.parse({});
-///       console.log(request_context.redis_url);
-///    "#,
-///    serde_json::to_string_pretty(
-///      &serde_json::to_string_pretty(&payload).unwrap()
-///    )
-///    .unwrap()
-///  );
-///  workers.execute_script("script_name", &init);
-///  let code = r#" console.log(request_context);"#;
-///  workers.execute_script("script_name", code);
-///  workers.run_event_loop(false).await;
-///}
+
 pub async fn init(args: Option<Vec<String>>) -> MainWorker {
     let start = Instant::now();
     let module_loader = Rc::new(FsModuleLoader);

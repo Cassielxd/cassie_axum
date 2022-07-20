@@ -6,6 +6,7 @@ server_name: "cassieWeb"
 server:
   host: "0.0.0.0"
   port: "9999"
+  ws: "20003"
 #缓存介质类型,"redis"
 cache_type: "redis"
 #redis地址(cache_type为“redis”时有效)

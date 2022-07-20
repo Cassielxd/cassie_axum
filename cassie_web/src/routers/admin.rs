@@ -1,3 +1,4 @@
+use crate::middleware::clean_context::ContextMiddleware;
 use crate::{
     admin::{
         asi::{asi_group_column_resource, asi_group_resource, asi_group_values_resource},
@@ -15,7 +16,6 @@ use axum::{
     Router,
 };
 use tower::layer::layer_fn;
-use crate::middleware::clean_context::ContextMiddleware;
 
 pub fn routers() -> Router {
     need_auth_routers().merge(noneed_auth_routers())
@@ -52,7 +52,6 @@ pub fn need_auth_routers() -> Router {
         .layer(layer_fn(|inner| EventMiddleware { inner })) //日志记录
         .layer(from_extractor::<auth_admin::Auth>()) //权限拦截
         .layer(layer_fn(|inner| ContextMiddleware { inner })) //后置处理器
-
 }
 //不需要权限认证的路由
 pub fn noneed_auth_routers() -> Router {

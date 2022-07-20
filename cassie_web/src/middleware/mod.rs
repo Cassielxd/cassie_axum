@@ -1,18 +1,18 @@
 use cassie_domain::vo::jwt::JWTToken;
 pub mod auth_admin;
 pub mod auth_api;
-pub mod event;
 pub mod clean_context;
+pub mod event;
 
+use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_config::config::ApplicationConfig;
 use cassie_domain::request::RequestModel;
 use std::sync::{Arc, Mutex};
 use thread_local::ThreadLocal;
-use crate::APPLICATION_CONTEXT;
 
-lazy_static!{
-     static ref REQUEST_CONTEXT:Arc<Mutex<ThreadLocal<RequestModel>>> = Arc::new(Mutex::new(ThreadLocal::new()));
+lazy_static! {
+    static ref REQUEST_CONTEXT: Arc<Mutex<ThreadLocal<RequestModel>>> = Arc::new(Mutex::new(ThreadLocal::new()));
 }
 /**
  *method:checked_token
@@ -30,7 +30,7 @@ pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
 pub fn get_local() -> Option<RequestModel> {
     let req = REQUEST_CONTEXT.clone();
     let request_model = req.lock().unwrap();
-    match request_model.get(){
+    match request_model.get() {
         None => None,
         Some(e) => {
             let mut model = RequestModel::default();
@@ -50,7 +50,7 @@ pub fn set_local(data: JWTToken, path: String) {
     let mut request_model = req.lock().unwrap();
     //先清除再创建
     request_model.clear();
-    request_model.get_or(||RequestModel::new(data,path));
+    request_model.get_or(|| RequestModel::new(data, path));
 }
 
 pub fn set_local_for_model(data: RequestModel) {
@@ -59,7 +59,6 @@ pub fn set_local_for_model(data: RequestModel) {
     //先清除再创建
     request_model.clear();
     request_model.get_or(|| data);
-
 }
 
 pub fn clear_local() {

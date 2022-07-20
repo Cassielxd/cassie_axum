@@ -420,7 +420,7 @@ dependencies = [
  "sha-1 0.10.0",
  "sync_wrapper",
  "tokio 1.17.0",
- "tokio-tungstenite 0.17.1",
+ "tokio-tungstenite 0.17.2",
  "tower",
  "tower-http 0.3.2",
  "tower-layer",
@@ -941,6 +941,8 @@ dependencies = [
  "deno_runtime",
  "fast_log",
  "futures 0.3.21",
+ "futures-channel",
+ "futures-util",
  "indexmap",
  "jsonwebtoken",
  "lazy_static",
@@ -959,6 +961,7 @@ dependencies = [
  "state",
  "thread_local",
  "tokio 1.17.0",
+ "tokio-tungstenite 0.16.1",
  "tower",
  "tower-http 0.2.5",
  "validator",
@@ -6385,14 +6388,14 @@ dependencies = [
 
 [[package]]
 name = "tokio-tungstenite"
-version = "0.17.1"
+version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06cda1232a49558c46f8a504d5b93101d42c0bf7f911f12a105ba48168f821ae"
+checksum = "f714dd15bead90401d77e04243611caec13726c2408afd5b31901dfcdcb3b181"
 dependencies = [
  "futures-util",
  "log",
  "tokio 1.17.0",
- "tungstenite 0.17.2",
+ "tungstenite 0.17.3",
 ]
 
 [[package]]
@@ -6692,9 +6695,9 @@ dependencies = [
 
 [[package]]
 name = "tungstenite"
-version = "0.17.2"
+version = "0.17.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d96a2dea40e7570482f28eb57afbe42d97551905da6a9400acc5c328d24004f5"
+checksum = "e27992fd6a8c29ee7eef28fc78349aa244134e10ad447ce3b9f0ac0ed0fa4ce0"
 dependencies = [
  "base64 0.13.0",
  "byteorder",
