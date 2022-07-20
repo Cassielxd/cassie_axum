@@ -32,14 +32,14 @@ async fn handle_connection(peer_map: PeerMap, raw_stream: TcpStream, addr: Socke
     let (outgoing, incoming) = ws_stream.split();
 
     let broadcast_incoming = incoming.try_for_each(|msg| {
-        match msg {
-            Message::Text(_) => {}
+        info!("接收到来自 {}: {}", addr, msg.to_text().unwrap());
+        match msg.clone() {
+            Message::Text(_ms) => {}
             Message::Binary(_) => {}
             Message::Ping(_) => {}
             Message::Pong(_) => {}
             Message::Close(_) => {}
         }
-        info!("接收到来自 {}: {}", addr, msg.to_text().unwrap());
         let peers = peer_map.lock().unwrap();
         // 把消息发送给 非自己的所有用户
         let broadcast_recipients = peers.iter().filter(|(peer_addr, _)| peer_addr != &&addr).map(|(_, ws_sink)| ws_sink);
