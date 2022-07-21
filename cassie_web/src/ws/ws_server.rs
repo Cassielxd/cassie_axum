@@ -13,8 +13,7 @@ use cassie_config::config::ApplicationConfig;
 use tokio::net::{TcpListener, TcpStream};
 use tokio_tungstenite::tungstenite::protocol::Message;
 use tokio_tungstenite::tungstenite::{
-    handshake::server::{ErrorResponse, Request, Response},
-    http::StatusCode,
+    handshake::server::{Request, Response}
 };
 
 type Tx = UnboundedSender<Message>;
