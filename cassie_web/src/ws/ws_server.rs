@@ -31,7 +31,7 @@ lazy_static! {
 fn send_msg(uid: String, msg: String) {
     let peer_map = PEER_MAP.clone();
     let umap = UID_MAP.clone();
-    let mp = umap.lock().unwrap();
+    let mut mp = umap.lock().unwrap();
     let addr = mp.get(&*uid);
     match addr {
         None => {
@@ -41,6 +41,9 @@ fn send_msg(uid: String, msg: String) {
             //如果用户在线 则发送消息
             if let Some(recp) = peer_map.lock().unwrap().get(address) {
                 recp.unbounded_send(Message::from(msg.clone())).unwrap();
+            } else {
+                //证明用户不在线
+                mp.remove(&*uid);
             }
         }
     }
