@@ -51,7 +51,7 @@ where
         }
         resp.msg = Some(format!("权限不足"));
         /*验证token有效性*/
-        match checked_token(token_value).await {
+        match checked_token(token_value) {
             Ok(data) => {
                 //登录了但是不需要权限
                 let data1 = data.clone();

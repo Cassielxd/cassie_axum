@@ -47,7 +47,7 @@ where
             return Err(Error::E(serde_json::json!(&resp).to_string()));
         }
         /*验证token有效性*/
-        match checked_token(token_value).await {
+        match checked_token(token_value) {
             Ok(data) => {
                 //登录了但是不需要权限
                 let data1 = data.clone();

@@ -20,7 +20,7 @@ lazy_static! {
  *author:String
  *email:348040933@qq.com
  */
-pub async fn checked_token(token: &str) -> Result<JWTToken, Error> {
+pub fn checked_token(token: &str) -> Result<JWTToken, Error> {
     //check token alive
     let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
     let token = JWTToken::verify(cassie_config.jwt_secret(), token);
