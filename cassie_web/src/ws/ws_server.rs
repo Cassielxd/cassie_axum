@@ -66,7 +66,6 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
             });
             let receive_from_others = rx.map(Ok).forward(outgoing);
             pin_mut!(broadcast_incoming, receive_from_others);
-
             future::select(broadcast_incoming, receive_from_others).await;
             info!("{} 断开连接", &addr);
             off_line(&addr);
@@ -83,7 +82,7 @@ pub async fn init_ws() -> Result<(), IoError> {
         let addr = format!("{}:{}", cassie_config.server().host(), cassie_config.server().ws().clone().unwrap());
         let try_socket = TcpListener::bind(&addr).await;
         let listener = try_socket.expect("绑定失败");
-        info!("Listening on: {}", addr);
+        info!("WS Listening on: {}", addr);
         while let Ok((stream, addr)) = listener.accept().await {
             tokio::spawn(handle_connection(stream, addr));
         }

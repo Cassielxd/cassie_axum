@@ -10,6 +10,19 @@ pub fn handle_msg(addr: SocketAddr, msg: String) {
     match massage.mt {
         MsgType::Ping => {
             //心跳检测
+            {
+                let p = PEER_MAP.clone();
+                let peers = p.lock().unwrap();
+                let recp = peers.get(&addr).unwrap();
+                let body = crate::ws::msg::MsgBody {
+                    from: "".to_string(),
+                    to: "".to_string(),
+                    text: "receive".to_string(),
+                };
+                massage.body = Some(body);
+                let m = serde_json::to_string(&massage).unwrap();
+                recp.unbounded_send(Message::from(m)).unwrap();
+            }
         }
         MsgType::Msg => {
             //消息发送 默认发给所有人
@@ -32,9 +45,11 @@ pub fn handle_msg(addr: SocketAddr, msg: String) {
         }
         MsgType::UserList => {
             //获取在线用户信息
+            //这里多加个括号是为了防止 Mutex锁中毒  达到显示的dorp效果  也可以  dorp(xxx)
             {
                 let usermap = USER_MAP.clone();
                 let userinfomap = usermap.lock().unwrap();
+                //获取到所有的在线用户
                 let list: Vec<JWTToken> = userinfomap.iter().map(|(_, v)| v.clone()).collect();
                 let p = PEER_MAP.clone();
                 let peers = p.lock().unwrap();
