@@ -93,6 +93,7 @@ String <348040933@qq.com>
 ///默认连接地址
 ///access_token 是登录以后的token
 ///ws://127.0.0.1:20003/?access_token=xxxxxxxx
+///链接如果没有token的话会链接不上
  ```
 
 
