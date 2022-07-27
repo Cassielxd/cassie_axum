@@ -69,12 +69,36 @@ pub fn off_line(addr: &SocketAddr) {
         }
     }
 }
-
+//根据用户id下线
+pub fn off_line_by_uid(uid: String) {
+    let umap = UID_MAP.clone();
+    let amap = ADDR_MAP.clone();
+    let usermap = USER_MAP.clone();
+    let p = PEER_MAP.clone();
+    let addr = umap.lock().unwrap().remove(&uid);
+    match addr {
+        None => {}
+        Some(address) => {
+            amap.lock().unwrap().remove(&address);
+            usermap.lock().unwrap().remove(&address);
+            p.lock().unwrap().remove(&address);
+        }
+    }
+}
+//用户上线
+pub fn on_line(userinfo: JWTToken, addr: SocketAddr) {
+    let umap = UID_MAP.clone();
+    let amap = ADDR_MAP.clone();
+    let usermap = USER_MAP.clone();
+    usermap.lock().unwrap().insert(addr, userinfo.clone());
+    umap.lock().unwrap().insert(userinfo.id().to_string(), addr);
+    amap.lock().unwrap().insert(addr, userinfo.id().to_string());
+}
 //向单个用户发送消息
 fn send_msg(uid: String, msg: String) {
     let peer_map = PEER_MAP.clone();
     let umap = UID_MAP.clone();
-    let mut mp = umap.lock().unwrap();
+    let mp = umap.lock().unwrap();
     let addr = mp.get(&*uid);
     match addr {
         None => {

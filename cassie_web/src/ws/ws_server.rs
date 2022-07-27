@@ -9,7 +9,7 @@ use std::{
 };
 
 use crate::middleware::checked_token;
-use crate::ws::ws_handle::{handle_msg, off_line};
+use crate::ws::ws_handle::{handle_msg, off_line, off_line_by_uid, on_line};
 use crate::ws::{ADDR_MAP, PEER_MAP, UID_MAP, USER_MAP};
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
@@ -26,10 +26,6 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
     //构建权限错误信息
     let resp = Response::builder().status(StatusCode::UNAUTHORIZED).body(Some("token 不存在".into())).unwrap();
     let ws_stream = tokio_tungstenite::accept_hdr_async(raw_stream, |req: &Request, response: Response| {
-        let umap = UID_MAP.clone();
-        let amap = ADDR_MAP.clone();
-        let usermap = USER_MAP.clone();
-
         //获取url参数
         match req.uri().query() {
             //没有参数证明 没权限
@@ -46,9 +42,8 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
                 //验证token 是否正确 错误则返回
                 match checked_token(access_token) {
                     Ok(data) => {
-                        usermap.lock().unwrap().insert(addr, data.clone());
-                        umap.lock().unwrap().insert(data.id().to_string(), addr);
-                        amap.lock().unwrap().insert(addr, data.id().to_string());
+                        off_line_by_uid(data.id().to_string());
+                        on_line(data, addr);
                     }
                     Err(_) => {
                         return Err(resp);
@@ -69,8 +64,7 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
             p.lock().unwrap().insert(addr, tx);
             let (outgoing, incoming) = ws_s.split();
             let broadcast_incoming = incoming.try_for_each(|msg| {
-                info!("接收到来自 {}: {}", addr, msg.to_text().unwrap());
-                match msg.clone() {
+                match msg {
                     Message::Text(ms) => {
                         handle_msg(addr, ms);
                     }
