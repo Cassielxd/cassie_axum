@@ -24,6 +24,7 @@ http://47.104.64.212/#/login
 5. RBAC:cabin-rs
 6. 验证码:captcha
 7. 数据验证:validator
+8. websocket:tokio-tungstenite
 
 #### 开发计划
 
@@ -50,7 +51,9 @@ http://47.104.64.212/#/login
 9. 自定义javascript playground
 
 #### 使用说明
- 前置 安装rust开发环境 遵循官网
+ 前置 安装rust开发环境 遵循官网 
+ 如果开启了websocket 请放开20003端口
+ 否则连接不到
  1. 初始化DB，添加配置
    导入db/cassie_admin.sql文件
    配置application.yml
@@ -63,47 +66,6 @@ http://47.104.64.212/#/login
 
 
 
-#### 目录结构
-```
-cassie_axum
-├─ Cargo.toml                   //核心包配置
-├─ cassie_casbin_adapter                 
-├─ cassie_common                
-├─ cassie_ops   //操作 宏定义
-├─ cassie_config
-├─ cassie_domain
-├─ cassie_orm
-├─ cassie_macros
-├─ cassie_wx
-├─ cassie_storage
-├─ cassie_web
-│  ├─ application.yml
-│  ├─ auth_config
-│  │  └─ rbac_with_domains_model.conf
-│  ├─ Cargo.toml
-│  └─ src
-│     ├─ admin      //后台管理resource核心实现
-│     │  ├─ asi    //动态表单相关
-│     │  └─ sys     //系统相关
-│     ├─ api
-│     ├─ cici_casbin  //casbin 实现
-│     ├─ config
-│     ├─ initialize   //系统启动初始化相关
-│     ├─ interceptor//租户拦截器
-│     ├─ lib.rs
-│     ├─ main.rs
-│     ├─ middleware      //中间件实现
-│     ├─ nacos
-│     │  └─ mod.rs
-│     ├─ observe         //event 核心实现
-│     ├─ routers  
-│     │  ├─ admin.rs     //管理端路由
-│     │  ├─ api.rs       //api路由
-│     └─ service         //service核心包
-├─ LICENSE
-└─ README.md
-
-```
 
 #### 框架说明
 管理员账号:admin/123456
@@ -124,6 +86,17 @@ String <348040933@qq.com>
 #### 提示
 代码每天都在更新,大家每天及时更新
 #### 更新日志
+2022.7.27
+完成websocket 单聊天室开发
+``` rust
+///ws 默认端口20003
+///默认连接地址
+///access_token 是登录以后的token
+///ws://127.0.0.1:20003/?access_token=xxxxxxxx
+ ```
+
+
+
 2022.5.30
 event事件宏定义
 开发者无需关注事件如何发送触发
