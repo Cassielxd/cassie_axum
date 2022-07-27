@@ -9,6 +9,8 @@ use std::{
 };
 
 use crate::middleware::checked_token;
+use crate::ws::ws_handle::{handle_msg, off_line};
+use crate::ws::{ADDR_MAP, PEER_MAP, UID_MAP, USER_MAP};
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_config::config::ApplicationConfig;
@@ -19,41 +21,15 @@ use tokio_tungstenite::tungstenite::http::StatusCode;
 use tokio_tungstenite::tungstenite::protocol::Message;
 use tokio_tungstenite::WebSocketStream;
 
-type Tx = UnboundedSender<Message>;
-type PeerMap = Arc<Mutex<HashMap<SocketAddr, Tx>>>;
-type UidMap = Arc<Mutex<HashMap<String, SocketAddr>>>;
-lazy_static! {
-    static ref PEER_MAP: Arc<Mutex<HashMap<SocketAddr, Tx>>> = PeerMap::new(Mutex::new(HashMap::new()));
-    static ref UID_MAP: Arc<Mutex<HashMap<String, SocketAddr>>> = UidMap::new(Mutex::new(HashMap::new()));
-}
-
-//向用户发送消息
-fn send_msg(uid: String, msg: String) {
-    let peer_map = PEER_MAP.clone();
-    let umap = UID_MAP.clone();
-    let mut mp = umap.lock().unwrap();
-    let addr = mp.get(&*uid);
-    match addr {
-        None => {
-            //用户不在线
-        }
-        Some(address) => {
-            //如果用户在线 则发送消息
-            if let Some(recp) = peer_map.lock().unwrap().get(address) {
-                recp.unbounded_send(Message::from(msg.clone())).unwrap();
-            } else {
-                //证明用户不在线
-                mp.remove(&*uid);
-            }
-        }
-    }
-}
 //核心请求处理
 async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
     //构建权限错误信息
     let resp = Response::builder().status(StatusCode::UNAUTHORIZED).body(Some("token 不存在".into())).unwrap();
     let ws_stream = tokio_tungstenite::accept_hdr_async(raw_stream, |req: &Request, response: Response| {
         let umap = UID_MAP.clone();
+        let amap = ADDR_MAP.clone();
+        let usermap = USER_MAP.clone();
+
         //获取url参数
         match req.uri().query() {
             //没有参数证明 没权限
@@ -70,7 +46,9 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
                 //验证token 是否正确 错误则返回
                 match checked_token(access_token) {
                     Ok(data) => {
+                        usermap.lock().unwrap().insert(addr, data.clone());
                         umap.lock().unwrap().insert(data.id().to_string(), addr);
+                        amap.lock().unwrap().insert(addr, data.id().to_string());
                     }
                     Err(_) => {
                         return Err(resp);
@@ -90,19 +68,13 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
             let p = PEER_MAP.clone();
             p.lock().unwrap().insert(addr, tx);
             let (outgoing, incoming) = ws_s.split();
-
             let broadcast_incoming = incoming.try_for_each(|msg| {
                 info!("接收到来自 {}: {}", addr, msg.to_text().unwrap());
                 match msg.clone() {
-                    Message::Text(_ms) => {}
+                    Message::Text(ms) => {
+                        handle_msg(addr, ms);
+                    }
                     _ => {}
-                }
-                let p = PEER_MAP.clone();
-                let peers = p.lock().unwrap();
-                // 把消息发送给 非自己的所有用户
-                let broadcast_recipients = peers.iter().filter(|(peer_addr, _)| peer_addr != &&addr).map(|(_, ws_sink)| ws_sink);
-                for recp in broadcast_recipients {
-                    recp.unbounded_send(msg.clone()).unwrap();
                 }
                 future::ok(())
             });
@@ -111,7 +83,7 @@ async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {
 
             future::select(broadcast_incoming, receive_from_others).await;
             info!("{} 断开连接", &addr);
-            p.lock().unwrap().remove(&addr);
+            off_line(&addr);
         }
         Err(_) => {}
     }
