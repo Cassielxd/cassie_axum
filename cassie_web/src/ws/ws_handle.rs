@@ -1,7 +1,6 @@
-use crate::ws::msg::{Msg, MsgBody, MsgType};
+use crate::ws::msg::{Msg, MsgType};
 use crate::ws::{ADDR_MAP, PEER_MAP, UID_MAP, USER_MAP};
 use cassie_domain::vo::jwt::JWTToken;
-use futures_util::SinkExt;
 use std::net::SocketAddr;
 use tokio_tungstenite::tungstenite::Message;
 

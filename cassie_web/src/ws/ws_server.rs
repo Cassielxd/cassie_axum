@@ -1,25 +1,17 @@
-use futures_channel::mpsc::{unbounded, UnboundedSender};
+use futures_channel::mpsc::unbounded;
 use futures_util::{future, pin_mut, stream::TryStreamExt, StreamExt};
 use log::info;
-use std::{
-    collections::HashMap,
-    io::Error as IoError,
-    net::SocketAddr,
-    sync::{Arc, Mutex},
-};
+use std::{io::Error as IoError, net::SocketAddr};
 
 use crate::middleware::checked_token;
 use crate::ws::ws_handle::{handle_msg, off_line, off_line_by_uid, on_line};
-use crate::ws::{ADDR_MAP, PEER_MAP, UID_MAP, USER_MAP};
+use crate::ws::PEER_MAP;
 use crate::APPLICATION_CONTEXT;
-use cassie_common::error::Error;
 use cassie_config::config::ApplicationConfig;
-use cassie_domain::vo::jwt::JWTToken;
 use tokio::net::{TcpListener, TcpStream};
-use tokio_tungstenite::tungstenite::handshake::server::{ErrorResponse, Request, Response};
+use tokio_tungstenite::tungstenite::handshake::server::{Request, Response};
 use tokio_tungstenite::tungstenite::http::StatusCode;
 use tokio_tungstenite::tungstenite::protocol::Message;
-use tokio_tungstenite::WebSocketStream;
 
 //核心请求处理
 async fn handle_connection(raw_stream: TcpStream, addr: SocketAddr) {

@@ -3,10 +3,9 @@ pub mod ws_handle;
 pub mod ws_server;
 
 use cassie_domain::vo::jwt::JWTToken;
-use futures_channel::mpsc::{unbounded, UnboundedSender};
+use futures_channel::mpsc::UnboundedSender;
 use std::{
     collections::HashMap,
-    io::Error as IoError,
     net::SocketAddr,
     sync::{Arc, Mutex},
 };
