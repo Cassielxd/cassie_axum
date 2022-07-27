@@ -6,7 +6,6 @@ use tokio_tungstenite::tungstenite::Message;
 
 //消息处理
 pub fn handle_msg(addr: SocketAddr, msg: String) {
-    println!("{}", msg);
     let mut massage: Msg = serde_json::from_str(&*msg).unwrap();
     match massage.mt {
         MsgType::Ping => {
