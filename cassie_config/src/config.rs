@@ -63,6 +63,7 @@ impl OSSConfig {
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
 pub struct ApplicationConfig {
     debug: bool,
+    is_demo: bool,
     ///redis地址
     redis_url: String,
     //mongodb_url地址

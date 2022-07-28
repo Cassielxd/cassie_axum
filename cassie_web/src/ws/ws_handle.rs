@@ -108,6 +108,7 @@ pub fn on_line(userinfo: JWTToken, addr: SocketAddr) {
     umap.lock().unwrap().insert(userinfo.id().to_string(), addr);
     amap.lock().unwrap().insert(addr, userinfo.id().to_string());
 }
+
 //向单个用户发送消息
 fn send_msg(uid: String, msg: String) {
     let peer_map = PEER_MAP.clone();

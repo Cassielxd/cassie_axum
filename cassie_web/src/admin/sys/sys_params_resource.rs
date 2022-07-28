@@ -6,6 +6,7 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{Json, Router};
 use cassie_common::RespVO;
+use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::sys_params_dto::SysParamsDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::SysParamsQuery;
@@ -39,6 +40,10 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    if *cassie_config.is_demo() {
+        return RespVO::from(&"演示删除成功".to_string()).resp_json();
+    }
     let sys_params_service = APPLICATION_CONTEXT.get::<SysParamsService>();
     sys_params_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()

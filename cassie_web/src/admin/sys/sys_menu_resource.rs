@@ -9,6 +9,7 @@ use axum::{
     Json, Router,
 };
 use cassie_common::RespVO;
+use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::SysMenuQuery;
@@ -66,6 +67,10 @@ pub async fn get_by_id(Path(id): Path<String>) -> impl IntoResponse {
 }
 
 pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    if *cassie_config.is_demo() {
+        return RespVO::from(&"演示删除成功".to_string()).resp_json();
+    }
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     sys_menu_service.del(&id).await;
     RespVO::from(&"删除成功".to_string()).resp_json()
@@ -79,6 +84,10 @@ pub async fn delete(Path(id): Path<String>) -> impl IntoResponse {
  */
 
 pub async fn save(Json(arg): Json<SysMenuDTO>) -> impl IntoResponse {
+    let cassie_config = APPLICATION_CONTEXT.get::<ApplicationConfig>();
+    if *cassie_config.is_demo() {
+        return RespVO::from(&"演示更新成功".to_string()).resp_json();
+    }
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     sys_menu_service.save_or_update(arg).await;
     RespVO::from(&"更新成功".to_string()).resp_json()
