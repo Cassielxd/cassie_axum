@@ -1,6 +1,8 @@
 use crate::ws::msg::{Msg, MsgType};
 use crate::ws::{ADDR_MAP, PEER_MAP, UID_MAP, USER_MAP};
 use cassie_domain::vo::jwt::JWTToken;
+use chrono::format::{DelayedFormat, StrftimeItems};
+use chrono::{DateTime, Local};
 use std::net::SocketAddr;
 use tokio_tungstenite::tungstenite::Message;
 
@@ -19,6 +21,7 @@ pub fn handle_msg(addr: SocketAddr, msg: String) {
                     to: "".to_string(),
                     text: "receive".to_string(),
                 };
+                massage.date = Some(get_date());
                 massage.body = Some(body);
                 let m = serde_json::to_string(&massage).unwrap();
                 recp.unbounded_send(Message::from(m)).unwrap();
@@ -34,6 +37,7 @@ pub fn handle_msg(addr: SocketAddr, msg: String) {
                 let indfo = userinfomap.get(&addr).unwrap();
                 let mut body = massage.body.clone().unwrap();
                 body.from = indfo.username().clone();
+                massage.date = Some(get_date());
                 massage.body = Some(body);
                 // 把消息发送给 非自己的所有用户
                 let broadcast_recipients = peers.iter().filter(|(peer_addr, _)| peer_addr != &&addr).map(|(_, ws_sink)| ws_sink);
@@ -59,6 +63,7 @@ pub fn handle_msg(addr: SocketAddr, msg: String) {
                     to: "".to_string(),
                     text: serde_json::to_string(&list).unwrap(),
                 };
+                massage.date = Some(get_date());
                 massage.body = Some(body);
                 let m = serde_json::to_string(&massage).unwrap();
                 recp.unbounded_send(Message::from(m)).unwrap();
@@ -126,4 +131,10 @@ fn send_msg(uid: String, msg: String) {
             }
         }
     }
+}
+fn get_date() -> String {
+    let fmt = "%Y-%m-%d %H:%M:%S";
+    let now: DateTime<Local> = Local::now();
+    let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
+    dft.to_string()
 }

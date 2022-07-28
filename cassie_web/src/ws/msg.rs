@@ -15,5 +15,6 @@ pub struct MsgBody {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Msg {
     pub mt: MsgType, //消息类型
+    pub date: Option<String>,
     pub body: Option<MsgBody>,
 }
