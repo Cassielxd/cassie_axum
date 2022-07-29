@@ -9,7 +9,8 @@ rust axum web 是rust开发的web手脚架项目
 #### 项目讲解
 B站：
 https://space.bilibili.com/480402847?spm_id_from=333.788.b_765f7570696e666f.1
-
+#### 项目文档
+文档：https://www.yuque.com/heapw/hsr49u/kglmy5
 #### 演示地址
 http://47.104.64.212/#/login
 
