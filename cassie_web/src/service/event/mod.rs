@@ -18,9 +18,8 @@ use log::info;
 use pharos::SharedPharos;
 use retry::{delay::Fixed, retry_with_index, Error, OperationResult};
 use tokio::time::Instant;
-//事件消费 待二次开发 todo
-pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
-    //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
+
+pub async fn consume_sys(e: CassieEvent) {
     match e {
         //登录事件
         CassieEvent::LogLogin(dto) => {
@@ -38,21 +37,24 @@ pub async fn consume(worker: &mut MainWorker, e: CassieEvent) {
         CassieEvent::Sms { sms_type } => {
             //todo!("消息事件");  短信发送  公众号消息  app消息
         }
-        //自定义事件
-        CassieEvent::Custom(custom) => {
-            let event_config_service = APPLICATION_CONTEXT.get::<EventConfigService>();
-            //获取到所有的事件配置
-            let list = load_event().await;
-            if let Ok(data) = list {
-                let d = data
-                    .iter()
-                    .filter(|item| key_match2(&custom.path.clone().as_str(), &item.path().clone().unwrap()) || item.path().clone().unwrap().contains(&custom.path.clone()))
-                    .collect::<Vec<_>>();
-                info!("事件个数：{:?}", d.len());
-                if d.len() > 0 {
-                    execute_script(worker, d, &custom).await;
-                }
-            }
+        _ => {}
+    }
+}
+
+//事件消费
+pub async fn consume_script(worker: &mut MainWorker, custom: CustomEvent) {
+    //在这里是获取不到 thread_local 的值 异步消费过来 已经不在同一个线程里了
+    let event_config_service = APPLICATION_CONTEXT.get::<EventConfigService>();
+    //获取到所有的事件配置
+    let list = load_event().await;
+    if let Ok(data) = list {
+        let d = data
+            .iter()
+            .filter(|item| key_match2(&custom.path.clone().as_str(), &item.path().clone().unwrap()) || item.path().clone().unwrap().contains(&custom.path.clone()))
+            .collect::<Vec<_>>();
+        info!("事件个数：{:?}", d.len());
+        if d.len() > 0 {
+            execute_script(worker, d, &custom).await;
         }
     }
 }

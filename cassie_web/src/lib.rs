@@ -43,8 +43,8 @@ use cassie_config::config::ApplicationConfig;
 pub use deno_runtime::deno_core;
 use log::info;
 use middleware::get_local;
+use observe::event::CassieEvent;
 use observe::event::CustomEvent;
-use observe::{consumer::init_consumer, event::CassieEvent};
 use service::fire_event;
 use state::Container;
 /*
