@@ -2,7 +2,7 @@ use crate::upload::oss_service::OssService;
 use async_trait::async_trait;
 use axum::body::Bytes;
 use cassie_common::error::Result;
-use cassie_config::config::ApplicationConfig;
+use cassie_config::config::{ApplicationConfig, UploadType};
 
 /**
  * @description:  IUploadService  upload base trait
@@ -22,8 +22,8 @@ pub struct UploadService {
 impl UploadService {
     //创建上传服务默认实现oss
     pub fn new(config: &ApplicationConfig) -> cassie_common::error::Result<Self> {
-        match config.upload_type().as_str() {
-            "oss" => {
+        match config.upload_type() {
+            UploadType::OSS => {
                 config.oss().validate();
                 Ok(Self {
                     inner: Box::new(OssService::new(
@@ -35,8 +35,8 @@ impl UploadService {
                     )),
                 })
             }
-            e => {
-                panic!("unknown of upload_type: \"{}\",current support 'oss' ", e);
+            _ => {
+                panic!("unknown of upload_type:,current support 'oss' ");
             }
         }
     }

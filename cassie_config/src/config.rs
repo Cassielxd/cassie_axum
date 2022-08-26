@@ -57,7 +57,10 @@ impl OSSConfig {
         }
     }
 }
-
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone)]
+pub enum UploadType {
+    OSS,
+}
 ///服务启动配置
 #[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize, Clone, Getters, Setters, MutGetters)]
 #[getset(get_mut = "pub", get = "pub", set = "pub")]
@@ -92,7 +95,7 @@ pub struct ApplicationConfig {
     super_admin_ids: Vec<String>,
     ///权限缓存类型
     cache_type: String,
-    upload_type: String,
+    upload_type: UploadType,
     ///重试
     login_fail_retry: u64,
     ///重试等待时间

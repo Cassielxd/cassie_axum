@@ -35,7 +35,6 @@ pub async fn init_service() {
     APPLICATION_CONTEXT.set::<AsiGroupService>(AsiGroupService::default());
     info!("AsiGroupService init success!");
     APPLICATION_CONTEXT.set::<UploadService>(UploadService::new(config).unwrap());
-    info!("UploadService init success! storage_type is {}", config.upload_type());
     APPLICATION_CONTEXT.set::<LogLoginService>(LogLoginService::default());
     info!("LogLoginService init success!");
     APPLICATION_CONTEXT.set::<LogOperationService>(LogOperationService::default());
