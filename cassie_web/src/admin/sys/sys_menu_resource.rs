@@ -1,7 +1,7 @@
 use crate::middleware::get_local;
 use crate::service::crud_service::CrudService;
 use crate::service::sys_menu_service::{get_user_menu_list, SysMenuService};
-use crate::{fire_script_event, APPLICATION_CONTEXT};
+use crate::APPLICATION_CONTEXT;
 use axum::routing::get;
 use axum::{
     extract::{Path, Query},
@@ -13,7 +13,6 @@ use cassie_config::config::ApplicationConfig;
 use cassie_domain::dto::sys_menu_dto::SysMenuDTO;
 use cassie_domain::entity::PageData;
 use cassie_domain::request::SysMenuQuery;
-use cassie_macros::api_operation;
 
 /**
  *method:/menu
@@ -42,16 +41,12 @@ pub async fn list() -> impl IntoResponse {
     let vo = sys_menu_service.menu_list().await;
     RespVO::from_result(&vo).resp_json()
 }
-///api_operation event_bus触发器
-/// #[api_operation("result=false")] 返回值为Result类型 默认是true   false
-/// #[api_operation("return=true")]  是否传递返回值 到jsRuntime里面 默认是不开启的
-/// #[api_operation("result=false|return=true")]多参数同时使用
-#[api_operation]
+
 pub async fn nav() -> impl IntoResponse {
     let sys_menu_service = APPLICATION_CONTEXT.get::<SysMenuService>();
     let request_model = get_local().unwrap();
     let vo = get_user_menu_list(request_model.uid().clone().to_string(), request_model.super_admin().clone(), request_model.agency_code().clone()).await;
-    vo
+    RespVO::from_result(&vo).resp_json()
 }
 
 /**

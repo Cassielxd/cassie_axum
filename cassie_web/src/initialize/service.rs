@@ -1,7 +1,6 @@
 use crate::service::api::user_service::{UserService, WechatUserService};
 use crate::service::asi::asi_service::AsiGroupService;
 use crate::service::cache_service::CacheService;
-use crate::service::event_service::EventConfigService;
 use crate::service::log::log_service::{LogLoginService, LogOperationService};
 use crate::service::sys_auth_service::SysAuthService;
 use crate::service::sys_dict_service::{SysDictDataService, SysDictTypeService};
@@ -40,8 +39,6 @@ pub async fn init_service() {
     info!("LogLoginService init success!");
     APPLICATION_CONTEXT.set::<LogOperationService>(LogOperationService::default());
     info!("LogOperationService init success!");
-    APPLICATION_CONTEXT.set::<EventConfigService>(EventConfigService {});
-    info!("EventConfigService init success!");
     //apis  用户服务
     APPLICATION_CONTEXT.set::<UserService>(UserService {});
     info!("UserService init success!");

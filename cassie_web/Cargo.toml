@@ -49,8 +49,7 @@ state = { version = "0.5", features = ["tls"] }
 cached = {version="0.34.0",features = ["redis_store","redis_async_std","async"]}
 #sqlparse sql解析器
 sqlparser = "0.15.0"
-#pharosv事件框架
-pharos = "0.5.3"
+
 lazy_static ="1"
 thread_local="1.1.4"
 retry = "1.3.1"
@@ -67,12 +66,3 @@ cassie_storage = { path = "../cassie_storage" }
 cassie_wx = { path = "../cassie_wx" }
 #cassie casbin mysql数据库orm层的适配器
 cassie_casbin_adapter = { path = "../cassie_casbin_adapter" }
-cassie_macros = {path= "../cassie_macros" }
-#cassie 规则引擎
-deno_core = "0.133.0"
-deno_runtime = "0.59.0"
-
-#ws
-futures-channel = "0.3.21"
-futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
-tokio-tungstenite = "*"

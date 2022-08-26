@@ -1,5 +1,3 @@
-use crate::observe::event::CassieEvent;
-use crate::service::fire_event;
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
 use cassie_common::error::Result;
@@ -54,13 +52,6 @@ impl SysAuthService {
             return Err(error.unwrap());
         }
         let sign_in_vo = self.get_user_info(&user).await?;
-        let mut login_log = SysLogLoginDto::default();
-        login_log.set_operation(Some("0".to_string()));
-        login_log.set_user_agent(Some("admin".to_string()));
-        login_log.set_creator_name(arg.username().clone());
-        login_log.set_creator(user.id.clone());
-        let event = CassieEvent::LogLogin(login_log);
-        fire_event(event).await;
         return Ok(sign_in_vo);
     }
 

@@ -2,7 +2,6 @@ use cassie_domain::vo::jwt::JWTToken;
 pub mod auth_admin;
 pub mod auth_api;
 pub mod clean_context;
-pub mod event;
 
 use crate::APPLICATION_CONTEXT;
 use cassie_common::error::Error;
